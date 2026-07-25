@@ -5,8 +5,8 @@
 import cocotb
 from cocotb.triggers import ClockCycles
 
-from cordic_tb import CordicDut, FUNC, REG, get_field, stream_push, stream_pop
-import cordic_regmap as rmap
+from cordic_tb import (CordicDut, FUNC, REG, get_field, rmap, stream_pop,
+                       stream_push)
 
 
 @cocotb.test()

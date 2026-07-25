@@ -25,6 +25,8 @@ module cordic_core_pipe #(
 ) (
   input  logic clk_i,
   input  logic rst_ni,
+  /// Synchronously drop every operation in flight.
+  input  logic                     flush_i,
 
   input  logic                     valid_i,
   output logic                     ready_o,
@@ -135,8 +137,12 @@ module cordic_core_pipe #(
       .z_o         (z_st)
     );
 
+    // The flush wins over the stall, so a flush lands even while the tail is
+    // blocked on a full consumer.
     always_ff @(posedge clk_i or negedge rst_ni) begin
       if (!rst_ni) begin
+        vq[s] <= 1'b0;
+      end else if (flush_i) begin
         vq[s] <= 1'b0;
       end else if (pipe_en) begin
         vq[s] <= v_in;

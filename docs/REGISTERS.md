@@ -78,7 +78,7 @@ The peripheral occupies a 4 KB window. Offsets `0x000` to `0x060` are implemente
 | `3` | `FLUSH_OUT` | W1S | Drop every completed but unread result |
 | `2` | `FLUSH_IN` | W1S | Drop every queued but unstarted operation |
 | `1` | `POP` | W1S | Discard the result at the head of the output FIFO |
-| `0` | `SOFT_RST` | W1S | Flush both FIFOs, clear sticky errors and IRQ state |
+| `0` | `SOFT_RST` | W1S | Abort every operation in flight, flush both FIFOs, clear the sticky errors and the IRQ state. Operand, CMD and SCRATCH registers are left alone |
 | others | reserved | RO | Read 0, writes ignored |
 
 #### `STATUS` at `0x014` (RO)

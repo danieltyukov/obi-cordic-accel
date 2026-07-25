@@ -92,10 +92,14 @@ class CordicModel:
         self.inv_k_hyp = to(rom["InvKHypRom"][n])
         self.k_circ = to(rom["KCircRom"][n])
         self.k_hyp = to(rom["KHypRom"][n])
-        self.lim_circ = to(rom["LimCircRom"][n])
-        self.lim_hyp = to(rom["LimHypRom"][n])
-        self.lim_lin = to(rom["LimLinRom"][n])
-        self.tanh_lim_hyp = to(rom["TanhLimHypRom"][n])
+        # Radii are quantised to the interface format first, then widened, so the
+        # value software reads from LIM_* is exactly the largest accepted
+        # argument. See cordic_limit_to_int in rtl/cordic_rom_fx.svh.
+        lim = self._rom_to_limit
+        self.lim_circ = lim(rom["LimCircRom"][n])
+        self.lim_hyp = lim(rom["LimHypRom"][n])
+        self.lim_lin = lim(rom["LimLinRom"][n])
+        self.tanh_lim_hyp = lim(rom["TanhLimHypRom"][n])
         self.half = 1 << (self.int_frac - 1)
 
         self.shifts = {c: ct.stage_shifts(c, n) for c in (COORD_CIRC, COORD_LIN, COORD_HYP)}
@@ -112,6 +116,11 @@ class CordicModel:
     # -- fixed-point helpers ------------------------------------------------
     def _rom_to_int(self, v):
         return ct.rom_to_fx(v, self.int_frac)
+
+    def _rom_to_limit(self, v):
+        """Truncate to the interface format, then widen. Mirrors
+        cordic_limit_to_int() in the RTL."""
+        return (v >> (ct.ROM_FRAC - self.frac_bits)) << self.guard_frac
 
     def wrap(self, v):
         """Two's complement wrap to the internal datapath width."""

@@ -55,7 +55,7 @@ REGS = [
         f("INTERVAL", 27, 20, "RO", "Minimum cycles between accepted operations"),
     ]),
     Reg("CTRL", 0x10, "RW", "Control. Bits 0 to 4 are write-1-to-trigger and read 0", [
-        f("SOFT_RST", 0, 0, "W1S", "Flush both FIFOs, clear sticky errors and IRQ state"),
+        f("SOFT_RST", 0, 0, "W1S", "Abort every operation in flight, flush both FIFOs, clear the sticky errors and the IRQ state. Operand, CMD and SCRATCH registers are left alone"),
         f("POP", 1, 1, "W1S", "Discard the result at the head of the output FIFO"),
         f("FLUSH_IN", 2, 2, "W1S", "Drop every queued but unstarted operation"),
         f("FLUSH_OUT", 3, 3, "W1S", "Drop every completed but unread result"),

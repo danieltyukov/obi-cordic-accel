@@ -29,6 +29,32 @@
     end
   endfunction
 
+  /// Convert a Q3.61 ROM entry to `frac` fractional bits, truncating rather than
+  /// rounding. Used only for the convergence radii, where rounding up could put
+  /// the advertised limit a hair outside the radius the datapath can actually
+  /// reach. Truncating keeps the limit inside it.
+  function automatic logic signed [63:0] cordic_rom_to_fx_floor(input logic [63:0] rom_val,
+                                                                input int unsigned frac);
+    int unsigned sh;
+    begin
+      sh = CordicRomFrac - frac;
+      cordic_rom_to_fx_floor = $signed(rom_val) >>> sh;
+    end
+  endfunction
+
+  /// A convergence radius in the internal format, quantised so that the value
+  /// software reads from LIM_CIRC, LIM_HYP or LIM_LIN is exactly the largest
+  /// argument the hardware accepts. Rounding straight to the internal format
+  /// instead would leave the interface-format value one LSB out of range, and an
+  /// argument written back from the register would be rejected.
+  function automatic logic signed [63:0] cordic_limit_to_int(input logic [63:0] rom_val,
+                                                             input int unsigned frac_bits,
+                                                             input int unsigned guard_frac);
+    begin
+      cordic_limit_to_int = cordic_rom_to_fx_floor(rom_val, frac_bits) <<< guard_frac;
+    end
+  endfunction
+
   /// Shift amount used by stage `stage` of coordinate system `coord`.
   /// Circular and linear walk 0, 1, 2, ...; hyperbolic follows the repeat
   /// sequence 1, 2, 3, 4, 4, 5, ..., 13, 13, 14, ... taken from the ROM.

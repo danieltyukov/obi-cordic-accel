@@ -107,6 +107,8 @@ module cordic_obi_regs #(
   // Control outputs
   output logic                 flush_in_o,
   output logic                 flush_out_o,
+  /// CTRL.SOFT_RST: abort every operation in flight as well as flushing.
+  output logic                 soft_rst_o,
   output logic                 irq_o
 );
 
@@ -205,6 +207,15 @@ module cordic_obi_regs #(
     end
   endfunction
 
+  /// Convergence radii read back truncated, matching what cordic_pre compares
+  /// against, so writing a limit register's value straight back as an operand is
+  /// always accepted.
+  function automatic logic [31:0] limit_word(input logic [63:0] rom_val);
+    begin
+      limit_word = 32'(cordic_rom_to_fx_floor(rom_val, FracBits));
+    end
+  endfunction
+
   logic [31:0] status_word, ctrl_word, cfg0_word, cfg1_word, cmd_word, flags_word;
 
   always_comb begin
@@ -282,10 +293,10 @@ module cordic_obi_regs #(
       CordicIkCircWord:  rdata_sel = rom_word(CordicInvKCircRom[NumStages]);
       CordicKHypWord:    rdata_sel = rom_word(CordicKHypRom[NumStages]);
       CordicIkHypWord:   rdata_sel = rom_word(CordicInvKHypRom[NumStages]);
-      CordicLimCircWord: rdata_sel = rom_word(CordicLimCircRom[NumStages]);
-      CordicLimHypWord:  rdata_sel = rom_word(CordicLimHypRom[NumStages]);
-      CordicLimLinWord:  rdata_sel = rom_word(CordicLimLinRom[NumStages]);
-      CordicTanhLimHypWord: rdata_sel = rom_word(CordicTanhLimHypRom[NumStages]);
+      CordicLimCircWord: rdata_sel = limit_word(CordicLimCircRom[NumStages]);
+      CordicLimHypWord:  rdata_sel = limit_word(CordicLimHypRom[NumStages]);
+      CordicLimLinWord:  rdata_sel = limit_word(CordicLimLinRom[NumStages]);
+      CordicTanhLimHypWord: rdata_sel = limit_word(CordicTanhLimHypRom[NumStages]);
       CordicScratchWord: rdata_sel = scratch_q;
       default: begin
         rdata_sel = CordicBadAccessData;
@@ -392,6 +403,7 @@ module cordic_obi_regs #(
 
   assign flush_in_o  = trig_flush_in;
   assign flush_out_o = trig_flush_out;
+  assign soft_rst_o  = trig_soft_rst;
 
   // ---------------------------------------------------------------------------
   // Sticky errors and interrupt state

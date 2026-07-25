@@ -24,6 +24,8 @@ module cordic_core_iter #(
 ) (
   input  logic clk_i,
   input  logic rst_ni,
+  /// Synchronously drop the operation in flight.
+  input  logic                    flush_i,
 
   input  logic                    valid_i,
   output logic                    ready_o,
@@ -180,6 +182,9 @@ module cordic_core_iter #(
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
+      state_q <= StIdle;
+      cnt_q   <= '0;
+    end else if (flush_i) begin
       state_q <= StIdle;
       cnt_q   <= '0;
     end else begin

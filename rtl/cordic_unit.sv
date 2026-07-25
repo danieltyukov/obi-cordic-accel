@@ -38,6 +38,8 @@ module cordic_unit #(
 ) (
   input  logic clk_i,
   input  logic rst_ni,
+  /// Synchronously drop every operation in flight.
+  input  logic                        flush_i,
 
   input  logic                        valid_i,
   output logic                        ready_o,
@@ -102,6 +104,7 @@ module cordic_unit #(
     ) i_core (
       .clk_i,
       .rst_ni,
+      .flush_i,
       .valid_i,
       .ready_o,
       .x_i               (pre_x),
@@ -132,6 +135,7 @@ module cordic_unit #(
     ) i_core (
       .clk_i,
       .rst_ni,
+      .flush_i,
       .valid_i,
       .ready_o,
       .x_i         (pre_x),

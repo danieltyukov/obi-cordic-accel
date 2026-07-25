@@ -136,7 +136,7 @@ module cordic_accel #(
   logic [InCntWidth-1:0]   in_count;
   logic [OutCntWidth-1:0]  out_count;
   logic                    res_push, res_push_dom;
-  logic                    flush_in, flush_out;
+  logic                    flush_in, flush_out, soft_rst;
 
   cordic_obi_regs #(
     .AddrWidth (AddrWidth),
@@ -199,6 +199,7 @@ module cordic_accel #(
 
     .flush_in_o  (flush_in),
     .flush_out_o (flush_out),
+    .soft_rst_o  (soft_rst),
     .irq_o       (irq_o)
   );
 
@@ -264,6 +265,10 @@ module cordic_accel #(
   ) i_unit (
     .clk_i,
     .rst_ni,
+    // CTRL.SOFT_RST aborts what is in flight as well as flushing the queues, so a
+    // stale result cannot land after software has cleared the interrupt state.
+    // FLUSH_IN and FLUSH_OUT touch only their own queue, as their names say.
+    .flush_i (soft_rst),
     .valid_i (fifo_out_valid),
     .ready_o (fifo_out_ready),
     .func_i  (unit_func),

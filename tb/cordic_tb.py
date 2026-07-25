@@ -22,6 +22,10 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "scripts
 import cordic_regmap as rmap  # noqa: E402
 from cordic_model import CordicModel, FUNC, FUNC_NAME  # noqa: E402
 
+# Re-exported so test modules can `from cordic_tb import rmap` instead of relying
+# on this module having been imported first to fix up sys.path.
+__all__ = ["rmap", "CordicModel", "FUNC", "FUNC_NAME"]
+
 CLK_PERIOD_NS = 10
 
 REG = {r.name: r.offset for r in rmap.REGS}
