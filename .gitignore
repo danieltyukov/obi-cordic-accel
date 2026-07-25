@@ -33,3 +33,8 @@ build/
 # editors / OS
 *.swp
 .DS_Store
+
+# PnR working trees. LibreLane runs are large and reproducible; docs/pnr keeps the
+# metrics and docs/img the rendered layout.
+build/pnr/
+pnr/runs/

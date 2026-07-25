@@ -295,28 +295,45 @@ rather than assume.
 
 ## Choosing the parameters
 
+Real IHP SG13G2 130nm numbers, the process Croc taped out in, from `make pdk`:
+
 | | `Variant = 0`, pipelined | `Variant = 1`, iterative |
 |---|---:|---:|
-| Cells, Q3.29 N=28 | 55,096 | 11,101 |
+| Cells, Q3.29 N=28 | 40,413 | 8,390 |
 | Flip-flops | 4,921 | 1,229 |
-| Logic depth | 67 | 59 |
+| Area | 0.607 mm2 | **0.135 mm2** |
+| Fmax, slow corner | 61.6 MHz | 48.5 MHz |
 | Result every | 1 cycle | 29 cycles |
+| Throughput | 61.6 M/s | 1.67 M/s |
 | Latency | 30 cycles | 31 cycles |
 
 For a CVE2-only Croc, **take the iterative core**. The register interface needs 57
 cycles per operation, so the pipelined core's one-per-cycle retire rate is
-unreachable and you would be paying five times the area for nothing. The results are
-bit-identical either way, which `tb/test_equivalence.py` asserts over 900
-operations, so this is purely an area-versus-throughput decision with no accuracy
-consequence.
+unreachable and you would be paying 4.5x the area for throughput nothing in the
+system can consume. The results are bit-identical either way, which
+`tb/test_equivalence.py` asserts over 900 operations, so this is purely an
+area-versus-throughput decision with no accuracy consequence.
+
+Two things to know before choosing, both of which come out of the real timing rather
+than from cell counts:
+
+- **The folded core is also slower per cycle**, 48.5 against 61.6 MHz at Q3.29,
+  because its barrel shifter and angle mux sit in series with the same adder carry
+  chain. If the accelerator ends up on Croc's critical path, that 27 percent matters.
+  At Q3.13 the two are equal, so the penalty is specific to the wider datapath.
+- **The folded core's area is nearly independent of `NumStages`**: 0.1349 mm2 at 16
+  stages against 0.1354 at 28. Accuracy from more micro-rotations is close to free
+  there, which is not true of the pipelined core, where 28 stages cost 1.54x the area
+  of 16.
 
 The pipelined core earns its area only with the streaming port fed by something that
 can sustain it.
 
 Smaller again: `DataWidth = 16`, `FracBits = 13`, `NumStages = 15` gives Q3.13 at
-5,879 cells iterative or 18,670 pipelined, with about 13 bits of accuracy instead of
-29. `NumStages` must be 5, or 15 or more, or the hyperbolic repeat sequence is
-truncated and elaboration fails with an explanation; see `docs/DESIGN.md`.
+0.079 mm2 iterative or 0.225 mm2 pipelined, at 98 MHz either way, with about 13 bits
+of accuracy instead of 29. `NumStages` must be 5, or 15 or more, or the hyperbolic
+repeat sequence is truncated and elaboration fails with an explanation; see
+`docs/DESIGN.md`.
 
 ## Using the streaming port
 

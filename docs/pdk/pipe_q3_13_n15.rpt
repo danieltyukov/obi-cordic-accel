@@ -1,0 +1,115 @@
+IHP SG13G2 130nm synthesis and timing: pipe_q3_13_n15
+============================================================================
+
+Real standard cells and real Liberty timing on the process Croc taped out
+in. Produced by scripts/run_pdk.py; see docs/pdk/README.md for the
+methodology and its limits.
+
+Configuration
+----------------------------------------------------------------------------
+  variant          0 (fully pipelined)
+  format           Q3.13  (16-bit interface word)
+  micro-rotations  15
+  guard bits       2 integer, 4 fractional
+  FIFO depths      4 in, 4 out
+
+Area
+----------------------------------------------------------------------------
+  cells                    14243
+  flip-flops               1988
+  area after mapping       224940.2 um^2
+  area after drive repair  228024.7 um^2  (+1.4%)
+
+Timing, one repaired netlist across all three corners
+----------------------------------------------------------------------------
+  corner  conditions        path delay       Fmax  setup slack  hold slack
+  slow    1.08 V, 125 C      10.430 ns    95.9 MHz    -0.000 ns    0.266 ns
+  typ     1.20 V, 25 C        6.732 ns   148.6 MHz     3.698 ns    0.167 ns
+  fast    1.65 V, -40 C       3.210 ns   311.5 MHz     7.220 ns    0.082 ns
+
+Critical path at the slow corner
+----------------------------------------------------------------------------
+  startpoint  _24965_ (rising edge-triggered flip-flop clocked by clk)
+              which is RTL register i_in_fifo.rptr_q [0]
+  endpoint    _26261_ (rising edge-triggered flip-flop clocked by clk)
+              which is RTL register i_unit.gen_pipelined.i_core.yq [21]
+  cells       40
+  runs through:
+    carry chain (AOI/OAI) 21 of 40
+    nand/nor/inv 11 of 40
+    flip-flop 4 of 40
+    xor/xnor (sum bits) 2 of 40
+    mux (shifter or select) 2 of 40
+
+  Full path report:
+  [WARNING STA-0503] report_checks -group_count is deprecated. Use -group_path_count instead.
+  Startpoint: _24965_ (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: _26261_ (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+  
+      Delay      Time   Description
+  -------------------------------------------------------------
+     0.0000    0.0000   clock clk (rise edge)
+     0.0000    0.0000   clock network delay (ideal)
+     0.0000    0.0000 ^ _24965_/CLK (sg13g2_dfrbpq_2)
+     1.7263    1.7263 ^ _24965_/Q (sg13g2_dfrbpq_2)
+     0.8363    2.5626 v _13625_/X (sg13g2_mux4_1)
+     0.2610    2.8236 ^ _13640_/Y (sg13g2_nor2b_1)
+     0.4494    3.2730 v _13648_/Y (sg13g2_nand3b_1)
+     0.3201    3.5931 v _13656_/X (sg13g2_and4_1)
+     0.2138    3.8069 v fanout255/X (sg13g2_buf_1)
+     0.2117    4.0186 ^ _13675_/Y (sg13g2_nand2_1)
+     0.2429    4.2615 v _13724_/Y (sg13g2_nand3_1)
+     0.2432    4.5047 ^ _23226_/Y (sg13g2_o21ai_1)
+     0.2670    4.7717 ^ _23227_/X (sg13g2_a21o_1)
+     0.1591    4.9308 v _23229_/Y (sg13g2_nand3_1)
+     0.1685    5.0993 v _23230_/X (sg13g2_and3_1)
+     0.1583    5.2576 ^ _23231_/Y (sg13g2_o21ai_1)
+     0.2227    5.4803 v _23234_/Y (sg13g2_o21ai_1)
+     0.2137    5.6940 ^ _23242_/Y (sg13g2_a21oi_1)
+     0.2499    5.9439 ^ fanout5/X (sg13g2_buf_1)
+     0.2553    6.1992 ^ fanout3/X (sg13g2_buf_1)
+     0.1349    6.3341 v _23999_/Y (sg13g2_nand2_1)
+     0.1960    6.5301 v _24001_/Y (sg13g2_xnor2_1)
+     0.2079    6.7380 v _24003_/Y (sg13g2_xnor2_1)
+     0.2183    6.9563 ^ _24007_/Y (sg13g2_o21ai_1)
+     0.2486    7.2049 ^ _24020_/X (sg13g2_a21o_1)
+     0.1510    7.3559 v _24032_/Y (sg13g2_a21oi_1)
+     0.2314    7.5873 ^ _24044_/Y (sg13g2_o21ai_1)
+     0.2441    7.8314 ^ _24055_/X (sg13g2_a21o_1)
+     0.1479    7.9793 v _24068_/Y (sg13g2_a21oi_1)
+     0.2321    8.2114 ^ _24079_/Y (sg13g2_o21ai_1)
+     0.2269    8.4382 v _24092_/Y (sg13g2_a21oi_1)
+     0.1800    8.6182 ^ _24107_/Y (sg13g2_o21ai_1)
+     0.1622    8.7804 v _24120_/Y (sg13g2_a21oi_1)
+     0.2317    9.0122 ^ _24132_/Y (sg13g2_o21ai_1)
+     0.1936    9.2058 v _24143_/Y (sg13g2_a21oi_1)
+     0.2415    9.4473 ^ _24154_/Y (sg13g2_o21ai_1)
+     0.2029    9.6502 v _24165_/Y (sg13g2_a21oi_1)
+     0.2476    9.8978 ^ _24179_/Y (sg13g2_o21ai_1)
+     0.1513   10.0491 v _24187_/Y (sg13g2_o21ai_1)
+     0.1796   10.2287 v _24188_/X (sg13g2_mux2_1)
+     0.0000   10.2287 v _26261_/D (sg13g2_dfrbpq_1)
+              10.2287   data arrival time
+  
+    10.4300   10.4300   clock clk (rise edge)
+     0.0000   10.4300   clock network delay (ideal)
+     0.0000   10.4300   clock reconvergence pessimism
+              10.4300 ^ _26261_/CLK (sg13g2_dfrbpq_1)
+    -0.2014   10.2286   library setup time
+              10.2286   data required time
+  -------------------------------------------------------------
+              10.2286   data required time
+             -10.2287   data arrival time
+  -------------------------------------------------------------
+              -0.0001   slack (VIOLATED)
+
+Convergence of the repair target
+----------------------------------------------------------------------------
+  Each pass feeds the achieved delay back as the next target, so the
+  reported Fmax is a converged measurement rather than a function of the
+  probe period.
+    iteration 0: target   40.000 ns -> delay   10.430 ns (slack +29.570 ns)
+    iteration 1: target   10.430 ns -> delay   10.430 ns (slack +0.000 ns)
+

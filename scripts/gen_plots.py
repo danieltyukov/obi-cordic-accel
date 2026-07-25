@@ -8,7 +8,10 @@ Sources, all of them real:
   build/results/trajectories.json   RTL simulation, iterative core's debug port
   build/results/throughput_v*.json  RTL simulation, measured retire cycles
   build/results/path_compare_v*.json RTL simulation, register vs streaming
-  docs/synth/summary.json           Yosys, written by scripts/run_synth.py
+  docs/synth/summary.json           Yosys, generic cells
+  docs/pdk/summary.json             Yosys plus OpenROAD on the real IHP SG13G2 PDK,
+                                    written by scripts/run_pdk.py: real um^2 and
+                                    real MHz at three corners
 
 Two studies sweep the bit-accurate model instead of the RTL, and say so on the
 figure: error versus stage count and error versus word width would each need dozens
@@ -33,6 +36,7 @@ ROOT = HERE.parent
 RESULTS = ROOT / "build" / "results"
 IMG = ROOT / "docs" / "img"
 SYNTH = ROOT / "docs" / "synth"
+PDKDIR = ROOT / "docs" / "pdk"
 
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(ROOT / "tb"))
@@ -404,51 +408,60 @@ def plot_trajectories():
 # 6. Area comparison from Yosys
 # ---------------------------------------------------------------------------
 def plot_area():
-    path = SYNTH / "summary.json"
+    """Area and flip-flop split on the real IHP SG13G2 process."""
+    path = PDKDIR / "summary.json"
     if not path.exists():
-        raise SystemExit(f"missing {path}. Run `make synth` first.")
+        raise SystemExit(f"missing {path}. Run `make pdk` first.")
     s = json.loads(path.read_text())
 
     order = ["pipe_q3_13_n15", "iter_q3_13_n15", "pipe_q3_29_n16",
              "iter_q3_29_n16", "pipe_q3_29_n28", "iter_q3_29_n28"]
     order = [k for k in order if k in s]
-    labels = []
+    labels, ff, comb, fmax, colours = [], [], [], [], []
     for k in order:
         c = s[k]["config"]
         labels.append(f"{'pipe' if c['variant'] == 0 else 'iter'}\n"
                       f"Q{c['data_width'] - c['frac_bits']}.{c['frac_bits']}\n"
                       f"N={c['num_stages']}")
-    ff = np.array([s[k]["num_ffs"] for k in order])
-    comb = np.array([s[k]["num_cells"] - s[k]["num_ffs"] for k in order])
-    depth = np.array([s[k]["longest_path"] for k in order])
-    colours = [PALETTE[0] if "pipe" in k else PALETTE[1] for k in order]
+        # Flip-flop area is not broken out by the tool, so the split shown is by
+        # cell count scaled onto the measured total. Honest and clearly labelled.
+        total = s[k]["synth_area_um2"]
+        frac_ff = s[k]["flip_flops"] / max(s[k]["cells"], 1)
+        ff.append(total * frac_ff)
+        comb.append(total * (1 - frac_ff))
+        fmax.append(s[k]["corners"]["slow"]["fmax_mhz"])
+        colours.append(PALETTE[0] if c["variant"] == 0 else PALETTE[1])
 
-    fig, axes = plt.subplots(1, 2, figsize=(10.4, 4.4),
+    ff = np.array(ff)
+    comb = np.array(comb)
+    fig, axes = plt.subplots(1, 2, figsize=(10.6, 4.4),
                              gridspec_kw={"width_ratios": [1.55, 1]})
     ax = axes[0]
     x = np.arange(len(order))
-    ax.bar(x, comb, 0.62, label="combinational cells", color=colours, alpha=0.9)
-    ax.bar(x, ff, 0.62, bottom=comb, label="flip-flops", color=colours, alpha=0.45,
+    ax.bar(x, comb / 1000.0, 0.62, label="combinational (by cell share)",
+           color=colours, alpha=0.9)
+    ax.bar(x, ff / 1000.0, 0.62, bottom=comb / 1000.0,
+           label="flip-flops (by cell share)", color=colours, alpha=0.45,
            hatch="///", edgecolor="white", linewidth=0.4)
     for xi, k in zip(x, order):
-        total = s[k]["num_cells"]
-        ax.text(xi, total * 1.02, f"{total:,}", ha="center", fontsize=7.5)
+        t = s[k]["synth_area_um2"] / 1000.0
+        ax.text(xi, t * 1.02, f"{t:,.0f}k", ha="center", fontsize=7.5)
     ax.set_xticks(x)
     ax.set_xticklabels(labels, fontsize=7.5)
-    ax.set_ylabel("gate-equivalent cells")
-    ax.set_ylim(0, max(comb + ff) * 1.16)
-    ax.set_title("Area: pipelined against iterative")
+    ax.set_ylabel("cell area (thousand um^2)")
+    ax.set_ylim(0, max((comb + ff) / 1000.0) * 1.16)
+    ax.set_title("Area on IHP SG13G2 130nm")
     ax.legend(loc="upper left")
 
     ax = axes[1]
-    ax.bar(x, depth, 0.62, color=colours, alpha=0.9)
-    for xi, dv in zip(x, depth):
-        ax.text(xi, dv + 1.0, str(dv), ha="center", fontsize=7.5)
+    ax.bar(x, fmax, 0.62, color=colours, alpha=0.9)
+    for xi, fv in zip(x, fmax):
+        ax.text(xi, fv + 1.5, f"{fv:.1f}", ha="center", fontsize=7.5)
     ax.set_xticks(x)
     ax.set_xticklabels(labels, fontsize=7.5)
-    ax.set_ylabel("longest register-to-register path (gates)")
-    ax.set_ylim(0, max(depth) * 1.2)
-    ax.set_title("Logic depth")
+    ax.set_ylabel("Fmax at the slow corner (MHz)")
+    ax.set_ylim(0, max(fmax) * 1.2)
+    ax.set_title("Frequency")
 
     ratios = []
     for a, b in (("pipe_q3_29_n28", "iter_q3_29_n28"),
@@ -456,13 +469,13 @@ def plot_area():
                  ("pipe_q3_13_n15", "iter_q3_13_n15")):
         if a in s and b in s:
             ratios.append(f"{s[a]['config']['num_stages']} stages: "
-                          f"{s[a]['num_cells'] / s[b]['num_cells']:.2f}x")
-    fig.suptitle("Yosys, technology-independent mapping. Pipelined / iterative cell "
+                          f"{s[a]['synth_area_um2'] / s[b]['synth_area_um2']:.2f}x")
+    fig.suptitle("Real cells and real Liberty timing. Pipelined / iterative area "
                  "ratio " + ", ".join(ratios), y=1.02, fontsize=9.5)
-    note(fig, "Gate-equivalent counts from abc -g cmos4, not IHP 130nm areas, but "
-              "directly comparable because every configuration goes through the same "
-              "script. The iterative core's depth is only a little lower despite far "
-              "fewer adders: its barrel shifter and angle mux sit in the loop.")
+    note(fig, "The folded core's area hardly moves between 16 and 28 stages, since "
+              "only the angle table grows, while the pipelined core scales with the "
+              "stage count. The combinational and register split is apportioned by "
+              "cell count, because the tool reports one area total.")
     save(fig, "area_comparison.png")
 
 
@@ -540,6 +553,112 @@ def plot_throughput():
     save(fig, "throughput_latency.png")
 
 
+
+# ---------------------------------------------------------------------------
+# 8. Real IHP SG13G2 area, frequency and throughput
+# ---------------------------------------------------------------------------
+def plot_ppa():
+    path = PDKDIR / "summary.json"
+    if not path.exists():
+        raise SystemExit(f"missing {path}. Run `make pdk` first.")
+    s = json.loads(path.read_text())
+
+    rows = []
+    for name, v in s.items():
+        cfg = v["config"]
+        slow = v["corners"]["slow"]
+        # Results per second: the pipelined core retires one per cycle, the folded
+        # one once every NumStages+1 cycles. Both numbers are Fmax divided by the
+        # measured issue interval, so this is throughput, not a peak claim.
+        interval = 1 if cfg["variant"] == 0 else cfg["num_stages"] + 1
+        rows.append(dict(
+            name=name, variant=cfg["variant"], stages=cfg["num_stages"],
+            fmt=f"Q{cfg['data_width'] - cfg['frac_bits']}.{cfg['frac_bits']}",
+            area=v["synth_area_um2"], fmax=slow["fmax_mhz"],
+            mres=slow["fmax_mhz"] * 1e6 / interval / 1e6, interval=interval,
+            corners={c: t["fmax_mhz"] for c, t in v["corners"].items()}))
+    rows.sort(key=lambda r: (r["variant"], -r["stages"]))
+
+    fig, axes = plt.subplots(1, 3, figsize=(12.4, 4.3))
+
+    # --- area against frequency, the Pareto view
+    ax = axes[0]
+    for r in rows:
+        c = PALETTE[0] if r["variant"] == 0 else PALETTE[1]
+        mk = "o" if r["variant"] == 0 else "s"
+        ax.scatter(r["area"] / 1000.0, r["fmax"], s=70, color=c, marker=mk,
+                   zorder=3, edgecolor="white", linewidth=0.8)
+        ax.annotate(f"{r['fmt']} N={r['stages']}",
+                    (r["area"] / 1000.0, r["fmax"]), textcoords="offset points",
+                    xytext=(7, -3), fontsize=7.2, color="#3a3a3a")
+    # Join only points that share a format, since a line across formats would
+    # suggest a sweep that was never run.
+    for v, c, mk in ((0, PALETTE[0], "o"), (1, PALETTE[1], "s")):
+        for fmt in sorted({r["fmt"] for r in rows}):
+            pts = sorted([(r["area"] / 1000.0, r["fmax"]) for r in rows
+                          if r["variant"] == v and r["fmt"] == fmt])
+            if len(pts) > 1:
+                ax.plot([p[0] for p in pts], [p[1] for p in pts], "-", color=c,
+                        linewidth=1.0, alpha=0.5)
+    for v, label, c, mk in ((0, "pipelined", PALETTE[0], "o"),
+                            (1, "iterative", PALETTE[1], "s")):
+        ax.scatter([], [], s=70, color=c, marker=mk, label=label)
+    ax.set_xlabel("cell area (thousand um^2)")
+    ax.set_ylabel("Fmax at the slow corner (MHz)")
+    ax.set_title("Area against frequency")
+    ax.legend(loc="lower right")
+
+    # --- area against throughput, which is the number that matters
+    ax = axes[1]
+    for r in rows:
+        c = PALETTE[0] if r["variant"] == 0 else PALETTE[1]
+        mk = "o" if r["variant"] == 0 else "s"
+        ax.scatter(r["area"] / 1000.0, r["mres"], s=70, color=c, marker=mk,
+                   zorder=3, edgecolor="white", linewidth=0.8)
+        ax.annotate(f"{r['fmt']} N={r['stages']}",
+                    (r["area"] / 1000.0, r["mres"]), textcoords="offset points",
+                    xytext=(7, -3), fontsize=7.2, color="#3a3a3a")
+    for v, label, c, mk in ((0, "pipelined", PALETTE[0], "o"),
+                            (1, "iterative", PALETTE[1], "s")):
+        ax.scatter([], [], s=70, color=c, marker=mk, label=label)
+    ax.set_yscale("log")
+    ax.set_xlabel("cell area (thousand um^2)")
+    ax.set_ylabel("million results per second, slow corner")
+    ax.set_title("Area against throughput")
+    ax.legend(loc="lower right")
+
+    # --- corner spread
+    ax = axes[2]
+    labels = [f"{'pipe' if r['variant'] == 0 else 'iter'}\n{r['fmt']}\nN={r['stages']}"
+              for r in rows]
+    x = np.arange(len(rows))
+    w = 0.26
+    for i, (corner, c) in enumerate((("slow", PALETTE[5]), ("typ", PALETTE[0]),
+                                    ("fast", PALETTE[2]))):
+        vals = [r["corners"][corner] for r in rows]
+        ax.bar(x + (i - 1) * w, vals, w, label=corner, color=c, alpha=0.9)
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, fontsize=6.8)
+    ax.set_ylabel("Fmax (MHz)")
+    ax.set_title("Corner spread")
+    ax.legend(loc="upper left", ncol=3, fontsize=7.5)
+
+    pipe = next(r for r in rows if r["name"] == "pipe_q3_29_n28")
+    itr = next(r for r in rows if r["name"] == "iter_q3_29_n28")
+    fig.suptitle(
+        f"IHP SG13G2 130nm, real cells and real Liberty timing. At Q3.29 with 28 "
+        f"stages the pipelined core is {pipe['area'] / itr['area']:.1f}x the area "
+        f"for {pipe['mres'] / itr['mres']:.0f}x the throughput, so "
+        f"{(pipe['mres'] / pipe['area']) / (itr['mres'] / itr['area']):.1f}x the "
+        f"results per second per um^2.", y=1.03, fontsize=9.5)
+    note(fig, "Slow corner is 1.08 V and 125 C, the corner a design closes on. "
+              "Throughput is Fmax divided by the measured issue interval, 1 cycle "
+              "pipelined and N+1 folded. Folding costs frequency as well as "
+              "throughput, because its barrel shifter and angle mux sit inside the "
+              "loop where the pipelined core has hardwired shifts.")
+    save(fig, "ppa_ihp_sg13g2.png")
+
+
 FIGURES = {
     "error_vs_angle": plot_error_vs_angle,
     "error_histograms": plot_error_histograms,
@@ -548,6 +667,7 @@ FIGURES = {
     "convergence_trajectory": plot_trajectories,
     "area_comparison": plot_area,
     "throughput_latency": plot_throughput,
+    "ppa_ihp_sg13g2": plot_ppa,
 }
 
 

@@ -7,11 +7,15 @@
 #   make gen       regenerate every generated file (ROM, register map, sw vectors)
 #   make lint      Verilator -Wall on the core RTL and on the Croc wrapper
 #   make test      the whole cocotb suite, both variants, both OBI handshakes
-#   make synth     Yosys over six configurations, reports into docs/synth
+#   make synth     Yosys generic cells, six configurations, docs/synth
+#   make pdk       real IHP SG13G2 130nm: area in um^2 and Fmax at three
+#                  corners via Yosys plus OpenROAD, reports into docs/pdk
+#   make pnr       full RTL-to-GDS through LibreLane, post-route area plus
+#                  DRC and LVS signoff, reports into docs/pnr
 #   make sw        host driver test (runs) and both RV32 images (link)
 #   make images    regenerate every figure in docs/img from measured data
 #   make check-gen fail if any generated file is out of date
-#   make all       gen, lint, test, synth, sw, images
+#   make all       gen, lint, test, synth, pdk, sw, images
 #
 # Simulator note: Verilator, because it is the only open simulator on this machine
 # that elaborates the design. Icarus Verilog 12 aborts on an internal assertion when
@@ -65,9 +69,9 @@ STREAM_OPS     ?= 256
 .PHONY: all venv gen rom regmap sw-vectors check-gen lint lint-core lint-wrap \
         lint-configs test test-smoke test-accuracy test-domain test-obi \
         test-throughput test-equivalence test-reset synth synth-quick sw sw-host \
-        sw-rv32 images clean distclean tools help
+        sw-rv32 images clean distclean tools help pdk pdk-quick pnr layout
 
-all: check-tools gen lint test synth sw images
+all: check-tools gen lint test synth pdk sw images
 	@echo
 	@echo "==== make all completed ===="
 
@@ -89,10 +93,12 @@ $(VENV_OK): $(TOP)/requirements.txt
 .PHONY: check-tools
 check-tools:
 	@fail=0; \
-	for t in $(VERILATOR) $(YOSYS) python3; do \
+	for t in $(VERILATOR) $(YOSYS) python3 openroad; do \
 	  if ! command -v $$t >/dev/null 2>&1; then \
 	    echo "missing required tool: $$t"; fail=1; fi; \
 	done; \
+	if [ ! -d $(IHP_PDK_ROOT) ]; then \
+	  echo "IHP SG13G2 PDK not found at $(IHP_PDK_ROOT); set IHP_PDK_ROOT"; fail=1; fi; \
 	if ! command -v riscv64-unknown-elf-gcc >/dev/null 2>&1; then \
 	  echo "note: riscv64-unknown-elf-gcc not found, 'make sw' will skip the RV32 image"; \
 	fi; \
@@ -224,6 +230,30 @@ synth-quick: $(VENV_OK)
 	$(PY) $(TOP)/scripts/run_synth.py --quick
 
 # ---------------------------------------------------------------------------
+# Real IHP SG13G2 130nm, the process Croc taped out in
+# ---------------------------------------------------------------------------
+# Yosys maps to real sg13g2 cells against the slow-corner Liberty, OpenROAD's
+# resizer repairs drive strength (unrepaired the netlist has min-size gates driving
+# 0.7 pF nets, so its timing means nothing), then the one repaired netlist is timed
+# at all three corners. See docs/pdk/README.md.
+IHP_PDK_ROOT ?= $(HOME)/.local/share/pdk/IHP-Open-PDK/ihp-sg13g2
+export IHP_PDK_ROOT
+
+pdk: $(VENV_OK)
+	$(PY) $(TOP)/scripts/run_pdk.py
+
+pdk-quick: $(VENV_OK)
+	$(PY) $(TOP)/scripts/run_pdk.py --quick
+
+# Full RTL-to-GDS. Slower and optional; the headline numbers come from `make pdk`,
+# and pnr/README.md says why timing is not taken from here.
+pnr: $(VENV_OK)
+	$(PY) $(TOP)/scripts/run_pnr.py
+
+layout:
+	$(TOP)/scripts/run_pnr_render.sh
+
+# ---------------------------------------------------------------------------
 # Software
 # ---------------------------------------------------------------------------
 sw: sw-host sw-rv32
@@ -252,6 +282,8 @@ images: $(VENV_OK)
 	  echo "build/results is missing; run 'make test' first"; exit 1; fi
 	@if [ ! -f $(TOP)/docs/synth/summary.json ]; then \
 	  echo "docs/synth/summary.json is missing; run 'make synth' first"; exit 1; fi
+	@if [ ! -f $(TOP)/docs/pdk/summary.json ]; then \
+	  echo "docs/pdk/summary.json is missing; run 'make pdk' first"; exit 1; fi
 	$(PY) $(TOP)/scripts/gen_plots.py
 	$(PY) $(TOP)/scripts/gen_svg.py
 	$(PY) $(TOP)/scripts/gen_regmap.py

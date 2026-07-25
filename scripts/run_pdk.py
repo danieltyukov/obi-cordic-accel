@@ -274,8 +274,15 @@ puts "@@@HOLDSLACK [sta::worst_slack_cmd min]"
     hdr = dict((k, v.strip()) for k, v in PATH_HDR.findall(body))
     cells = PATH_CELL.findall(body)
     m = re.search(r"Design area (\d+) um\^2", text)
+    # Turn the flattened instance names into the RTL registers they implement.
+    nl = pathlib.Path(netlist).read_text()
+    start_reg = resolve_flop(nl, hdr.get("Startpoint", "").split()[0]) \
+        if hdr.get("Startpoint") else None
+    end_reg = resolve_flop(nl, hdr.get("Endpoint", "").split()[0]) \
+        if hdr.get("Endpoint") else None
     return dict(
         corner=corner, conditions=CORNERS[corner][1], period_ns=period,
+        start_reg=start_reg, end_reg=end_reg,
         slack_ns=slack, delay_ns=period - slack,
         fmax_mhz=1000.0 / (period - slack) if period - slack > 0 else None,
         tns_ns=grab("TNS", 1e9), hold_slack_ns=grab("HOLDSLACK", 1e9),
@@ -284,6 +291,28 @@ puts "@@@HOLDSLACK [sta::worst_slack_cmd min]"
         path_depth=len(cells), path_cells=cells,
         path_report="\n".join(body.strip().splitlines()),
     )
+
+
+FLOP_INST = re.compile(r"\b\w+\s+(%s)\s*\((.*?)\);", re.S)
+
+
+def resolve_flop(netlist_text, inst):
+    """Name the RTL register a flattened flop instance implements.
+
+    ABC renames everything to _NNNNN_, so a path report on its own says only that
+    the path runs flop to flop. Yosys keeps the original signal on the flop's Q
+    net, so reading that back turns "_72443_" into
+    "i_unit.gen_pipelined.i_core.xq[36]", which is what makes the path report
+    actually diagnostic.
+    """
+    m = re.search(r"\b\w+\s+" + re.escape(inst) + r"\s*\((.*?)\);",
+                  netlist_text, re.S)
+    if not m:
+        return None
+    conns = dict(re.findall(r"\.(\w+)\(([^)]*)\)", m.group(1)))
+    q = conns.get("Q") or conns.get("Q_N") or ""
+    q = q.strip().lstrip("\\").strip()
+    return q or None
 
 
 def classify_path(cells):
@@ -356,7 +385,11 @@ def write_report(cfg, info):
         add(f"Critical path at the {SIGNOFF_CORNER} corner")
         add("-" * 76)
         add(f"  startpoint  {sign['path_start']}")
+        if sign.get("start_reg"):
+            add(f"              which is RTL register {sign['start_reg']}")
         add(f"  endpoint    {sign['path_end']}")
+        if sign.get("end_reg"):
+            add(f"              which is RTL register {sign['end_reg']}")
         add(f"  cells       {sign['path_depth']}")
         groups, ranked = classify_path(sign["path_cells"])
         add("  runs through:")

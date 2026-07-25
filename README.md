@@ -22,10 +22,11 @@ and two interchangeable microarchitectures that produce bit-identical results.
 | Format | Q3.29 in 32 bits by default, parameterised; Q3.13 in 16 bits also verified |
 | Accuracy | 4.5 LSB worst case for sin and cos, 1.5 RMS, measured against double precision |
 | Interfaces | OBI v1.6 subordinate over a 4 KB window, plus a valid/ready streaming port |
-| Pipelined core | 1 result per cycle, 30 cycles end-to-end latency, 55,096 cells |
-| Iterative core | 1 result per 29 cycles, 31 cycles end-to-end latency, 11,101 cells |
+| Pipelined core | 1 result per cycle, 61.6 MHz, 0.607 mm2 on IHP 130nm |
+| Iterative core | 1 result per 29 cycles, 48.5 MHz, 0.135 mm2, 4.5x smaller |
+| Silicon | Real IHP SG13G2 130nm, the process Croc taped out in: area in um2 and Fmax at three corners |
 | Verification | 71 tests: 17,536 accuracy comparisons, 4,200 domain arguments, 28 OBI protocol tests, bit-identity between both cores over 900 operations, plus 13 concurrent assertions in the RTL |
-| Tooling | Verilator lint clean at `-Wall` over 10 configurations, Yosys over 6, RV32 driver image links |
+| Tooling | Verilator lint clean at `-Wall` over 10 configurations, Yosys plus OpenROAD over 6, both RV32 driver images link |
 
 ## Contents
 
@@ -35,6 +36,7 @@ and two interchangeable microarchitectures that produce bit-identical results.
 - [Register map](#register-map)
 - [The two microarchitectures](#the-two-microarchitectures)
 - [Streaming](#streaming)
+- [Silicon: real IHP 130nm](#silicon-real-ihp-130nm)
 - [Synthesis](#synthesis)
 - [Software](#software)
 - [Simulating and testing](#simulating-and-testing)
@@ -349,21 +351,31 @@ offset above `0x063`, and a write to any of the 17 read-only registers.
 and angle sequence, so results are **bit-identical**, asserted over 900 operations by
 recording both runs and diffing the files word for word.
 
-| | Pipelined (`Variant = 0`) | Iterative (`Variant = 1`) |
-|---|---|---|
-| Structure | N register banks, shifts are wiring | one stage reused, barrel shifter in the loop |
-| Cells, Q3.29 N=28 | 55,096 | 11,101 |
-| Flip-flops | 4,921 | 1,229 |
-| Logic depth | 67 gates | 59 gates |
-| Retire interval | **1 cycle** | 29 cycles |
-| Latency, end to end | 30 cycles | 31 cycles |
+| | Pipelined (`Variant = 0`) | Iterative (`Variant = 1`) | Ratio |
+|---|---|---|---|
+| Structure | N register banks, shifts are wiring | one stage reused, barrel shifter in the loop | |
+| Cells, Q3.29 N=28 | 40,413 | 8,390 | 4.8x |
+| Flip-flops | 4,921 | 1,229 | 4.0x |
+| Area, IHP 130nm | 0.607 mm2 | 0.135 mm2 | **4.5x** |
+| Fmax, slow corner | 61.6 MHz | 48.5 MHz | 1.27x |
+| Retire interval | **1 cycle** | 29 cycles | 29x |
+| Throughput | 61.6 M results/s | 1.67 M results/s | **36.9x** |
+| Results/s per mm2 | 101.4 M | 12.3 M | **8.2x** |
+| Latency, end to end | 30 cycles | 31 cycles | |
 
 ![Area comparison](docs/img/area_comparison.png)
 
-The revealing number is logic depth: folding gives back 5x the area but only 12
-percent of the depth, because the iterative core's barrel shifter and angle mux sit
-inside the loop where the pipelined core has hardwired shifts. Folding buys area, not
-clock frequency.
+Folding turns out to be a worse deal than 1/N, and the real-silicon numbers are what
+show it. It costs **frequency as well as throughput**: at Q3.29 the folded core runs
+27 percent slower, because its barrel shifter and angle mux sit inside the loop, in
+series with the same carry chain the pipelined core has all to itself. So 4.5x the
+area buys 36.9x the throughput, and the pipelined core is 8.2x better per square
+millimetre.
+
+That penalty is width-dependent, which is worth knowing before picking a format. At
+Q3.13 the two run at the same speed (95.9 against 98.1 MHz) because a 22-bit internal
+datapath needs one fewer mux level in the shifter, and the throughput gap narrows to
+15.6x for 2.85x the area.
 
 Flow control in the pipelined core is one global enable, not per-stage skid buffers:
 
@@ -405,22 +417,57 @@ FIFO: a register issue wins a tie and the streaming port sees `ready` low for th
 cycle. `CTRL.POP` likewise wins over the streaming output, so a result is never
 handed to two consumers.
 
+## Silicon: real IHP 130nm
+
+`make pdk`. Yosys maps to real `sg13g2` standard cells, OpenROAD's resizer repairs
+drive strength, and the one repaired netlist is timed at all three corners. Reports
+under [docs/pdk/](docs/pdk/), methodology in
+[docs/pdk/README.md](docs/pdk/README.md).
+
+| Configuration | Cells | FFs | Area | Fmax slow | typ | fast | Throughput |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| pipelined, Q3.29, N=28 | 40,413 | 4,921 | 0.607 mm2 | 61.6 MHz | 95.3 | 197.3 | **61.6 M/s** |
+| pipelined, Q3.29, N=16 | 26,398 | 3,277 | 0.396 mm2 | 59.7 MHz | 92.5 | 193.0 | 59.7 M/s |
+| pipelined, Q3.13, N=15 | 14,243 | 1,988 | 0.225 mm2 | 95.9 MHz | 148.6 | 311.5 | 95.9 M/s |
+| iterative, Q3.29, N=28 | 8,390 | 1,229 | 0.135 mm2 | 48.5 MHz | 75.2 | 156.5 | 1.67 M/s |
+| iterative, Q3.29, N=16 | 8,064 | 1,229 | 0.135 mm2 | 50.0 MHz | 77.0 | 159.8 | 2.94 M/s |
+| iterative, Q3.13, N=15 | 4,627 | 748 | 0.079 mm2 | 98.1 MHz | 150.9 | 315.3 | 6.13 M/s |
+
+Slow corner is 1.08 V and 125 C, the one a design has to close on. Throughput is Fmax
+divided by the measured issue interval, so it is a real rate, not a peak claim.
+
+![Area, frequency and throughput on IHP SG13G2](docs/img/ppa_ihp_sg13g2.png)
+
+Three things in that data are worth pointing out.
+
+**The folded core's area barely moves with the stage count.** 0.1349 mm2 at 16 stages
+against 0.1354 mm2 at 28, a 1.004x increase for 1.75x the micro-rotations, because
+only the angle table and its mux grow. The pipelined core scales 1.535x over the same
+change. That is the textbook property of folding, measured rather than asserted.
+
+**Both variants' critical path is the adder's carry chain.** 42 of 55 cells on the
+pipelined path are AOI/OAI pairs, which is what a ripple carry maps to, and 36 of 52
+on the folded one. Not the shift network, not the angle lookup. `abc` maps the adders
+to ripple carry, so a carry-select or carry-lookahead structure is the single change
+that would lift both variants; the comparison between them is unaffected, since both
+go through the identical flow.
+
+**The paths end where the analysis says they should.** The pipelined path runs from
+the input FIFO's read pointer to `i_unit.gen_pipelined.i_core.xq[36]`, so it covers
+the FIFO read, `cordic_pre`'s pi fold and stage 0's adder in one cycle: three adds in
+series. The folded path runs from the coordinate-system bit of the attribute register
+to `i_unit.gen_iterative.i_core.xr_q[37]`, through the shift and angle muxes into the
+same carry chain. Registering `cordic_pre` would shorten the first; nothing shortens
+the second without unfolding.
+
 ## Synthesis
 
-Yosys 0.33, technology-independent mapping (`abc -g cmos4`). Reports are committed
-under [docs/synth/](docs/synth/) and CI fails if they differ from a fresh run.
-
-| Configuration | Cells | Flip-flops | Combinational | Logic depth |
-|---|---:|---:|---:|---:|
-| pipelined, Q3.29, 28 stages | 55,096 | 4,921 | 50,175 | 67 |
-| iterative, Q3.29, 28 stages | 11,101 | 1,229 | 9,872 | 59 |
-| pipelined, Q3.29, 16 stages | 35,217 | 3,277 | 31,940 | 65 |
-| iterative, Q3.29, 16 stages | 10,510 | 1,229 | 9,281 | 53 |
-| pipelined, Q3.13, 15 stages | 18,670 | 1,988 | 16,682 | 46 |
-| iterative, Q3.13, 15 stages | 5,879 | 748 | 5,131 | 39 |
-
-Asserted inside the Yosys script itself, so a regression fails the run rather than
-appearing in a report nobody reads:
+`make synth` also keeps a technology-independent Yosys run (`abc -g cmos4`) under
+[docs/synth/](docs/synth/), and CI fails if the committed reports differ from a fresh
+one. Those are gate equivalents rather than areas, so the real-silicon table above is
+what the README quotes; the generic run is kept because it is what someone without
+the PDK can reproduce, and because the following checks are asserted inside the Yosys
+script itself rather than appearing in a report nobody reads:
 
 - **no inferred latches** anywhere: `$dlatch`, `$_DLATCH_*`, `$sr` and `$_SR_*` all
   asserted empty, before and after technology mapping
@@ -428,11 +475,6 @@ appearing in a report nobody reads:
   Yosys primitive
 - `check -assert`: no combinational loop, no multiply-driven wire, no undriven wire
 - no unmapped memory, no tristate
-
-These are gate equivalents, not IHP 130nm areas. They are directly comparable
-between configurations because every one goes through the same script; they are not a
-substitute for Croc's OpenROAD flow with the real library, and no timing closure is
-claimed.
 
 ## Software
 
@@ -488,7 +530,9 @@ byte stores, which is what the byte-enable support in `cordic_obi_regs` is for.
 make venv        # .venv plus requirements
 make lint        # Verilator -Wall, 10 configurations plus the Croc wrapper
 make test        # the whole suite, both variants, both OBI handshakes
-make synth       # Yosys over 6 configurations
+make synth       # Yosys generic cells, 6 configurations
+make pdk         # real IHP SG13G2 130nm: um2 and MHz at three corners
+make pnr         # full RTL-to-GDS, post-route area plus DRC and LVS
 make sw          # host driver test (runs) and RV32 image (links)
 make images      # redraw every figure from the measured data
 make all         # all of the above
@@ -550,8 +594,13 @@ so a clone needs no generator run to build.
 
 - **The RV32 image is never executed here.** It compiles and links; running it needs
   Croc's own testbench.
-- **Synthesis is technology-independent.** Gate-equivalent counts, comparable between
-  configurations, not IHP 130nm areas. No timing closure is claimed.
+- **The IHP numbers stop after synthesis and drive repair.** Wire parasitics are
+  estimated, not extracted, because there is no placement. `make pnr` runs the full
+  LibreLane flow for post-route area and DRC/LVS signoff; see
+  [pnr/README.md](pnr/README.md) for why timing is not quoted from there.
+- **Fmax is limited by ripple-carry adders.** That is a property of `abc`'s mapping,
+  not of the architecture, and it is stated rather than worked around. Both variants
+  are affected identically, so the comparison holds.
 - **Icarus Verilog does not work.** Not a limitation of the tool's SystemVerilog
   coverage in general, but two specific defects documented in
   [docs/DESIGN.md](docs/DESIGN.md).

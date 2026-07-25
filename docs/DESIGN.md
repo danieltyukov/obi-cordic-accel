@@ -404,26 +404,78 @@ ever read behind a valid bit.
 adder set, but now two barrel shifters and a mux over the angle table. Accepting a
 new operation in the `StDone` cycle rather than after it saves a cycle per operation.
 
-Measured, from `make test` and `make synth`:
+Measured, from `make test` and `make pdk`, on the real IHP SG13G2 130nm process:
 
 | | Pipelined | Iterative | Ratio |
 |---|---:|---:|---:|
-| Cells, Q3.29 N=28 | 55,096 | 11,101 | 4.96x |
-| Flip-flops | 4,921 | 1,229 | 4.00x |
-| Logic depth | 67 | 59 | 1.14x |
+| Cells, Q3.29 N=28 | 40,413 | 8,390 | 4.8x |
+| Flip-flops | 4,921 | 1,229 | 4.0x |
+| Area | 607,385 um2 | 135,442 um2 | 4.5x |
+| Fmax, slow corner | 61.6 MHz | 48.5 MHz | 1.27x |
 | Retire interval | 1 cycle | 29 cycles | 29x |
+| Throughput | 61.6 M results/s | 1.67 M results/s | 36.9x |
+| Results/s per mm2 | 101.4 M | 12.3 M | 8.2x |
 | Latency, end to end | 30 cycles | 31 cycles | |
 
-The interesting number is logic depth: the iterative core is only 12 percent
-shallower despite having a twenty-eighth of the adders, because its barrel shifter
-and angle mux sit inside the loop where the pipelined core has hardwired shifts.
-Folding buys area, not clock frequency.
+**Folding is a worse deal than 1/N**, and it takes real timing to see why. It costs
+frequency as well as throughput: the folded core runs 27 percent slower at Q3.29,
+because its barrel shifter and angle mux sit inside the loop, in series with the same
+carry chain the pipelined core has to itself. So 4.5x the area buys 36.9x the
+throughput.
+
+The penalty is width-dependent. At Q3.13 the two run at the same speed, 95.9 against
+98.1 MHz, because a 22-bit internal datapath needs one fewer mux level in the shifter
+than a 38-bit one. The throughput gap narrows to 15.6x for 2.85x the area, so the
+folded core is a relatively better proposition at narrow formats.
+
+The folded core's **area barely moves with the stage count**: 134,857 um2 at 16
+stages against 135,442 at 28, a factor of 1.004 for 1.75x the micro-rotations,
+because only the angle table and its mux grow. The pipelined core scales 1.535x over
+the same change. That is the property folding exists for, measured rather than
+asserted.
 
 **Why the streaming port exists.** A register-mapped issue costs four writes and
 five reads, measured at 57 cycles per operation. The pipelined core retires one per
 cycle. Nothing reachable over a register interface can keep it fed, so the streaming
 port takes one operation per cycle from a DMA engine or another accelerator:
 measured 1.94 cycles per operation against 57, a 29.4x gap.
+
+## What the critical path actually runs through
+
+`make pdk` reports the path with the flattened instance names resolved back to the
+RTL registers they implement, so this is read off the tool rather than reasoned about.
+At the slow corner, Q3.29 with 28 stages:
+
+| | Pipelined | Iterative |
+|---|---|---|
+| Startpoint | `i_in_fifo.rptr_q[0]` | `i_unit.gen_iterative.i_core.ar_q[0]` |
+| Endpoint | `i_unit.gen_pipelined.i_core.xq[36]` | `i_unit.gen_iterative.i_core.xr_q[37]` |
+| Cells | 55 | 52 |
+| Carry chain (AOI/OAI) | 42 | 36 |
+| Mux (shift or select) | 1 | 3 |
+| XOR/XNOR (sum bits) | 3 | 2 |
+
+**The adder's carry chain dominates both.** Not the shift network, not the angle
+lookup, which is the answer to the question you would actually ask about a CORDIC.
+`abc` maps the adders to ripple carry, so 42 of 55 cells on the pipelined path are
+the AOI/OAI pairs a carry chain becomes, ending at bit 36 of a 38-bit word, which is
+the far end of that chain.
+
+What differs is what sits **in series** with it:
+
+- The pipelined path starts at the input FIFO's read pointer, so one cycle covers the
+  FIFO read, `cordic_pre`'s pi fold (a subtract) and stage 0's own add. Three adds in
+  series. Registering `cordic_pre` would shorten this, at the cost of one cycle of
+  latency and a wider pipeline.
+- The folded path starts at the coordinate-system bit of the attribute register and
+  runs through the shift and angle muxes before reaching the same carry chain. Three
+  mux cells rather than one. Nothing shortens this without unfolding, which is
+  precisely the point: the barrel shifter is the price of reusing one stage.
+
+The obvious next optimisation, then, is not architectural but arithmetic: a
+carry-select or carry-lookahead adder would lift both variants. It is left undone
+deliberately, since it would change the comparison for neither variant's benefit and
+`abc`'s ripple carry is what an integrator will actually get from this flow.
 
 ## Constant generation and tool support
 
@@ -477,7 +529,9 @@ either cocotb generation.
 | Reset and handshake | `tb/test_reset.py` | Reset asserted with a full pipeline leaves no stale result. Busy, done, queueing, overflow and the interrupt path. |
 | Concurrent assertions | `rtl/cordic_obi_regs.sv`, `cordic_fifo.sv`, `cordic_core_pipe.sv` | 13 properties evaluated in every simulation via Verilator's `--assert`, so the OBI and structural rules hold in any integration's own testbench too. |
 | Lint | `make lint` | Zero Verilator warnings at `-Wall` over 10 parameter configurations plus the Croc wrapper against stand-in Croc packages. |
-| Synthesis | `make synth` | Six configurations. No inferred latch, no combinational loop, no unmapped submodule, asserted inside the Yosys script itself. |
+| Synthesis | `make synth` | Six configurations, generic cells. No inferred latch, no combinational loop, no unmapped submodule, asserted inside the Yosys script itself. |
+| Silicon | `make pdk` | Six configurations on real IHP SG13G2 130nm cells: area in um2 and Fmax at all three corners, with the repair target iterated to convergence so Fmax is a measurement rather than a function of the probe period. |
+| Place and route | `make pnr` | Full RTL-to-GDS through LibreLane for post-route area and DRC/LVS signoff. |
 | Driver | `make sw` | The identical driver source runs on the host against a register-accurate peripheral model, 626 checks, and links as a complete RV32IMC image. |
 
 Two things this repository does **not** establish, said plainly:
@@ -485,7 +539,12 @@ Two things this repository does **not** establish, said plainly:
 - **The RV32 image is never executed.** There is no Croc simulation here. It
   compiles and links, and it records its outcome at a known symbol so Croc's own
   testbench can read it, but nothing in this repository runs it.
-- **Synthesis is technology-independent.** The cell counts are gate equivalents from
-  `abc -g cmos4`, directly comparable between configurations because every one goes
-  through the same script, but they are not IHP 130nm areas and no timing closure is
-  claimed. That needs Croc's OpenROAD flow with the real library.
+- **The IHP timing stops after synthesis and drive repair.** Wire parasitics are
+  estimated by `set_wire_rc`, not extracted, because there is no placement. `make pnr`
+  runs the full flow for post-route area and signoff; `pnr/README.md` explains why
+  timing is not quoted from there.
+- **Fmax is set by ripple-carry adders.** That is `abc`'s mapping, not the
+  architecture, and it is reported rather than worked around. Both variants are
+  affected identically, so the comparison between them holds.
+- **`make synth` remains technology-independent** and is kept for anyone without the
+  PDK. Those counts are gate equivalents, not areas.

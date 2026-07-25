@@ -30,7 +30,9 @@ Timing, one repaired netlist across all three corners
 Critical path at the slow corner
 ----------------------------------------------------------------------------
   startpoint  _8330_ (rising edge-triggered flip-flop clocked by clk)
+              which is RTL register i_unit.gen_iterative.i_core.cnt_q [3]
   endpoint    _8068_ (rising edge-triggered flip-flop clocked by clk)
+              which is RTL register i_unit.gen_iterative.i_core.xr_q [21]
   cells       38
   runs through:
     carry chain (AOI/OAI) 24 of 38
