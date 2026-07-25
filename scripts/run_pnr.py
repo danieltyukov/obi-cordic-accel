@@ -321,6 +321,29 @@ def harvest(run):
     return merged
 
 
+def die_rect_um(run, top):
+    """The die rectangle in micrometres, out of the DEF the router wrote.
+
+    Recorded in the summary rather than looked up when a figure is drawn, because a
+    clone has the summary and not the run tree, and a figure that silently loses its
+    die dimensions there is a figure that cannot be regenerated from a clean checkout.
+    Neither die is square, so the square root of the area metric is not the shape.
+    """
+    for path in reversed(sorted(run.glob(f"**/{top}.def"))):
+        try:
+            head = path.read_text()[:200000]
+        except OSError:
+            continue
+        u = re.search(r"UNITS DISTANCE MICRONS (\d+)", head)
+        d = re.search(r"DIEAREA \(\s*(-?\d+)\s+(-?\d+)\s*\)\s*\(\s*(\d+)\s+(\d+)\s*\)",
+                      head)
+        if u and d:
+            scale = float(u.group(1))
+            x1, y1, x2, y2 = (int(v) for v in d.groups())
+            return [(x2 - x1) / scale, (y2 - y1) / scale]
+    return None
+
+
 SIGNOFF_CORNER = "nom_slow_1p08V_125C"
 CORNERS = ["nom_slow_1p08V_125C", "nom_typ_1p20V_25C", "nom_fast_1p32V_m40C"]
 
@@ -509,6 +532,9 @@ def main(argv=None):
         # magic__drc_error__count means opposite things in those two cases.
         if metrics.get("_source"):
             picked["_source"] = metrics["_source"]
+        rect = die_rect_um(run, cfg["top"])
+        if rect:
+            picked["die_um"] = rect
         picked["config"] = cfg
         wpath = worst_reg_path(run)
         if wpath:

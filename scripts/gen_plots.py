@@ -853,25 +853,17 @@ def plot_pnr():
 # ---------------------------------------------------------------------------
 # 10. The two routed dies at one scale
 # ---------------------------------------------------------------------------
-def die_dims(run, top):
-    """The die rectangle in micrometres, out of the DEF the router wrote.
+def die_dims(entry):
+    """The die rectangle in micrometres.
 
-    Neither die is square, so the square root of the area metric is not the shape.
-    DEF coordinates are in database units and the header says how many per micron.
+    Recorded by scripts/run_pnr.py into the summary, because it comes from the DEF and
+    a clone has the summary without the run tree that holds it. Older summaries
+    predate the field, hence the fallback to nothing rather than to a guess: the
+    square root of the area metric is not the shape, since neither die is square.
     """
-    defs = sorted(run.glob(f"**/{top}.def"))
-    for path in reversed(defs):          # the latest step's DEF is the routed one
-        try:
-            head = path.read_text()[:200000]
-        except OSError:
-            continue
-        m = re.search(r"UNITS DISTANCE MICRONS (\d+)", head)
-        d = re.search(r"DIEAREA \(\s*(-?\d+)\s+(-?\d+)\s*\)\s*\(\s*(\d+)\s+(\d+)\s*\)",
-                      head)
-        if m and d:
-            u = float(m.group(1))
-            x1, y1, x2, y2 = (int(v) for v in d.groups())
-            return (x2 - x1) / u, (y2 - y1) / u
+    rect = entry.get("die_um")
+    if isinstance(rect, (list, tuple)) and len(rect) == 2:
+        return float(rect[0]), float(rect[1])
     return None
 
 
@@ -914,7 +906,7 @@ def plot_layouts():
         for s in ax.spines.values():
             s.set_edgecolor("#4a4a4a")
         head = f"{label}, Q3.29 N=28"
-        dims = die_dims(ROOT / v["run_dir"], cfg["top"])
+        dims = die_dims(v)
         if dims:
             head += f"\n{dims[0]:.0f} x {dims[1]:.0f} um"
         if die:

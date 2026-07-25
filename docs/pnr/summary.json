@@ -39,6 +39,10 @@
   "antenna__violating__nets": 6,
   "power__total": 0.01796388253569603,
   "run_dir": "build/pnr/iter_q3_29_n28/runs/RUN_2026-07-25_19-55-54",
+  "die_um": [
+   609.705,
+   628.425
+  ],
   "config": {
    "guard_int": 2,
    "guard_frac": 4,
@@ -171,6 +175,10 @@
   "power__total": 0.11677476018667221,
   "run_dir": "build/pnr/pipe_q3_29_n28/runs/RUN_2026-07-25_17-45-05",
   "_source": "per-step or_metrics_out.json and state_out.json, flow did not reach final",
+  "die_um": [
+   1388.59,
+   1407.31
+  ],
   "config": {
    "guard_int": 2,
    "guard_frac": 4,
