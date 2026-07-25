@@ -1,0 +1,202 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 900" width="1180" height="900" role="img" aria-label="Block diagram of the OBI CORDIC accelerator">
+  <style>
+    text { font-family: "DejaVu Sans", "Helvetica Neue", Arial, sans-serif; }
+    .ttl  { font-size: 20px; font-weight: 700; }
+    .sub  { font-size: 11.5px; }
+    .bn   { font-size: 12px; font-weight: 700; }
+    .bd   { font-size: 9.5px; }
+    .lbl  { font-size: 9px; }
+    .lbls { font-size: 9px; font-weight: 600; }
+    .gn   { font-size: 10.5px; font-weight: 700; letter-spacing: 0.4px; }
+    @media (prefers-color-scheme: dark) {
+      .bgr { fill: #14171a; }
+      .ttl, .lbls, .bn { fill: #e8ebee; }
+      .sub, .bd, .lbl, .gn { fill: #9aa3ad; }
+      .bl { fill: #1e2429; stroke: #55606b; }
+      .grp { stroke: #3a424b; }
+      .gl { stroke: #3a424b; }
+      .w { stroke: #9aa3ad; }
+      .ahf { fill: #9aa3ad; }
+      .st-accent { stroke: #6f9fd0; }
+      .fl-accent { fill: #6f9fd0; }
+      .st-accent2 { stroke: #e0906a; }
+      .fl-accent2 { fill: #e0906a; }
+      .st-accent3 { stroke: #78b494; }
+      .fl-accent3 { fill: #78b494; }
+      .st-accent4 { stroke: #b58ab9; }
+      .fl-accent4 { fill: #b58ab9; }
+    }
+      :root[data-theme="dark"] .bgr { fill: #14171a; }
+      :root[data-theme="dark"] .ttl, :root[data-theme="dark"] .lbls, :root[data-theme="dark"] .bn { fill: #e8ebee; }
+      :root[data-theme="dark"] .sub, :root[data-theme="dark"] .bd, :root[data-theme="dark"] .lbl, :root[data-theme="dark"] .gn { fill: #9aa3ad; }
+      :root[data-theme="dark"] .bl { fill: #1e2429; stroke: #55606b; }
+      :root[data-theme="dark"] .grp { stroke: #3a424b; }
+      :root[data-theme="dark"] .gl { stroke: #3a424b; }
+      :root[data-theme="dark"] .w { stroke: #9aa3ad; }
+      :root[data-theme="dark"] .ahf { fill: #9aa3ad; }
+      :root[data-theme="dark"] .st-accent { stroke: #6f9fd0; }
+      :root[data-theme="dark"] .fl-accent { fill: #6f9fd0; }
+      :root[data-theme="dark"] .st-accent2 { stroke: #e0906a; }
+      :root[data-theme="dark"] .fl-accent2 { fill: #e0906a; }
+      :root[data-theme="dark"] .st-accent3 { stroke: #78b494; }
+      :root[data-theme="dark"] .fl-accent3 { fill: #78b494; }
+      :root[data-theme="dark"] .st-accent4 { stroke: #b58ab9; }
+      :root[data-theme="dark"] .fl-accent4 { fill: #b58ab9; }
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+            markerHeight="7" orient="auto-start-reverse">
+      <path class="ahf" d="M 0 0 L 10 5 L 0 10 z" fill="#5c646e"/>
+    </marker>
+  </defs>
+  <rect class="bgr" width="1180" height="900" fill="#ffffff"/>
+  <text class="ttl" x="24" y="34" fill="#16191d">CORDIC accelerator block diagram</text>
+  <text class="sub" x="24" y="54" fill="#5c646e">Three coordinate systems, both micro-rotation modes, two interchangeable cores behind one OBI subordinate window of 4 KB.</text>
+  <rect class="grp" x="24" y="74" width="300" height="190" rx="6" fill="none" stroke="#c3c9d1" stroke-width="1" stroke-dasharray="5 4"/>
+  <text class="gn" x="34" y="89" fill="#5c646e">CROC SOC, UPSTREAM</text>
+  <rect class="bl" x="44" y="100" width="260" height="52" rx="4" fill="#eef2f6" stroke="#7d8894" stroke-width="1.2"/>
+  <text class="bn" x="174.0" y="117" text-anchor="middle" fill="#16191d">croc_domain obi_xbar</text>
+  <text class="bd" x="174.0" y="130" text-anchor="middle" fill="#5c646e">XbarUser window, croc_pkg::UserBaseAddr</text>
+  <rect class="bl" x="44" y="166" width="260" height="52" rx="4" fill="#eef2f6" stroke="#7d8894" stroke-width="1.2"/>
+  <text class="bn" x="174.0" y="183" text-anchor="middle" fill="#16191d">user_domain.sv</text>
+  <text class="bd" x="174.0" y="196" text-anchor="middle" fill="#5c646e">addr_decode + obi_demux, 4 KB rules</text>
+  <path class="w" d="M 174 152 L 174 166" marker-end="url(#ah)" fill="none" stroke="#5c646e" stroke-width="1.4"/>
+  <text class="lbl" x="182" y="162" text-anchor="start" fill="#5c646e">sbr_obi_req_t</text>
+  <rect class="bl st-accent2" x="44" y="226" width="260" height="26" rx="4" fill="#eef2f6" stroke="#c1633b" stroke-width="1.2"/>
+  <text class="bn" x="174.0" y="243.0" text-anchor="middle" fill="#16191d">interrupts_o[0]</text>
+  <rect class="bl st-accent3" x="360" y="166" width="190" height="52" rx="4" fill="#eef2f6" stroke="#4f8a63" stroke-width="1.2"/>
+  <text class="bn" x="455.0" y="183" text-anchor="middle" fill="#16191d">cordic_obi_wrap.sv</text>
+  <text class="bd" x="455.0" y="196" text-anchor="middle" fill="#5c646e">struct types to flat OBI</text>
+  <path class="w st-accent" d="M 304 192 L 360 192" marker-end="url(#ah)" fill="none" stroke="#3b6ea5" stroke-width="2.0"/>
+  <text class="lbl" x="332.0" y="187.0" text-anchor="middle" fill="#5c646e">OBI</text>
+  <rect class="grp" x="360" y="74" width="796" height="470" rx="6" fill="none" stroke="#c3c9d1" stroke-width="1" stroke-dasharray="5 4"/>
+  <text class="gn" x="370" y="89" fill="#5c646e">CORDIC_ACCEL</text>
+  <rect class="bl st-accent" x="586" y="100" width="210" height="118" rx="4" fill="#eef2f6" stroke="#3b6ea5" stroke-width="1.2"/>
+  <text class="bn" x="691.0" y="117" text-anchor="middle" fill="#16191d">cordic_obi_regs</text>
+  <text class="bd" x="691.0" y="130" text-anchor="middle" fill="#5c646e">OBI v1.6 subordinate</text>
+  <text class="bd" x="691.0" y="141" text-anchor="middle" fill="#5c646e">req/gnt/addr/we/be/wdata/aid</text>
+  <text class="bd" x="691.0" y="152" text-anchor="middle" fill="#5c646e">rvalid/rdata/rid/err</text>
+  <text class="bd" x="691.0" y="163" text-anchor="middle" fill="#5c646e">one beat out per beat in</text>
+  <text class="bd" x="691.0" y="174" text-anchor="middle" fill="#5c646e">24 registers, unmapped -&gt; r.err</text>
+  <path class="w st-accent" d="M 550 192 L 586 192" marker-end="url(#ah)" fill="none" stroke="#3b6ea5" stroke-width="2.0"/>
+  <path class="w" d="M 160 226 L 160 226" marker-end="url(#ah)" fill="none" stroke="#5c646e" stroke-width="1.4"/>
+  <path class="w" d="M 586 130 L 566 130 L 566 239 L 304 239" marker-end="url(#ah)" fill="none" stroke="#5c646e" stroke-width="1.4"/>
+  <text class="lbl" x="400" y="234" text-anchor="start" fill="#5c646e">irq_o, to interrupts_o[0]</text>
+  <rect class="bl" x="586" y="246" width="210" height="62" rx="4" fill="#eef2f6" stroke="#7d8894" stroke-width="1.2"/>
+  <text class="bn" x="691.0" y="263" text-anchor="middle" fill="#16191d">issue arbitration</text>
+  <text class="bd" x="691.0" y="276" text-anchor="middle" fill="#5c646e">CMD.GO wins a tie</text>
+  <text class="bd" x="691.0" y="287" text-anchor="middle" fill="#5c646e">streaming sees ready low</text>
+  <path class="w" d="M 660 218 L 660 246" marker-end="url(#ah)" fill="none" stroke="#5c646e" stroke-width="1.4"/>
+  <text class="lbl" x="668" y="236" text-anchor="start" fill="#5c646e">operands + FUNC</text>
+  <rect class="bl st-accent2" x="380" y="246" width="170" height="62" rx="4" fill="#eef2f6" stroke="#c1633b" stroke-width="1.2"/>
+  <text class="bn" x="465.0" y="263" text-anchor="middle" fill="#16191d">stream in</text>
+  <text class="bd" x="465.0" y="276" text-anchor="middle" fill="#5c646e">valid / ready</text>
+  <text class="bd" x="465.0" y="287" text-anchor="middle" fill="#5c646e">func, tag, x, y, z</text>
+  <path class="w" d="M 550 277 L 586 277" marker-end="url(#ah)" fill="none" stroke="#5c646e" stroke-width="1.4"/>
+  <rect class="bl" x="586" y="334" width="210" height="46" rx="4" fill="#eef2f6" stroke="#7d8894" stroke-width="1.2"/>
+  <text class="bn" x="691.0" y="351" text-anchor="middle" fill="#16191d">cordic_fifo (in)</text>
+  <text class="bd" x="691.0" y="364" text-anchor="middle" fill="#5c646e">depth 4, flushable</text>
+  <path class="w" d="M 691 308 L 691 334" marker-end="url(#ah)" fill="none" stroke="#5c646e" stroke-width="1.4"/>
+  <rect class="bl st-accent" x="586" y="402" width="210" height="74" rx="4" fill="#eef2f6" stroke="#3b6ea5" stroke-width="1.2"/>
+  <text class="bn" x="691.0" y="419" text-anchor="middle" fill="#16191d">cordic_pre</text>
+  <text class="bd" x="691.0" y="432" text-anchor="middle" fill="#5c646e">FUNC -&gt; coord, mode, x0, y0, z0</text>
+  <text class="bd" x="691.0" y="443" text-anchor="middle" fill="#5c646e">pi fold for all four quadrants</text>
+  <text class="bd" x="691.0" y="454" text-anchor="middle" fill="#5c646e">rotation-mode radius check</text>
+  <path class="w" d="M 691 380 L 691 402" marker-end="url(#ah)" fill="none" stroke="#5c646e" stroke-width="1.4"/>
+  <rect class="grp" x="816" y="100" width="320" height="376" rx="6" fill="none" stroke="#c3c9d1" stroke-width="1" stroke-dasharray="5 4"/>
+  <text class="gn" x="826" y="115" fill="#5c646e">CORE, ONE OF TWO BY PARAMETER</text>
+  <rect class="bl st-accent" x="836" y="128" width="280" height="122" rx="4" fill="#eef2f6" stroke="#3b6ea5" stroke-width="1.2"/>
+  <text class="bn" x="976.0" y="145" text-anchor="middle" fill="#16191d">cordic_core_pipe  (Variant 0)</text>
+  <text class="bd" x="976.0" y="158" text-anchor="middle" fill="#5c646e">N register banks, one per stage</text>
+  <text class="bd" x="976.0" y="169" text-anchor="middle" fill="#5c646e">shift amounts are constants</text>
+  <text class="bd" x="976.0" y="180" text-anchor="middle" fill="#5c646e">global enable stalls as a unit</text>
+  <text class="bd" x="976.0" y="191" text-anchor="middle" fill="#5c646e">1 result / cycle, N cycle latency</text>
+  <rect class="bl st-accent2" x="836" y="268" width="280" height="108" rx="4" fill="#eef2f6" stroke="#c1633b" stroke-width="1.2"/>
+  <text class="bn" x="976.0" y="285" text-anchor="middle" fill="#16191d">cordic_core_iter  (Variant 1)</text>
+  <text class="bd" x="976.0" y="298" text-anchor="middle" fill="#5c646e">one stage reused N times</text>
+  <text class="bd" x="976.0" y="309" text-anchor="middle" fill="#5c646e">barrel shifter + angle mux</text>
+  <text class="bd" x="976.0" y="320" text-anchor="middle" fill="#5c646e">3 registers, 1 adder set</text>
+  <text class="bd" x="976.0" y="331" text-anchor="middle" fill="#5c646e">1 result / N+1 cycles</text>
+  <rect class="bl st-accent3" x="836" y="396" width="280" height="62" rx="4" fill="#eef2f6" stroke="#4f8a63" stroke-width="1.2"/>
+  <text class="bn" x="976.0" y="413" text-anchor="middle" fill="#16191d">cordic_stage  (shared)</text>
+  <text class="bd" x="976.0" y="426" text-anchor="middle" fill="#5c646e">the only copy of the arithmetic</text>
+  <text class="bd" x="976.0" y="437" text-anchor="middle" fill="#5c646e">which is what makes them bit-identical</text>
+  <path class="w" d="M 976 250 L 976 268" marker-end="url(#ah)" fill="none" stroke="#5c646e" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <path class="w" d="M 900 376 L 900 396" marker-end="url(#ah)" fill="none" stroke="#5c646e" stroke-width="1.4"/>
+  <path class="w" d="M 1052 250 L 1052 396" marker-end="url(#ah)" fill="none" stroke="#5c646e" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <path class="w st-accent" d="M 796 439 L 816 439 L 816 517 L 836 517" marker-end="url(#ah)" fill="none" stroke="#3b6ea5" stroke-width="2.0"/>
+  <text class="lbl" x="800" y="432" text-anchor="start" fill="#5c646e">x0, y0, z0, attr</text>
+  <rect class="bl st-accent4" x="586" y="494" width="210" height="46" rx="4" fill="#eef2f6" stroke="#8a5a8f" stroke-width="1.2"/>
+  <text class="bn" x="691.0" y="511" text-anchor="middle" fill="#16191d">angle tables (constants)</text>
+  <text class="bd" x="691.0" y="524" text-anchor="middle" fill="#5c646e">atan(2^-s), atanh(2^-s), 2^-s</text>
+  <text class="bd" x="691.0" y="535" text-anchor="middle" fill="#5c646e">generated into cordic_rom.svh</text>
+  <rect class="bl st-accent" x="920" y="494" width="216" height="46" rx="4" fill="#eef2f6" stroke="#3b6ea5" stroke-width="1.2"/>
+  <text class="bn" x="1028.0" y="511" text-anchor="middle" fill="#16191d">cordic_post</text>
+  <text class="bd" x="1028.0" y="524" text-anchor="middle" fill="#5c646e">residual convergence check</text>
+  <text class="bd" x="1028.0" y="535" text-anchor="middle" fill="#5c646e">+-pi, round half up, saturate</text>
+  <path class="w st-accent" d="M 1052 458 L 1052 500" marker-end="url(#ah)" fill="none" stroke="#3b6ea5" stroke-width="2.0"/>
+  <rect class="bl" x="920" y="570" width="216" height="46" rx="4" fill="#eef2f6" stroke="#7d8894" stroke-width="1.2"/>
+  <text class="bn" x="1028.0" y="587" text-anchor="middle" fill="#16191d">cordic_fifo (out)</text>
+  <text class="bd" x="1028.0" y="600" text-anchor="middle" fill="#5c646e">depth 4, flushable</text>
+  <text class="bd" x="1028.0" y="611" text-anchor="middle" fill="#5c646e">head read non-destructively</text>
+  <path class="w st-accent" d="M 1028 540 L 1028 570" marker-end="url(#ah)" fill="none" stroke="#3b6ea5" stroke-width="2.0"/>
+  <rect class="bl" x="586" y="570" width="210" height="46" rx="4" fill="#eef2f6" stroke="#7d8894" stroke-width="1.2"/>
+  <text class="bn" x="691.0" y="587" text-anchor="middle" fill="#16191d">result read path</text>
+  <text class="bd" x="691.0" y="600" text-anchor="middle" fill="#5c646e">RES_X / RES_Y / RES_Z / RES_FLAGS</text>
+  <text class="bd" x="691.0" y="611" text-anchor="middle" fill="#5c646e">CTRL.POP consumes the head</text>
+  <path class="w st-accent" d="M 920 593 L 796 593" marker-end="url(#ah)" fill="none" stroke="#3b6ea5" stroke-width="2.0"/>
+  <rect class="bl st-accent2" x="380" y="570" width="170" height="46" rx="4" fill="#eef2f6" stroke="#c1633b" stroke-width="1.2"/>
+  <text class="bn" x="465.0" y="587" text-anchor="middle" fill="#16191d">stream out</text>
+  <text class="bd" x="465.0" y="600" text-anchor="middle" fill="#5c646e">valid / ready</text>
+  <text class="bd" x="465.0" y="611" text-anchor="middle" fill="#5c646e">flags, func, tag</text>
+  <path class="w" d="M 586 586 L 550 586" marker-end="url(#ah)" fill="none" stroke="#5c646e" stroke-width="1.4"/>
+  <path class="w" d="M 691 570 L 691 328 L 566 328 L 566 180 L 586 180" marker-end="url(#ah)" fill="none" stroke="#5c646e" stroke-width="1.4" stroke-dasharray="3 3"/>
+  <text class="lbl" x="576" y="322" text-anchor="start" fill="#5c646e">results visible to the register file</text>
+  <rect class="grp" x="24" y="640" width="1132" height="230" rx="6" fill="none" stroke="#c3c9d1" stroke-width="1" stroke-dasharray="5 4"/>
+  <text class="gn" x="34" y="655" fill="#5c646e">ONE MICRO-ROTATION, CORDIC_STAGE</text>
+  <text class="sub" x="44" y="676" fill="#5c646e">x' = x - m*d*(y &gt;&gt; s)</text>
+  <text class="sub" x="216" y="676" fill="#5c646e">y' = y + d*(x &gt;&gt; s)</text>
+  <text class="sub" x="382" y="676" fill="#5c646e">z' = z - d*a_s</text>
+  <text class="sub" x="520" y="676" fill="#5c646e">m = +1 circular, 0 linear, -1 hyperbolic</text>
+  <text class="sub" x="790" y="676" fill="#5c646e">d = sign(z) rotating, -sign(y) vectoring</text>
+  <rect class="bl" x="60" y="696" width="76" height="46" rx="4" fill="#eef2f6" stroke="#7d8894" stroke-width="1.2"/>
+  <text class="bn" x="98.0" y="723.0" text-anchor="middle" fill="#16191d">x</text>
+  <rect class="bl" x="60" y="754" width="76" height="46" rx="4" fill="#eef2f6" stroke="#7d8894" stroke-width="1.2"/>
+  <text class="bn" x="98.0" y="781.0" text-anchor="middle" fill="#16191d">y</text>
+  <rect class="bl" x="190" y="696" width="108" height="46" rx="4" fill="#eef2f6" stroke="#7d8894" stroke-width="1.2"/>
+  <text class="bn" x="244.0" y="713" text-anchor="middle" fill="#16191d">&gt;&gt; s</text>
+  <text class="bd" x="244.0" y="726" text-anchor="middle" fill="#5c646e">wired, pipelined</text>
+  <rect class="bl" x="190" y="754" width="108" height="46" rx="4" fill="#eef2f6" stroke="#7d8894" stroke-width="1.2"/>
+  <text class="bn" x="244.0" y="771" text-anchor="middle" fill="#16191d">&gt;&gt; s</text>
+  <text class="bd" x="244.0" y="784" text-anchor="middle" fill="#5c646e">barrel, iterative</text>
+  <path class="w" d="M 136 719 L 190 719" marker-end="url(#ah)" fill="none" stroke="#5c646e" stroke-width="1.4"/>
+  <path class="w" d="M 136 777 L 190 777" marker-end="url(#ah)" fill="none" stroke="#5c646e" stroke-width="1.4"/>
+  <rect class="bl st-accent" x="348" y="696" width="118" height="46" rx="4" fill="#eef2f6" stroke="#3b6ea5" stroke-width="1.2"/>
+  <text class="bn" x="407.0" y="713" text-anchor="middle" fill="#16191d">add / sub</text>
+  <text class="bd" x="407.0" y="726" text-anchor="middle" fill="#5c646e">+- (y &gt;&gt; s)</text>
+  <rect class="bl st-accent" x="348" y="754" width="118" height="46" rx="4" fill="#eef2f6" stroke="#3b6ea5" stroke-width="1.2"/>
+  <text class="bn" x="407.0" y="771" text-anchor="middle" fill="#16191d">add / sub</text>
+  <text class="bd" x="407.0" y="784" text-anchor="middle" fill="#5c646e">+- (x &gt;&gt; s)</text>
+  <path class="w" d="M 298 719 L 348 719" marker-end="url(#ah)" fill="none" stroke="#5c646e" stroke-width="1.4"/>
+  <path class="w" d="M 298 777 L 348 777" marker-end="url(#ah)" fill="none" stroke="#5c646e" stroke-width="1.4"/>
+  <rect class="bl" x="60" y="812" width="76" height="46" rx="4" fill="#eef2f6" stroke="#7d8894" stroke-width="1.2"/>
+  <text class="bn" x="98.0" y="839.0" text-anchor="middle" fill="#16191d">z</text>
+  <rect class="bl st-accent4" x="516" y="812" width="150" height="46" rx="4" fill="#eef2f6" stroke="#8a5a8f" stroke-width="1.2"/>
+  <text class="bn" x="591.0" y="829" text-anchor="middle" fill="#16191d">angle a_s</text>
+  <text class="bd" x="591.0" y="842" text-anchor="middle" fill="#5c646e">atan / atanh / 2^-s</text>
+  <rect class="bl st-accent" x="720" y="812" width="118" height="46" rx="4" fill="#eef2f6" stroke="#3b6ea5" stroke-width="1.2"/>
+  <text class="bn" x="779.0" y="829" text-anchor="middle" fill="#16191d">add / sub</text>
+  <text class="bd" x="779.0" y="842" text-anchor="middle" fill="#5c646e">z -+ a_s</text>
+  <path class="w" d="M 666 835 L 720 835" marker-end="url(#ah)" fill="none" stroke="#5c646e" stroke-width="1.4"/>
+  <path class="w" d="M 136 835 L 260 835 L 260 874 L 690 874 L 690 846" marker-end="url(#ah)" fill="none" stroke="#5c646e" stroke-width="1.4"/>
+  <rect class="bl" x="888" y="696" width="100" height="46" rx="4" fill="#eef2f6" stroke="#7d8894" stroke-width="1.2"/>
+  <text class="bn" x="938.0" y="723.0" text-anchor="middle" fill="#16191d">x'</text>
+  <rect class="bl" x="888" y="754" width="100" height="46" rx="4" fill="#eef2f6" stroke="#7d8894" stroke-width="1.2"/>
+  <text class="bn" x="938.0" y="781.0" text-anchor="middle" fill="#16191d">y'</text>
+  <rect class="bl" x="888" y="812" width="100" height="46" rx="4" fill="#eef2f6" stroke="#7d8894" stroke-width="1.2"/>
+  <text class="bn" x="938.0" y="839.0" text-anchor="middle" fill="#16191d">z'</text>
+  <path class="w" d="M 466 719 L 888 719" marker-end="url(#ah)" fill="none" stroke="#5c646e" stroke-width="1.4"/>
+  <path class="w" d="M 466 777 L 888 777" marker-end="url(#ah)" fill="none" stroke="#5c646e" stroke-width="1.4"/>
+  <path class="w" d="M 838 835 L 888 835" marker-end="url(#ah)" fill="none" stroke="#5c646e" stroke-width="1.4"/>
+  <text class="sub" x="24" y="886" fill="#5c646e">One add or subtract per coordinate, and in the pipelined core the shift is wiring. There is no multiplier anywhere in the design, which is the whole reason to use CORDIC.</text>
+</svg>

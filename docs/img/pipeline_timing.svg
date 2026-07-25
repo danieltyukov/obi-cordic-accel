@@ -1,0 +1,245 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1207 518" width="1207" height="518" role="img" aria-label="Pipeline timing diagram of the fully pipelined CORDIC core">
+  <style>
+    text { font-family: "DejaVu Sans", "Helvetica Neue", Arial, sans-serif; }
+    .ttl  { font-size: 20px; font-weight: 700; }
+    .sub  { font-size: 11.5px; }
+    .bn   { font-size: 12px; font-weight: 700; }
+    .bd   { font-size: 9.5px; }
+    .lbl  { font-size: 9px; }
+    .lbls { font-size: 9px; font-weight: 600; }
+    .gn   { font-size: 10.5px; font-weight: 700; letter-spacing: 0.4px; }
+    @media (prefers-color-scheme: dark) {
+      .bgr { fill: #14171a; }
+      .ttl, .lbls, .bn { fill: #e8ebee; }
+      .sub, .bd, .lbl, .gn { fill: #9aa3ad; }
+      .bl { fill: #1e2429; stroke: #55606b; }
+      .grp { stroke: #3a424b; }
+      .gl { stroke: #3a424b; }
+      .w { stroke: #9aa3ad; }
+      .ahf { fill: #9aa3ad; }
+      .st-accent { stroke: #6f9fd0; }
+      .fl-accent { fill: #6f9fd0; }
+      .st-accent2 { stroke: #e0906a; }
+      .fl-accent2 { fill: #e0906a; }
+      .st-accent3 { stroke: #78b494; }
+      .fl-accent3 { fill: #78b494; }
+      .st-accent4 { stroke: #b58ab9; }
+      .fl-accent4 { fill: #b58ab9; }
+    }
+      :root[data-theme="dark"] .bgr { fill: #14171a; }
+      :root[data-theme="dark"] .ttl, :root[data-theme="dark"] .lbls, :root[data-theme="dark"] .bn { fill: #e8ebee; }
+      :root[data-theme="dark"] .sub, :root[data-theme="dark"] .bd, :root[data-theme="dark"] .lbl, :root[data-theme="dark"] .gn { fill: #9aa3ad; }
+      :root[data-theme="dark"] .bl { fill: #1e2429; stroke: #55606b; }
+      :root[data-theme="dark"] .grp { stroke: #3a424b; }
+      :root[data-theme="dark"] .gl { stroke: #3a424b; }
+      :root[data-theme="dark"] .w { stroke: #9aa3ad; }
+      :root[data-theme="dark"] .ahf { fill: #9aa3ad; }
+      :root[data-theme="dark"] .st-accent { stroke: #6f9fd0; }
+      :root[data-theme="dark"] .fl-accent { fill: #6f9fd0; }
+      :root[data-theme="dark"] .st-accent2 { stroke: #e0906a; }
+      :root[data-theme="dark"] .fl-accent2 { fill: #e0906a; }
+      :root[data-theme="dark"] .st-accent3 { stroke: #78b494; }
+      :root[data-theme="dark"] .fl-accent3 { fill: #78b494; }
+      :root[data-theme="dark"] .st-accent4 { stroke: #b58ab9; }
+      :root[data-theme="dark"] .fl-accent4 { fill: #b58ab9; }
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7"
+            markerHeight="7" orient="auto-start-reverse">
+      <path class="ahf" d="M 0 0 L 10 5 L 0 10 z" fill="#5c646e"/>
+    </marker>
+  </defs>
+  <rect class="bgr" width="1207" height="518" fill="#ffffff"/>
+  <text class="ttl" x="24" y="34" fill="#16191d">Pipelined core timing, measured in RTL simulation</text>
+  <text class="sub" x="24" y="54" fill="#5c646e">6 operations issued back to back into the 28-stage core. Every filled cell is dbg_stage_valid_o sampled at that cycle; nothing here is drawn by hand.</text>
+  <text class="sub" x="24" y="72" fill="#5c646e">Q3.29, 28 stages, streaming input, output drained every cycle. Cycle 0 is the first accepted issue.</text>
+  <text class="lbl" x="158.5" y="120" text-anchor="middle" fill="#5c646e">0</text>
+  <line class="gl" x1="148" y1="128" x2="148" y2="368" stroke="#c3c9d1" stroke-width="0.6"/>
+  <text class="lbl" x="263.5" y="120" text-anchor="middle" fill="#5c646e">5</text>
+  <line class="gl" x1="253" y1="128" x2="253" y2="368" stroke="#c3c9d1" stroke-width="0.6"/>
+  <text class="lbl" x="368.5" y="120" text-anchor="middle" fill="#5c646e">10</text>
+  <line class="gl" x1="358" y1="128" x2="358" y2="368" stroke="#c3c9d1" stroke-width="0.6"/>
+  <text class="lbl" x="473.5" y="120" text-anchor="middle" fill="#5c646e">15</text>
+  <line class="gl" x1="463" y1="128" x2="463" y2="368" stroke="#c3c9d1" stroke-width="0.6"/>
+  <text class="lbl" x="578.5" y="120" text-anchor="middle" fill="#5c646e">20</text>
+  <line class="gl" x1="568" y1="128" x2="568" y2="368" stroke="#c3c9d1" stroke-width="0.6"/>
+  <text class="lbl" x="683.5" y="120" text-anchor="middle" fill="#5c646e">25</text>
+  <line class="gl" x1="673" y1="128" x2="673" y2="368" stroke="#c3c9d1" stroke-width="0.6"/>
+  <text class="lbl" x="788.5" y="120" text-anchor="middle" fill="#5c646e">30</text>
+  <line class="gl" x1="778" y1="128" x2="778" y2="368" stroke="#c3c9d1" stroke-width="0.6"/>
+  <text class="lbl" x="893.5" y="120" text-anchor="middle" fill="#5c646e">35</text>
+  <line class="gl" x1="883" y1="128" x2="883" y2="368" stroke="#c3c9d1" stroke-width="0.6"/>
+  <text class="lbl" x="138" y="120" text-anchor="end" fill="#5c646e">cycle</text>
+  <text class="lbl" x="138" y="142" text-anchor="end" fill="#5c646e">issue</text>
+  <rect class="gl" x="148" y="128" width="819" height="17" fill="none" stroke="#c3c9d1" stroke-width="0.5"/>
+  <rect class="fl-accent" x="149" y="129" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.85"/>
+  <text class="lbls" x="158" y="141" text-anchor="middle" fill="#ffffff">0</text>
+  <rect class="fl-accent2" x="170" y="129" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.85"/>
+  <text class="lbls" x="180" y="141" text-anchor="middle" fill="#ffffff">1</text>
+  <rect class="fl-accent3" x="191" y="129" width="19" height="15" rx="2" fill="#4f8a63" fill-opacity="0.85"/>
+  <text class="lbls" x="200" y="141" text-anchor="middle" fill="#ffffff">2</text>
+  <rect class="fl-accent4" x="212" y="129" width="19" height="15" rx="2" fill="#8a5a8f" fill-opacity="0.85"/>
+  <text class="lbls" x="222" y="141" text-anchor="middle" fill="#ffffff">3</text>
+  <rect class="fl-accent" x="233" y="129" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.85"/>
+  <text class="lbls" x="242" y="141" text-anchor="middle" fill="#ffffff">4</text>
+  <rect class="fl-accent2" x="254" y="129" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.85"/>
+  <text class="lbls" x="264" y="141" text-anchor="middle" fill="#ffffff">5</text>
+  <text class="lbl" x="138" y="162" text-anchor="end" fill="#5c646e">stage 0</text>
+  <rect class="gl" x="148" y="148" width="819" height="17" fill="none" stroke="#c3c9d1" stroke-width="0.5"/>
+  <rect class="fl-accent" x="170" y="149" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.85"/>
+  <text class="lbls" x="180" y="161" text-anchor="middle" fill="#ffffff">0</text>
+  <rect class="fl-accent2" x="191" y="149" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.85"/>
+  <text class="lbls" x="200" y="161" text-anchor="middle" fill="#ffffff">1</text>
+  <rect class="fl-accent3" x="212" y="149" width="19" height="15" rx="2" fill="#4f8a63" fill-opacity="0.85"/>
+  <text class="lbls" x="222" y="161" text-anchor="middle" fill="#ffffff">2</text>
+  <rect class="fl-accent4" x="233" y="149" width="19" height="15" rx="2" fill="#8a5a8f" fill-opacity="0.85"/>
+  <text class="lbls" x="242" y="161" text-anchor="middle" fill="#ffffff">3</text>
+  <rect class="fl-accent" x="254" y="149" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.85"/>
+  <text class="lbls" x="264" y="161" text-anchor="middle" fill="#ffffff">4</text>
+  <rect class="fl-accent2" x="275" y="149" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.85"/>
+  <text class="lbls" x="284" y="161" text-anchor="middle" fill="#ffffff">5</text>
+  <text class="lbl" x="138" y="182" text-anchor="end" fill="#5c646e">stage 1</text>
+  <rect class="gl" x="148" y="168" width="819" height="17" fill="none" stroke="#c3c9d1" stroke-width="0.5"/>
+  <rect class="fl-accent" x="191" y="169" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.85"/>
+  <text class="lbls" x="200" y="181" text-anchor="middle" fill="#ffffff">0</text>
+  <rect class="fl-accent2" x="212" y="169" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.85"/>
+  <text class="lbls" x="222" y="181" text-anchor="middle" fill="#ffffff">1</text>
+  <rect class="fl-accent3" x="233" y="169" width="19" height="15" rx="2" fill="#4f8a63" fill-opacity="0.85"/>
+  <text class="lbls" x="242" y="181" text-anchor="middle" fill="#ffffff">2</text>
+  <rect class="fl-accent4" x="254" y="169" width="19" height="15" rx="2" fill="#8a5a8f" fill-opacity="0.85"/>
+  <text class="lbls" x="264" y="181" text-anchor="middle" fill="#ffffff">3</text>
+  <rect class="fl-accent" x="275" y="169" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.85"/>
+  <text class="lbls" x="284" y="181" text-anchor="middle" fill="#ffffff">4</text>
+  <rect class="fl-accent2" x="296" y="169" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.85"/>
+  <text class="lbls" x="306" y="181" text-anchor="middle" fill="#ffffff">5</text>
+  <text class="lbl" x="138" y="202" text-anchor="end" fill="#5c646e">stage 2</text>
+  <rect class="gl" x="148" y="188" width="819" height="17" fill="none" stroke="#c3c9d1" stroke-width="0.5"/>
+  <rect class="fl-accent" x="212" y="189" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.85"/>
+  <text class="lbls" x="222" y="201" text-anchor="middle" fill="#ffffff">0</text>
+  <rect class="fl-accent2" x="233" y="189" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.85"/>
+  <text class="lbls" x="242" y="201" text-anchor="middle" fill="#ffffff">1</text>
+  <rect class="fl-accent3" x="254" y="189" width="19" height="15" rx="2" fill="#4f8a63" fill-opacity="0.85"/>
+  <text class="lbls" x="264" y="201" text-anchor="middle" fill="#ffffff">2</text>
+  <rect class="fl-accent4" x="275" y="189" width="19" height="15" rx="2" fill="#8a5a8f" fill-opacity="0.85"/>
+  <text class="lbls" x="284" y="201" text-anchor="middle" fill="#ffffff">3</text>
+  <rect class="fl-accent" x="296" y="189" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.85"/>
+  <text class="lbls" x="306" y="201" text-anchor="middle" fill="#ffffff">4</text>
+  <rect class="fl-accent2" x="317" y="189" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.85"/>
+  <text class="lbls" x="326" y="201" text-anchor="middle" fill="#ffffff">5</text>
+  <text class="lbl" x="138" y="222" text-anchor="end" fill="#5c646e">stage 3</text>
+  <rect class="gl" x="148" y="208" width="819" height="17" fill="none" stroke="#c3c9d1" stroke-width="0.5"/>
+  <rect class="fl-accent" x="233" y="209" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.85"/>
+  <text class="lbls" x="242" y="221" text-anchor="middle" fill="#ffffff">0</text>
+  <rect class="fl-accent2" x="254" y="209" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.85"/>
+  <text class="lbls" x="264" y="221" text-anchor="middle" fill="#ffffff">1</text>
+  <rect class="fl-accent3" x="275" y="209" width="19" height="15" rx="2" fill="#4f8a63" fill-opacity="0.85"/>
+  <text class="lbls" x="284" y="221" text-anchor="middle" fill="#ffffff">2</text>
+  <rect class="fl-accent4" x="296" y="209" width="19" height="15" rx="2" fill="#8a5a8f" fill-opacity="0.85"/>
+  <text class="lbls" x="306" y="221" text-anchor="middle" fill="#ffffff">3</text>
+  <rect class="fl-accent" x="317" y="209" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.85"/>
+  <text class="lbls" x="326" y="221" text-anchor="middle" fill="#ffffff">4</text>
+  <rect class="fl-accent2" x="338" y="209" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.85"/>
+  <text class="lbls" x="348" y="221" text-anchor="middle" fill="#ffffff">5</text>
+  <text class="lbl" x="138" y="242" text-anchor="end" fill="#5c646e">stage 4</text>
+  <rect class="gl" x="148" y="228" width="819" height="17" fill="none" stroke="#c3c9d1" stroke-width="0.5"/>
+  <rect class="fl-accent" x="254" y="229" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.85"/>
+  <text class="lbls" x="264" y="241" text-anchor="middle" fill="#ffffff">0</text>
+  <rect class="fl-accent2" x="275" y="229" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.85"/>
+  <text class="lbls" x="284" y="241" text-anchor="middle" fill="#ffffff">1</text>
+  <rect class="fl-accent3" x="296" y="229" width="19" height="15" rx="2" fill="#4f8a63" fill-opacity="0.85"/>
+  <text class="lbls" x="306" y="241" text-anchor="middle" fill="#ffffff">2</text>
+  <rect class="fl-accent4" x="317" y="229" width="19" height="15" rx="2" fill="#8a5a8f" fill-opacity="0.85"/>
+  <text class="lbls" x="326" y="241" text-anchor="middle" fill="#ffffff">3</text>
+  <rect class="fl-accent" x="338" y="229" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.85"/>
+  <text class="lbls" x="348" y="241" text-anchor="middle" fill="#ffffff">4</text>
+  <rect class="fl-accent2" x="359" y="229" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.85"/>
+  <text class="lbls" x="368" y="241" text-anchor="middle" fill="#ffffff">5</text>
+  <text class="lbl" x="138" y="262" text-anchor="end" fill="#5c646e">stage 5</text>
+  <rect class="gl" x="148" y="248" width="819" height="17" fill="none" stroke="#c3c9d1" stroke-width="0.5"/>
+  <rect class="fl-accent" x="275" y="249" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.85"/>
+  <text class="lbls" x="284" y="261" text-anchor="middle" fill="#ffffff">0</text>
+  <rect class="fl-accent2" x="296" y="249" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.85"/>
+  <text class="lbls" x="306" y="261" text-anchor="middle" fill="#ffffff">1</text>
+  <rect class="fl-accent3" x="317" y="249" width="19" height="15" rx="2" fill="#4f8a63" fill-opacity="0.85"/>
+  <text class="lbls" x="326" y="261" text-anchor="middle" fill="#ffffff">2</text>
+  <rect class="fl-accent4" x="338" y="249" width="19" height="15" rx="2" fill="#8a5a8f" fill-opacity="0.85"/>
+  <text class="lbls" x="348" y="261" text-anchor="middle" fill="#ffffff">3</text>
+  <rect class="fl-accent" x="359" y="249" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.85"/>
+  <text class="lbls" x="368" y="261" text-anchor="middle" fill="#ffffff">4</text>
+  <rect class="fl-accent2" x="380" y="249" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.85"/>
+  <text class="lbls" x="390" y="261" text-anchor="middle" fill="#ffffff">5</text>
+  <text class="lbl" x="138" y="282" text-anchor="end" fill="#5c646e">...</text>
+  <text class="lbl" x="154" y="282" text-anchor="start" fill="#5c646e">stages 6 to 23 behave identically</text>
+  <text class="lbl" x="138" y="302" text-anchor="end" fill="#5c646e">stage 24</text>
+  <rect class="gl" x="148" y="288" width="819" height="17" fill="none" stroke="#c3c9d1" stroke-width="0.5"/>
+  <rect class="fl-accent" x="674" y="289" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.85"/>
+  <text class="lbls" x="684" y="301" text-anchor="middle" fill="#ffffff">0</text>
+  <rect class="fl-accent2" x="695" y="289" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.85"/>
+  <text class="lbls" x="704" y="301" text-anchor="middle" fill="#ffffff">1</text>
+  <rect class="fl-accent3" x="716" y="289" width="19" height="15" rx="2" fill="#4f8a63" fill-opacity="0.85"/>
+  <text class="lbls" x="726" y="301" text-anchor="middle" fill="#ffffff">2</text>
+  <rect class="fl-accent4" x="737" y="289" width="19" height="15" rx="2" fill="#8a5a8f" fill-opacity="0.85"/>
+  <text class="lbls" x="746" y="301" text-anchor="middle" fill="#ffffff">3</text>
+  <rect class="fl-accent" x="758" y="289" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.85"/>
+  <text class="lbls" x="768" y="301" text-anchor="middle" fill="#ffffff">4</text>
+  <rect class="fl-accent2" x="779" y="289" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.85"/>
+  <text class="lbls" x="788" y="301" text-anchor="middle" fill="#ffffff">5</text>
+  <text class="lbl" x="138" y="322" text-anchor="end" fill="#5c646e">stage 25</text>
+  <rect class="gl" x="148" y="308" width="819" height="17" fill="none" stroke="#c3c9d1" stroke-width="0.5"/>
+  <rect class="fl-accent" x="695" y="309" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.85"/>
+  <text class="lbls" x="704" y="321" text-anchor="middle" fill="#ffffff">0</text>
+  <rect class="fl-accent2" x="716" y="309" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.85"/>
+  <text class="lbls" x="726" y="321" text-anchor="middle" fill="#ffffff">1</text>
+  <rect class="fl-accent3" x="737" y="309" width="19" height="15" rx="2" fill="#4f8a63" fill-opacity="0.85"/>
+  <text class="lbls" x="746" y="321" text-anchor="middle" fill="#ffffff">2</text>
+  <rect class="fl-accent4" x="758" y="309" width="19" height="15" rx="2" fill="#8a5a8f" fill-opacity="0.85"/>
+  <text class="lbls" x="768" y="321" text-anchor="middle" fill="#ffffff">3</text>
+  <rect class="fl-accent" x="779" y="309" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.85"/>
+  <text class="lbls" x="788" y="321" text-anchor="middle" fill="#ffffff">4</text>
+  <rect class="fl-accent2" x="800" y="309" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.85"/>
+  <text class="lbls" x="810" y="321" text-anchor="middle" fill="#ffffff">5</text>
+  <text class="lbl" x="138" y="342" text-anchor="end" fill="#5c646e">stage 26</text>
+  <rect class="gl" x="148" y="328" width="819" height="17" fill="none" stroke="#c3c9d1" stroke-width="0.5"/>
+  <rect class="fl-accent" x="716" y="329" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.85"/>
+  <text class="lbls" x="726" y="341" text-anchor="middle" fill="#ffffff">0</text>
+  <rect class="fl-accent2" x="737" y="329" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.85"/>
+  <text class="lbls" x="746" y="341" text-anchor="middle" fill="#ffffff">1</text>
+  <rect class="fl-accent3" x="758" y="329" width="19" height="15" rx="2" fill="#4f8a63" fill-opacity="0.85"/>
+  <text class="lbls" x="768" y="341" text-anchor="middle" fill="#ffffff">2</text>
+  <rect class="fl-accent4" x="779" y="329" width="19" height="15" rx="2" fill="#8a5a8f" fill-opacity="0.85"/>
+  <text class="lbls" x="788" y="341" text-anchor="middle" fill="#ffffff">3</text>
+  <rect class="fl-accent" x="800" y="329" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.85"/>
+  <text class="lbls" x="810" y="341" text-anchor="middle" fill="#ffffff">4</text>
+  <rect class="fl-accent2" x="821" y="329" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.85"/>
+  <text class="lbls" x="830" y="341" text-anchor="middle" fill="#ffffff">5</text>
+  <text class="lbl" x="138" y="362" text-anchor="end" fill="#5c646e">stage 27</text>
+  <rect class="gl" x="148" y="348" width="819" height="17" fill="none" stroke="#c3c9d1" stroke-width="0.5"/>
+  <rect class="fl-accent" x="737" y="349" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.85"/>
+  <text class="lbls" x="746" y="361" text-anchor="middle" fill="#ffffff">0</text>
+  <rect class="fl-accent2" x="758" y="349" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.85"/>
+  <text class="lbls" x="768" y="361" text-anchor="middle" fill="#ffffff">1</text>
+  <rect class="fl-accent3" x="779" y="349" width="19" height="15" rx="2" fill="#4f8a63" fill-opacity="0.85"/>
+  <text class="lbls" x="788" y="361" text-anchor="middle" fill="#ffffff">2</text>
+  <rect class="fl-accent4" x="800" y="349" width="19" height="15" rx="2" fill="#8a5a8f" fill-opacity="0.85"/>
+  <text class="lbls" x="810" y="361" text-anchor="middle" fill="#ffffff">3</text>
+  <rect class="fl-accent" x="821" y="349" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.85"/>
+  <text class="lbls" x="830" y="361" text-anchor="middle" fill="#ffffff">4</text>
+  <rect class="fl-accent2" x="842" y="349" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.85"/>
+  <text class="lbls" x="852" y="361" text-anchor="middle" fill="#ffffff">5</text>
+  <text class="lbl" x="138" y="394" text-anchor="end" fill="#5c646e">result</text>
+  <rect class="fl-accent st-accent" x="737" y="381" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.45" stroke="#3b6ea5" stroke-width="1"/>
+  <text class="lbls" x="746.5" y="393" text-anchor="middle" fill="#16191d">0</text>
+  <rect class="fl-accent2 st-accent2" x="758" y="381" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.45" stroke="#c1633b" stroke-width="1"/>
+  <text class="lbls" x="767.5" y="393" text-anchor="middle" fill="#16191d">1</text>
+  <rect class="fl-accent3 st-accent3" x="779" y="381" width="19" height="15" rx="2" fill="#4f8a63" fill-opacity="0.45" stroke="#4f8a63" stroke-width="1"/>
+  <text class="lbls" x="788.5" y="393" text-anchor="middle" fill="#16191d">2</text>
+  <rect class="fl-accent4 st-accent4" x="800" y="381" width="19" height="15" rx="2" fill="#8a5a8f" fill-opacity="0.45" stroke="#8a5a8f" stroke-width="1"/>
+  <text class="lbls" x="809.5" y="393" text-anchor="middle" fill="#16191d">3</text>
+  <rect class="fl-accent st-accent" x="821" y="381" width="19" height="15" rx="2" fill="#3b6ea5" fill-opacity="0.45" stroke="#3b6ea5" stroke-width="1"/>
+  <text class="lbls" x="830.5" y="393" text-anchor="middle" fill="#16191d">4</text>
+  <rect class="fl-accent2 st-accent2" x="842" y="381" width="19" height="15" rx="2" fill="#c1633b" fill-opacity="0.45" stroke="#c1633b" stroke-width="1"/>
+  <text class="lbls" x="851.5" y="393" text-anchor="middle" fill="#16191d">5</text>
+  <text class="sub" x="24" y="426" fill="#5c646e">Operation k issued at cycle e occupies stage s at cycle e+s+1 and leaves the core at e+28. tb/test_throughput.py asserts that cell by cell over the whole capture.</text>
+  <text class="sub" x="24" y="444" fill="#5c646e">The core accepts one operation per cycle and retires one per cycle once full: measured steady-state gap 1 cycle, worst case 1 over 219 consecutive results.</text>
+  <text class="sub" x="24" y="462" fill="#5c646e">End to end through both FIFOs the measured latency is 30 cycles: the 28 core stages plus one cycle for each FIFO hop.</text>
+</svg>

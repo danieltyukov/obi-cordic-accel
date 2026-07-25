@@ -221,109 +221,135 @@ def gen_registers_md():
 # SVG figure
 # ---------------------------------------------------------------------------
 
-SVG_CSS = """
-    text { font-family: "DejaVu Sans", "Helvetica Neue", Arial, sans-serif; }
-    .ttl  { font-size: 21px; font-weight: 700; fill: var(--fg); }
-    .sub  { font-size: 12px; fill: var(--muted); }
-    .rn   { font-size: 13px; font-weight: 700; fill: var(--fg); }
-    .ro   { font-size: 11px; fill: var(--muted); }
-    .bit  { font-size: 9px; fill: var(--muted); }
-    .fl   { font-size: 10px; font-weight: 600; fill: var(--fg); }
-    .lg   { font-size: 11px; fill: var(--fg); }
-    .box  { fill: none; stroke: var(--grid); stroke-width: 1; }
-"""
+# Colours go out as presentation attributes with class-based dark overrides, not as
+# CSS custom properties: presentation attributes lose to any stylesheet rule, so a
+# renderer that ignores var() (librsvg, for one) still shows the light palette
+# rather than a black rectangle.
+LIGHT = dict(bg="#ffffff", fg="#16191d", muted="#5c646e", grid="#c3c9d1")
+DARK = dict(bg="#14171a", fg="#e8ebee", muted="#9aa3ad", grid="#3a424b")
 
 # Muted, colour-blind-safe hues, one per access class.
-ACCESS_FILL = {
-    "RO": "#5b7fa6",
-    "RW": "#4f9d76",
-    "W1C": "#b8863b",
-    "W1S": "#a3618f",
-}
+ACCESS_FILL = {"RO": "#5b7fa6", "RW": "#4f9d76", "W1C": "#b8863b", "W1S": "#a3618f"}
+ACCESS_FILL_DARK = {"RO": "#7fa3c9", "RW": "#74bd9a", "W1C": "#d5a75d",
+                    "W1S": "#c188b3"}
+
+
+def _dark_rules(prefix=""):
+    r = [f"      {prefix}.bgr {{ fill: {DARK['bg']}; }}",
+         f"      {prefix}.ttl, {prefix}.rn, {prefix}.lg {{ fill: {DARK['fg']}; }}",
+         f"      {prefix}.sub, {prefix}.ro, {prefix}.bit "
+         f"{{ fill: {DARK['muted']}; }}",
+         f"      {prefix}.box, {prefix}.gl {{ stroke: {DARK['grid']}; }}"]
+    for acc, colour in ACCESS_FILL_DARK.items():
+        r.append(f"      {prefix}.acc-{acc} {{ fill: {colour}; }}")
+    return "\n".join(r)
+
+
+def svg_style():
+    return "\n".join([
+        "  <style>",
+        '    text { font-family: "DejaVu Sans", "Helvetica Neue", Arial, '
+        "sans-serif; }",
+        "    .ttl  { font-size: 21px; font-weight: 700; }",
+        "    .sub  { font-size: 12px; }",
+        "    .rn   { font-size: 13px; font-weight: 700; }",
+        "    .ro   { font-size: 11px; }",
+        "    .bit  { font-size: 9px; }",
+        "    .fl   { font-size: 10px; font-weight: 600; }",
+        "    .lg   { font-size: 11px; }",
+        "    @media (prefers-color-scheme: dark) {",
+        _dark_rules(),
+        "    }",
+        _dark_rules(':root[data-theme="dark"] '),
+        "  </style>",
+    ])
+
+
+REGS_SORTED = sorted(rm.REGS, key=lambda r: r.offset)
 
 
 def gen_svg():
-    left = 118            # x where the 32-bit strip starts
+    left = 152            # x where the 32-bit strip starts, wide enough for TANH_LIM_HYP
     cellw = 20            # width of one bit cell
     roww = 32 * cellw
     rowh = 30
     gap = 8
     top = 108
-    rows = [r for r in REGS_SORTED]
+    rows = list(REGS_SORTED)
     height = top + len(rows) * (rowh + gap) + 96
     width = left + roww + 30
 
     p = []
-    p.append(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" '
-             f'width="{width}" height="{height}" role="img" '
+    p.append(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} '
+             f'{height}" width="{width}" height="{height}" role="img" '
              f'aria-label="CORDIC accelerator OBI register map">')
-    p.append("  <style>")
-    p.append("    :root { --bg:#ffffff; --fg:#16191d; --muted:#5c646e; --grid:#c3c9d1; }")
-    p.append("    @media (prefers-color-scheme: dark) {")
-    p.append("      :root { --bg:#14171a; --fg:#e8ebee; --muted:#9aa3ad; --grid:#3a424b; }")
-    p.append("    }")
-    p.append(SVG_CSS.rstrip())
-    p.append("  </style>")
-    p.append(f'  <rect width="{width}" height="{height}" fill="var(--bg)"/>')
-    p.append(f'  <text class="ttl" x="16" y="34">CORDIC accelerator register map</text>')
-    p.append(f'  <text class="sub" x="16" y="54">OBI subordinate window, '
-             f'{rm.WINDOW_BYTES // 1024} KB, 32-bit words. Offsets '
-             f'0x{rm.MAPPED_BYTES:03X} and above are unmapped and answer with '
-             f'r.err.</text>')
+    p.append(svg_style())
+    p.append(f'  <rect class="bgr" width="{width}" height="{height}" '
+             f'fill="{LIGHT["bg"]}"/>')
+    p.append(f'  <text class="ttl" x="16" y="34" fill="{LIGHT["fg"]}">'
+             f'CORDIC accelerator register map</text>')
+    p.append(f'  <text class="sub" x="16" y="54" fill="{LIGHT["muted"]}">'
+             f'OBI subordinate window, {rm.WINDOW_BYTES // 1024} KB, 32-bit words. '
+             f'Offsets 0x{rm.MAPPED_BYTES:03X} and above are unmapped and answer '
+             f'with r.err.</text>')
 
-    # bit ruler: bit 31 on the left, bit 0 on the right
+    # Bit ruler: bit 31 on the left, bit 0 on the right.
     for b in range(32):
         x = left + (31 - b) * cellw
         if b % 4 == 0 or b == 31:
             p.append(f'  <text class="bit" x="{x + cellw / 2:.0f}" y="{top - 8}" '
-                     f'text-anchor="middle">{b}</text>')
+                     f'text-anchor="middle" fill="{LIGHT["muted"]}">{b}</text>')
     p.append(f'  <text class="ro" x="{left - 10}" y="{top - 8}" '
-             f'text-anchor="end">bit</text>')
+             f'text-anchor="end" fill="{LIGHT["muted"]}">bit</text>')
 
     y = top
     for r in rows:
-        p.append(f'  <text class="rn" x="16" y="{y + 15}">{r.name}</text>')
-        p.append(f'  <text class="ro" x="16" y="{y + 27}">0x{r.offset:03X} {r.access}</text>')
-        p.append(f'  <rect class="box" x="{left}" y="{y}" width="{roww}" '
-                 f'height="{rowh}" rx="2"/>')
+        p.append(f'  <text class="rn" x="16" y="{y + 15}" fill="{LIGHT["fg"]}">'
+                 f'{r.name}</text>')
+        p.append(f'  <text class="ro" x="16" y="{y + 27}" '
+                 f'fill="{LIGHT["muted"]}">0x{r.offset:03X} {r.access}</text>')
         for b in range(1, 32):
             if b % 4 == 0:
                 x = left + b * cellw
-                p.append(f'  <line x1="{x}" y1="{y}" x2="{x}" y2="{y + rowh}" '
-                         f'stroke="var(--grid)" stroke-width="0.5" '
-                         f'stroke-dasharray="2 3"/>')
+                p.append(f'  <line class="gl" x1="{x}" y1="{y}" x2="{x}" '
+                         f'y2="{y + rowh}" stroke="{LIGHT["grid"]}" '
+                         f'stroke-width="0.5" stroke-dasharray="2 3"/>')
         for fl in r.fields:
             w = (fl.hi - fl.lo + 1) * cellw
             x = left + (31 - fl.hi) * cellw
             fill = ACCESS_FILL.get(fl.access, "#7a7a7a")
-            p.append(f'  <rect x="{x}" y="{y}" width="{w}" height="{rowh}" rx="2" '
-                     f'fill="{fill}" fill-opacity="0.85"/>')
+            p.append(f'  <rect class="acc-{fl.access}" x="{x}" y="{y}" '
+                     f'width="{w}" height="{rowh}" rx="2" fill="{fill}" '
+                     f'fill-opacity="0.9"><title>{fl.name} ({fl.access}): '
+                     f'{fl.desc}</title></rect>')
             label = fl.name
-            # roughly 6.3 px per character at 10 px DejaVu Sans
+            # Roughly 6.3 px per character at 10 px DejaVu Sans.
             if len(label) * 6.3 > w - 4:
                 label = "" if w < 22 else label[0]
             if label:
                 p.append(f'  <text class="fl" x="{x + w / 2:.0f}" y="{y + 19}" '
                          f'text-anchor="middle" fill="#ffffff">{label}</text>')
-            else:
-                p.append(f'  <title>{fl.name}</title>')
         p.append(f'  <rect class="box" x="{left}" y="{y}" width="{roww}" '
-                 f'height="{rowh}" rx="2"/>')
+                 f'height="{rowh}" rx="2" fill="none" stroke="{LIGHT["grid"]}" '
+                 f'stroke-width="1"/>')
         y += rowh + gap
 
-    # legend
+    # Legend
     ly = y + 18
-    p.append(f'  <text class="lg" x="16" y="{ly + 11}">Access</text>')
+    p.append(f'  <text class="lg" x="16" y="{ly + 11}" fill="{LIGHT["fg"]}">'
+             f'Access</text>')
     lx = 78
     for acc in ("RO", "RW", "W1C", "W1S"):
-        p.append(f'  <rect x="{lx}" y="{ly}" width="16" height="14" rx="2" '
-                 f'fill="{ACCESS_FILL[acc]}" fill-opacity="0.85"/>')
-        p.append(f'  <text class="lg" x="{lx + 22}" y="{ly + 11}">{acc}</text>')
+        p.append(f'  <rect class="acc-{acc}" x="{lx}" y="{ly}" width="16" '
+                 f'height="14" rx="2" fill="{ACCESS_FILL[acc]}" '
+                 f'fill-opacity="0.9"/>')
+        p.append(f'  <text class="lg" x="{lx + 22}" y="{ly + 11}" '
+                 f'fill="{LIGHT["fg"]}">{acc}</text>')
         lx += 22 + len(acc) * 8 + 22
-    p.append(f'  <text class="lg" x="16" y="{ly + 34}">'
-             f'Unlabelled cells are reserved: writes are ignored and reads return 0. '
-             f'W1S bits self-clear and always read 0.</text>')
-    p.append(f'  <text class="lg" x="16" y="{ly + 52}">'
+    p.append(f'  <text class="lg" x="16" y="{ly + 34}" fill="{LIGHT["fg"]}">'
+             f'Unlabelled cells are reserved: writes are ignored and reads return '
+             f'0. W1S bits self-clear and always read 0.</text>')
+    p.append(f'  <text class="lg" x="16" y="{ly + 52}" fill="{LIGHT["fg"]}">'
              f'Operand and result words hold signed fixed-point values in the '
              f'elaborated format reported by CFG0.</text>')
     p.append("</svg>")
