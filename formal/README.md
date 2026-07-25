@@ -114,9 +114,10 @@ from real non-convergence.
 
 | Task | Configuration | Bound | Outcome |
 |---|---|---|---|
-| `obi_protocol.sby` | Q3.5, 5 stages, 12-bit address | 20 | no result. z3 still inside step 0 after 900 s at about 3 GB resident per task |
+| `obi_protocol.sby` | Q3.29, 28 stages, 32-bit address, four tasks at once | 20 | no result. Every task still inside step 0 after 5 minutes, each holding about 3 GB, so it was stopped before it could push the machine into swap |
+| `obi_protocol.sby` | Q3.5, 5 stages, 12-bit address | 20 | no result in the 2 minutes it was given, still inside step 0 |
 | `obi_protocol.sby` | same | 8 | no result in 280 s, still inside step 0 |
-| `equiv_tiny_1op.sby` | Q3.5, 5 stages, one operation in flight | 14 | see below |
+| `equiv_tiny_1op.sby` | Q3.5, 5 stages, one operation in flight | 14 | no result in 900 s, exit 124 |
 | `equiv_tiny.sby` | Q3.5, 5 stages | 16 | no result in 1,898 s |
 | `equiv_q3_13.sby` | Q3.13, 15 stages | 22 | sby exited 16 after 1,696 s, engine returned no status |
 
