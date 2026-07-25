@@ -158,7 +158,7 @@
   "design__instance__area__class:inverter": 12359.7,
   "route__drc_errors": 0,
   "route__wirelength": 1685814,
-  "magic__drc_error__count": null,
+  "magic__drc_error__count": 7,
   "design__xor_difference__count": 0,
   "klayout__drc_error__count": null,
   "design__lvs_error__count": null,
@@ -220,44 +220,6 @@
    "nom_typ_1p20V_25C": 9.333702,
    "nom_fast_1p32V_m40C": 11.976439
   },
-  "gds": "build/pnr/pipe_q3_29_n28/runs/RUN_2026-07-25_17-45-05/57-magic-streamout/cordic_pnr_pipe.gds",
-  "postroute_fmax": {
-   "slow": {
-    "corner": "slow",
-    "reg_path_delay_ns": 12.7248,
-    "fmax_mhz": 78.59,
-    "startpoint": "i_accel.i_in_fifo.rptr_q[0]",
-    "endpoint": "i_accel.i_unit.gen_pipelined.i_core.gen_stage[1].i_stage.y_i[37]",
-    "path_cells": 46,
-    "path_buffers": 14,
-    "overall_hold_slack_ns": 0.4092
-   },
-   "typ": {
-    "corner": "typ",
-    "reg_path_delay_ns": 8.0538,
-    "fmax_mhz": 124.16,
-    "startpoint": "i_accel.i_in_fifo.rptr_q[0]",
-    "endpoint": "i_accel.i_unit.gen_pipelined.i_core.gen_stage[1].i_stage.y_i[37]",
-    "path_cells": 46,
-    "path_buffers": 14,
-    "overall_hold_slack_ns": 0.2557
-   },
-   "fast": {
-    "corner": "fast",
-    "reg_path_delay_ns": 3.7847,
-    "fmax_mhz": 264.22,
-    "startpoint": "i_accel.i_in_fifo.rptr_q[0]",
-    "endpoint": "i_accel.i_unit.gen_pipelined.i_core.gen_stage[1].i_stage.y_i[37]",
-    "path_cells": 50,
-    "path_buffers": 15,
-    "overall_hold_slack_ns": 0.1244
-   }
-  },
-  "wire_rc_control": {
-   "corner": "slow",
-   "note": "routed netlist, set_wire_rc -layer Metal2 instead of SPEF",
-   "reg_path_delay_ns": 9.6312,
-   "fmax_mhz": 103.83
-  }
+  "gds": "build/pnr/pipe_q3_29_n28/runs/RUN_2026-07-25_17-45-05/57-magic-streamout/cordic_pnr_pipe.gds"
  }
 }

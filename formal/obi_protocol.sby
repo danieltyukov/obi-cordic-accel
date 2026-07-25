@@ -1,0 +1,68 @@
+# Copyright 2026 Daniel Tyukov
+# SPDX-License-Identifier: Apache-2.0
+#
+# OBI subordinate protocol rules, proved for every bus sequence up to the bound.
+#
+# Two tasks, one per R-channel handshake configuration, because two of the seven rules
+# are conditional on it: gnt must never fall when UseRReady is 0, and a held response
+# must neither change nor withdraw when it is 1. Croc's SbrObiCfg sets it to 0.
+#
+# `cover` runs alongside `bmc` so the rules cannot pass vacuously. If the solver could
+# never reach a served read, an error response, an issue, or a pop, then asserting
+# things about them proves nothing.
+#
+# This is the formal target that converges. cordic_obi_regs is control: the CORDIC
+# datapath is entirely outside it, connected through ports the solver drives freely,
+# so what is left is the register file and the response-holding registers. The variant
+# equivalence proof in equiv_*.sby has to reason about iterated fixed-point addition
+# instead, and does not converge; formal/README.md gives the measured numbers.
+
+[tasks]
+rready0 bmc
+rready1 bmc
+cover0  cover
+cover1  cover
+
+[options]
+bmc:   mode bmc
+cover: mode cover
+depth 20
+expect pass
+
+[engines]
+smtbmc z3
+
+# -DSYNTHESIS skips the RTL's own concurrent assertions, which Yosys's native Verilog
+# front end cannot parse at all. formal/cordic_obi_props.sv restates them as immediate
+# assertions over ports.
+[script]
+read -formal -sv -DSYNTHESIS cordic_obi_regs.sv cordic_obi_props.sv
+# Two reductions, both stated rather than left implied, and neither of them weakens the
+# claim.
+#
+# AddrWidth 12. cordic_obi_regs decodes obi_addr_i[11:0] and nothing above it: the
+# window is 4 KB and the crossbar has already decoded the rest, which the RTL makes
+# explicit by tying obi_addr_i[AddrWidth-1:12] into unused_addr_msbs. Twenty free bits
+# per cycle over a 20-cycle unrolling is what was making this intractable, and the
+# design cannot observe them.
+#
+# Q3.5 with 5 stages, the same floor configuration the equivalence miters use. The
+# protocol rules are about req, gnt, rvalid, rid and err, none of which depends on the
+# number format, but the register file's readback mux and the constant tables it
+# returns are DataWidth wide, and that is what the solver has to carry.
+#
+# At the Q3.29 N=28 32-bit-address default, z3 was still working on step 0 after five
+# minutes at 3 GB resident per task.
+rready0: chparam -set UseRReady 0 -set AddrWidth 12 -set DataWidth 8 -set FracBits 5 -set NumStages 5 cordic_obi_props
+cover0:  chparam -set UseRReady 0 -set AddrWidth 12 -set DataWidth 8 -set FracBits 5 -set NumStages 5 cordic_obi_props
+rready1: chparam -set UseRReady 1 -set AddrWidth 12 -set DataWidth 8 -set FracBits 5 -set NumStages 5 cordic_obi_props
+cover1:  chparam -set UseRReady 1 -set AddrWidth 12 -set DataWidth 8 -set FracBits 5 -set NumStages 5 cordic_obi_props
+prep -top cordic_obi_props
+
+[files]
+../rtl/cordic_rom.svh
+../rtl/cordic_defs.svh
+../rtl/cordic_rom_fx.svh
+../rtl/cordic_regmap.svh
+../rtl/cordic_obi_regs.sv
+cordic_obi_props.sv

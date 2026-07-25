@@ -1,7 +1,15 @@
-# Bounded equivalence of the two microarchitectures
+# Formal attempts, and what came of them
 
 `make formal`. Needs [SymbiYosys](https://github.com/YosysHQ/sby) and a solver; not
 part of `make all`, since both are a separate install.
+
+**Read this first: none of these proofs converges on the hardware they were attempted
+on.** The properties are written, the models elaborate, the encodings are generated,
+and then the solver runs out of time. That is recorded below with wall clock times so
+the attempt can be repeated or improved, and nothing anywhere in this repository
+claims a formal result. The evidence for correctness here is the simulation suite:
+80 tests, the two cores diffed word for word over 900 operations, and 13 concurrent
+assertions live in the RTL. See [Results](#results).
 
 `tb/test_equivalence.py` already runs both variants over 900 directed and random
 operations and diffs their results word for word, with `scripts/check_equivalence.py`
@@ -71,13 +79,67 @@ on both sides would produce exactly that: a clean pass that proves nothing.
 `equiv_tiny_cover.sby` asks the opposite question in `cover` mode, whether `matched` is
 reachable at all. It has to pass for the `bmc` result to carry any weight.
 
+## The OBI protocol properties
+
+`obi_protocol.sby` and `cordic_obi_props.sv` ask a different and much smaller
+question: do the bus rules hold for every sequence of traffic up to a bound?
+`cordic_obi_regs` is the right unit for it, because the CORDIC datapath is entirely
+outside it. The issue port, the result port and the status inputs are all ports, so
+the solver drives them freely and what is left is the register file and the
+response-holding registers.
+
+Seven rules, each stated at the port boundary rather than over an internal signal,
+because the port boundary is the contract a bus manager can observe: no request
+accepted while a response is held, no pop of a result the hardware does not have,
+`gnt` never falling when `UseRReady` is 0, a response only ever following an accepted
+request, `rid` echoing `aid`, an issue lasting exactly one cycle, and a held response
+neither changing nor withdrawing when `UseRReady` is 1. Five `cover` properties run
+alongside so the rules cannot pass vacuously: if the solver could never reach a served
+read, an error response, an issue, a pop or a back-to-back beat, asserting things about
+them would prove nothing.
+
+Two reductions are applied and neither weakens the claim. `AddrWidth` drops to 12
+because the design decodes `obi_addr_i[11:0]` and explicitly ties everything above it
+into `unused_addr_msbs`, so twenty free bits per cycle over the unrolling buy nothing.
+`DataWidth` drops to the Q3.5 floor because the rules are about `req`, `gnt`, `rvalid`,
+`rid` and `err`, none of which depends on the number format.
+
+It still does not converge.
+
+## Results
+
+Every figure below is wall clock on a 22-core workstation with other work running, and
+every attempt was bounded by `timeout` so an external interruption is distinguishable
+from real non-convergence.
+
+| Task | Configuration | Bound | Outcome |
+|---|---|---|---|
+| `obi_protocol.sby` | Q3.5, 5 stages, 12-bit address | 20 | no result. z3 still inside step 0 after 900 s at about 3 GB resident per task |
+| `obi_protocol.sby` | same | 8 | no result in 280 s, still inside step 0 |
+| `equiv_tiny_1op.sby` | Q3.5, 5 stages, one operation in flight | 14 | see below |
+| `equiv_tiny.sby` | Q3.5, 5 stages | 16 | no result in 1,898 s |
+| `equiv_q3_13.sby` | Q3.13, 15 stages | 22 | sby exited 16 after 1,696 s, engine returned no status |
+
+The `abc bmc3` engine is not an alternative here: it crashes inside sby's own result
+parser with `KeyError: 'asserts'` in `sby_engine_abc.py`, about a second in, before it
+gets near the design.
+
+What the shape of the failure says: the OBI properties stall at step 0, before any
+unrolling, which is why halving the bound from 20 to 8 changed nothing. That points at
+the initial-state constraint rather than the depth, and it is where a next attempt
+should start. The equivalence miter is a different problem, and a plainer one: it has
+to reason about iterated fixed-point addition across two structurally different
+implementations, which is exactly the case bit-blasting handles worst.
+
 ## Configurations
 
 | Task | Configuration | Bound | Why |
 |---|---|---|---|
 | `equiv_tiny.sby` | Q3.5, 5 stages | 16 | the smallest configuration the design supports |
 | `equiv_tiny_cover.sby` | Q3.5, 5 stages | 24 | reachability of the comparison itself |
+| `equiv_tiny_1op.sby` | Q3.5, 5 stages, one operation in flight | 14 | the smallest question the miter can be asked |
 | `equiv_q3_13.sby` | Q3.13, 15 stages | 22 | the configuration the accuracy sweep uses |
+| `obi_protocol.sby` | Q3.5, 5 stages, 12-bit address | 20 | bus protocol only, four tasks over the two handshake settings |
 
 Q3.5 with 5 stages is not an arbitrarily shrunken model. It is the floor the
 elaboration checks in `rtl/cordic_accel.sv` allow: `DataWidth` at least 8,

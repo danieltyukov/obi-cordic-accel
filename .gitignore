@@ -42,3 +42,10 @@ build/
 # metrics and docs/img the rendered layout.
 build/pnr/
 pnr/runs/
+
+# SymbiYosys working trees. Same reasoning: sby writes a directory per task holding
+# the elaborated model, the SMT2 encoding and the solver log, all regenerable from the
+# .sby and the RTL beside it. What is worth keeping is the outcome, and that is
+# recorded as text in formal/README.md, where a reader can see it without unpacking
+# 3.5 MB of solver scratch.
+formal/*/

@@ -280,11 +280,30 @@ layout:
 # Not part of `make all`: SymbiYosys is a separate install, and the bound is deep
 # enough that the run is measured in minutes rather than seconds.
 # ---------------------------------------------------------------------------
+# FORMAL_TIMEOUT bounds each attempt, because none of them converges on the machine
+# this was developed on and an unbounded run is indistinguishable from a hang. The
+# wall time is printed either way, so an external interruption can be told apart from
+# real non-convergence. formal/README.md records what was measured.
+FORMAL_TIMEOUT ?= 1800
+FORMAL_SBY     ?= obi_protocol equiv_tiny_1op equiv_tiny equiv_q3_13
+
 formal:
 	@command -v sby >/dev/null 2>&1 || { \
-	  echo "sby (SymbiYosys) not on PATH; skipping the bounded equivalence proof"; \
+	  echo "sby (SymbiYosys) not on PATH; skipping the formal attempts"; \
 	  exit 0; }
-	cd $(TOP)/formal && sby -f equiv_q3_13.sby
+	@cd $(TOP)/formal && for f in $(FORMAL_SBY); do \
+	  echo "== formal: $$f, bounded at $(FORMAL_TIMEOUT)s"; \
+	  start=$$(date +%s); \
+	  timeout $(FORMAL_TIMEOUT) sby -f $$f.sby; rc=$$?; \
+	  el=$$(( $$(date +%s) - start )); \
+	  if [ $$rc -eq 124 ]; then \
+	    echo "   $$f: no result in $${el}s, the solver did not converge"; \
+	  elif [ $$rc -ne 0 ]; then \
+	    echo "   $$f: sby exited $$rc after $${el}s"; \
+	  else \
+	    echo "   $$f: PASS in $${el}s"; \
+	  fi; \
+	done
 
 # ---------------------------------------------------------------------------
 # Software

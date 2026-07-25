@@ -598,20 +598,27 @@ leftover slack, and for what that number does and does not claim.
 | Check | Pipelined | Iterative |
 |---|---|---|
 | Router DRC, iterated to convergence | 0 | 0 |
-| Magic DRC, sg13g2 runset | not finished | 0 |
+| Magic DRC, sg13g2 runset | **7** | 0 |
 | KLayout DRC, sg13g2 runset, 477 rules | not finished | 0 |
 | Magic against KLayout GDS XOR | 0 | 0 |
 | netgen LVS, extracted against netlist | not finished | **circuits match uniquely** |
 | Antenna violations after diode insertion | 13 | 6 |
 | Routed wirelength | 1,685,814 um | 418,654 um |
 
+**The folded variant closes clean and the pipelined one does not.** Magic finds 7
+violations on the pipelined layout of two kinds, both in the raw count Magic warns
+should be divided by three or four: a Metal2 minimum-area failure (`M2.d`) at one spot
+near (704.5, 467.4) um, and a tie extension beyond a diffusion contact (`LU.c`) at two
+more. Neither is in the deck OpenROAD's own router checks, which is why the router
+converged to zero and Magic did not. They are not designed in, they are artefacts of
+this flow configuration on a die five times the area, and clearing them would mean
+another routing run rather than an RTL change.
+
 Magic's DRC is single-threaded whatever the flow is told, and it scales badly: 7
-minutes 43 seconds for the folded variant's 30k instances, and it had not returned on
-the pipelined variant's 166k when this was written. "Not finished" in that column
-means exactly that, and not that the check passed. Everything above it in the
-pipelined column did run: the router iterated its own DRC from 15,957 violations to
-zero over six passes, and Magic and KLayout independently streamed out GDS that XOR to
-nothing.
+minutes 43 seconds for the folded variant's 30k instances against 2 hours 7 minutes
+for the pipelined variant's 166k. The stages after it had not returned when this was
+written, and "not finished" in that column means exactly that, not that the check
+passed.
 
 ## Software
 
@@ -753,6 +760,11 @@ so a clone needs no generator run to build.
 - **Fmax is limited by ripple-carry adders.** That is a property of `abc`'s mapping,
   not of the architecture, and it is stated rather than worked around. Both variants
   are affected identically, so the comparison holds.
+- **There is no formal result.** `formal/` holds a SymbiYosys equivalence miter and a
+  set of OBI protocol properties, both written and both elaborating, and the solver
+  runs out of time on every configuration attempted. Each attempt is recorded with its
+  bound and its wall clock in [formal/README.md](formal/README.md). Nothing above
+  depends on it.
 - **Icarus Verilog does not work.** Not a limitation of the tool's SystemVerilog
   coverage in general, but two specific defects documented in
   [docs/DESIGN.md](docs/DESIGN.md).
