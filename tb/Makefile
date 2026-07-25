@@ -45,6 +45,10 @@ SIM_BUILD ?= sim_build/$(SIM)_$(TOPLEVEL)_w$(CORDIC_DATA_WIDTH)_f$(CORDIC_FRAC_B
 
 VERILOG_INCLUDE_DIRS += $(TOPDIR)/rtl
 COMPILE_ARGS += -Wno-fatal
+# --assert turns on the concurrent assertions in the RTL, so the protocol and
+# structural invariants are checked in every simulation rather than only by the
+# testbench looking in from outside.
+COMPILE_ARGS += --assert
 COMPILE_ARGS += -GDataWidth=$(CORDIC_DATA_WIDTH)
 COMPILE_ARGS += -GFracBits=$(CORDIC_FRAC_BITS)
 COMPILE_ARGS += -GNumStages=$(CORDIC_NUM_STAGES)

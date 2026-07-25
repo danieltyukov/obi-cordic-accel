@@ -73,6 +73,25 @@ module cordic_fifo #(
   end
 
 `ifndef SYNTHESIS
+  // Structural invariants. push and pop are gated by ready_o and valid_o, so these
+  // can only fail if a consumer or producer ignores the handshake, which is exactly
+  // what they are here to catch.
+  a_no_push_when_full: assert property (@(posedge clk_i) disable iff (!rst_ni)
+      !(push && full_o))
+    else $error("pushed into a full FIFO");
+
+  a_no_pop_when_empty: assert property (@(posedge clk_i) disable iff (!rst_ni)
+      !(pop && empty_o))
+    else $error("popped from an empty FIFO");
+
+  a_count_in_range: assert property (@(posedge clk_i) disable iff (!rst_ni)
+      count_o <= CntWidth'(Depth))
+    else $error("occupancy %0d exceeds the depth %0d", count_o, Depth);
+
+  a_full_and_empty_exclusive: assert property (@(posedge clk_i) disable iff (!rst_ni)
+      !(full_o && empty_o))
+    else $error("FIFO reported full and empty at once");
+
   initial begin
     if (Depth < 2 || (Depth & (Depth - 1)) != 0) begin
       $fatal(1, "cordic_fifo: Depth must be a power of two and at least 2, got %0d", Depth);

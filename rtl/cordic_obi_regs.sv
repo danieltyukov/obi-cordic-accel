@@ -504,6 +504,54 @@ module cordic_obi_regs #(
   assign unused_addr_msbs = ^{obi_addr_i[AddrWidth-1:12]};
 
 `ifndef SYNTHESIS
+  // ---------------------------------------------------------------------------
+  // OBI protocol assertions
+  // ---------------------------------------------------------------------------
+  // The testbench manager checks these from outside as it drives. Asserting them
+  // here as well means they hold in any simulation of any integration, including
+  // Croc's own testbench, without that testbench having to know the rules.
+  //
+  // Enabled by Verilator's --assert, which tb/Makefile passes. A tool without SVA
+  // support skips the whole block.
+
+  // A request may only be taken when a response slot is free. Violating this is
+  // how a subordinate loses a transaction.
+  a_no_accept_while_held: assert property (@(posedge clk_i) disable iff (!rst_ni)
+      !(a_ack && rsp_hold_q && !rsp_taken))
+    else $error("A beat accepted while an unclaimed response was still held");
+
+  // A response only ever appears because a request was accepted the cycle before.
+  a_rsp_follows_req: assert property (@(posedge clk_i) disable iff (!rst_ni)
+      $rose(rsp_hold_q) |-> $past(a_ack))
+    else $error("rvalid rose without an accepted A beat in the previous cycle");
+
+  // With rready in play, a held response must not change and must not withdraw.
+  a_rsp_stable: assert property (@(posedge clk_i) disable iff (!rst_ni)
+      (obi_rvalid_o && (UseRReady != 0) && !obi_rready_i)
+      |=> obi_rvalid_o && $stable({obi_rdata_o, obi_rid_o, obi_err_o}))
+    else $error("held response changed or withdrew before rready");
+
+  // Without rready, gnt must never fall: a manager that ignores rready depends on
+  // it, and Croc's SbrObiCfg is exactly that configuration.
+  a_gnt_always: assert property (@(posedge clk_i) disable iff (!rst_ni)
+      (UseRReady == 0) |-> obi_gnt_o)
+    else $error("gnt fell with UseRReady = 0");
+
+  // rid echoes the aid of the request being answered.
+  a_rid_echo: assert property (@(posedge clk_i) disable iff (!rst_ni)
+      a_ack |=> (obi_rid_o == $past(obi_aid_i)))
+    else $error("rid does not echo the accepted aid");
+
+  // An issue is only ever offered for one cycle, and only on a CMD write.
+  a_issue_pulse: assert property (@(posedge clk_i) disable iff (!rst_ni)
+      iss_valid_o |=> !iss_valid_o)
+    else $error("iss_valid_o held for more than one cycle");
+
+  // Popping a result the hardware does not have would corrupt the queue.
+  a_pop_only_when_valid: assert property (@(posedge clk_i) disable iff (!rst_ni)
+      res_pop_o |-> res_valid_i)
+    else $error("res_pop_o asserted with no result available");
+
   initial begin
     if (DataWidth > 32) $fatal(1, "cordic_obi_regs: DataWidth %0d exceeds the 32-bit OBI word",
                                DataWidth);

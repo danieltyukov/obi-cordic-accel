@@ -175,4 +175,19 @@ module cordic_core_pipe #(
 
   assign dbg_stage_valid_o = {vq, valid_i && ready_o};
 
+`ifndef SYNTHESIS
+  // The whole point of the global-enable scheme is that a stalled consumer costs
+  // throughput and nothing else. If the tail is holding a result the consumer will
+  // not take, that result must still be there, unchanged, next cycle.
+  a_tail_holds_on_stall: assert property (@(posedge clk_i) disable iff (!rst_ni)
+      (valid_o && !ready_i && !flush_i)
+      |=> valid_o && $stable({x_o, y_o, z_o, attr_o}))
+    else $error("a stalled result was dropped or changed");
+
+  // ready_o low means the pipeline is frozen, so nothing may advance.
+  a_frozen_when_not_ready: assert property (@(posedge clk_i) disable iff (!rst_ni)
+      (!ready_o && !flush_i) |=> $stable(vq))
+    else $error("the pipeline advanced while frozen");
+`endif
+
 endmodule
