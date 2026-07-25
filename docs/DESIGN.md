@@ -49,6 +49,25 @@ That is the whole datapath. `rtl/cordic_stage.sv` is nine lines of arithmetic an
 there is no multiplier anywhere in the design, which is the reason to use CORDIC in
 the first place. Both cores instantiate that one module, so they cannot drift.
 
+`make arith` asserts the no-multiplier property rather than leaving it as a claim:
+Yosys is stopped after `proc` and `flatten`, before any cell mapping, and asked to
+assert `$mul`, `$div`, `$mod`, `$pow` and `$macc` are absent. It then prints what the
+design does infer, which describes the two microarchitectures more precisely than
+prose can:
+
+| Configuration | Arithmetic inferred |
+|---|---|
+| pipelined Q3.29 N=28 | mux 366, add 95, sub 89, pmux 45, neg 8 |
+| iterative Q3.29 N=28 | mux 252, add 15, sub 8, pmux 9, neg 8, `sshr` 2 |
+| pipelined Q3.13 N=15 | mux 236, add 56, sub 50, pmux 27, neg 8 |
+| iterative Q3.13 N=15 | mux 200, add 15, sub 8, pmux 9, neg 8, `sshr` 2 |
+
+The folded core has a sixth of the adders and the only two `sshr` cells in the whole
+design, which are its two barrel shifters. The pipelined core has none at all,
+because its shift amounts are elaboration-time constants and become wiring. That one
+table is the area-versus-frequency trade-off in its rawest form, before any tool has
+mapped a cell.
+
 ## Circular coordinates
 
 Each stage is a rotation by `atan(2**-s)` scaled by `sqrt(1 + 2**-2s)`:
