@@ -36,7 +36,7 @@ module cordic_obi_regs #(
   parameter int unsigned AddrWidth = 32,
   parameter int unsigned IdWidth   = 3,
   /// 1 makes the R channel wait for rready. Croc uses 0.
-  parameter bit          UseRReady = 1'b0,
+  parameter int unsigned UseRReady = 0,
 
   /// Width of the interface fixed-point word, at most 32.
   parameter int unsigned DataWidth = 32,
@@ -44,7 +44,7 @@ module cordic_obi_regs #(
   parameter int unsigned NumStages = 28,
   parameter int unsigned GuardInt  = 2,
   parameter int unsigned GuardFrac = 4,
-  parameter bit          Variant   = 1'b0,
+  parameter int unsigned Variant   = 0,
   parameter int unsigned InDepth   = 4,
   parameter int unsigned OutDepth  = 4,
   /// Issue-to-result latency in cycles, reported through CFG1.
@@ -125,7 +125,7 @@ module cordic_obi_regs #(
   logic rsp_taken;    // it is being taken this cycle
   logic a_ack;        // an A beat is accepted this cycle
 
-  assign rsp_taken   = UseRReady ? (rsp_hold_q && obi_rready_i) : rsp_hold_q;
+  assign rsp_taken   = (UseRReady != 0) ? (rsp_hold_q && obi_rready_i) : rsp_hold_q;
   assign obi_gnt_o   = !rsp_hold_q || rsp_taken;
   assign a_ack       = obi_req_i && obi_gnt_o;
   assign obi_rvalid_o = rsp_hold_q;
@@ -235,8 +235,8 @@ module cordic_obi_regs #(
     cfg0_word[CordicCfg0GuardFracMsb:CordicCfg0GuardFracLsb] = 4'(GuardFrac);
 
     cfg1_word = '0;
-    cfg1_word[CordicCfg1VariantBit]   = Variant;
-    cfg1_word[CordicCfg1UseRreadyBit] = UseRReady;
+    cfg1_word[CordicCfg1VariantBit]   = (Variant != 0);
+    cfg1_word[CordicCfg1UseRreadyBit] = (UseRReady != 0);
     cfg1_word[CordicCfg1InDepthMsb:CordicCfg1InDepthLsb]   = 4'(InDepth);
     cfg1_word[CordicCfg1OutDepthMsb:CordicCfg1OutDepthLsb] = 4'(OutDepth);
     cfg1_word[CordicCfg1LatencyMsb:CordicCfg1LatencyLsb]   = 8'(Latency);

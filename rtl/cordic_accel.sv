@@ -32,7 +32,7 @@ module cordic_accel #(
   /// Micro-rotations per operation. 5, or 15 and above, for hyperbolic support.
   parameter int unsigned NumStages = 28,
   /// 0 selects the fully pipelined core, 1 the iterative one.
-  parameter bit          Variant   = 1'b0,
+  parameter int unsigned Variant   = 0,
   /// Integer guard bits of the internal datapath, at least 1.
   parameter int unsigned GuardInt  = 2,
   /// Fractional guard bits of the internal datapath, at least 1.
@@ -45,7 +45,7 @@ module cordic_accel #(
   parameter int unsigned AddrWidth = 32,
   parameter int unsigned IdWidth   = 3,
   /// 1 makes the OBI R channel wait for rready. Croc uses 0.
-  parameter bit          UseRReady = 1'b0
+  parameter int unsigned UseRReady = 0
 ) (
   input  logic clk_i,
   input  logic rst_ni,
@@ -106,8 +106,8 @@ module cordic_accel #(
   // Pipelined: NumStages cycles from an accepted operation to a result, one
   // operation per cycle. Iterative: NumStages+1 cycles, and the next operation
   // may be accepted in the cycle the result is taken.
-  localparam int unsigned CoreLatency  = Variant ? (NumStages + 1) : NumStages;
-  localparam int unsigned CoreInterval = Variant ? (NumStages + 1) : 1;
+  localparam int unsigned CoreLatency  = (Variant != 0) ? (NumStages + 1) : NumStages;
+  localparam int unsigned CoreInterval = (Variant != 0) ? (NumStages + 1) : 1;
 
   // Payload layouts. Concatenation order is fixed here so that the FIFO stays a
   // plain vector-width parameter.
@@ -374,6 +374,8 @@ module cordic_accel #(
       $fatal(1, "cordic_accel: OutDepth must be 2, 4 or 8, got %0d", OutDepth);
     end
     if (IdWidth < 1) $fatal(1, "cordic_accel: IdWidth must be at least 1");
+    if (Variant > 1) $fatal(1, "cordic_accel: Variant must be 0 or 1, got %0d", Variant);
+    if (UseRReady > 1) $fatal(1, "cordic_accel: UseRReady must be 0 or 1, got %0d", UseRReady);
     if (AddrWidth < 12) $fatal(1, "cordic_accel: AddrWidth must be at least 12");
   end
 `endif

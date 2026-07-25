@@ -24,7 +24,7 @@ module cordic_unit #(
   /// Number of micro-rotations.
   parameter int unsigned NumStages = 28,
   /// 0 selects the fully pipelined core, 1 the iterative one.
-  parameter bit          Variant   = 1'b0,
+  parameter int unsigned Variant   = 0,
   /// Integer guard bits of the internal datapath.
   parameter int unsigned GuardInt  = 2,
   /// Fractional guard bits of the internal datapath.
@@ -93,7 +93,7 @@ module cordic_unit #(
   logic signed [IntWidth-1:0] core_x, core_y, core_z;
   logic [AttrWidth-1:0]       core_attr;
 
-  if (Variant == 1'b0) begin : gen_pipelined
+  if (Variant == 0) begin : gen_pipelined
     cordic_core_pipe #(
       .Width     (IntWidth),
       .FracBits  (FracBits + GuardFrac),

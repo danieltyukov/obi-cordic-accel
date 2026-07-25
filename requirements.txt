@@ -1,5 +1,11 @@
-cocotb==2.0.1
+# cocotb 1.9.x, not 2.x, on purpose. cocotb 2.0 requires Verilator 5.036 or newer
+# and this design cannot be simulated with Icarus Verilog at all (it aborts on an
+# internal assertion when a constant function indexes a packed 2D localparam), so
+# Verilator is the only usable simulator and its version pins cocotb.
+# tb/cordic_tb.py papers over the 1.x/2.x API differences, so the suite also runs
+# unchanged on cocotb 2.x with a new enough Verilator.
+cocotb==1.9.2
 numpy>=1.26
 matplotlib>=3.8
-pytest>=8.0
 mpmath>=1.3
+pytest>=8.0
