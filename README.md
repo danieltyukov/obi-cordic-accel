@@ -24,7 +24,7 @@ and two interchangeable microarchitectures that produce bit-identical results.
 | Interfaces | OBI v1.6 subordinate over a 4 KB window, plus a valid/ready streaming port |
 | Pipelined core | 1 result per cycle, 30 cycles end-to-end latency, 55,096 cells |
 | Iterative core | 1 result per 29 cycles, 31 cycles end-to-end latency, 11,101 cells |
-| Verification | 17,536 accuracy comparisons, 4,200 domain arguments, 28 OBI protocol tests, bit-identity between both cores over 900 operations |
+| Verification | 71 tests: 17,536 accuracy comparisons, 4,200 domain arguments, 28 OBI protocol tests, bit-identity between both cores over 900 operations, plus 13 concurrent assertions in the RTL |
 | Tooling | Verilator lint clean at `-Wall` over 10 configurations, Yosys over 6, RV32 driver image links |
 
 ## Contents
@@ -502,6 +502,14 @@ make all         # all of the above
 | `test-throughput` | Retire interval asserted against what `CFG1` advertises, per-stage occupancy checked cell by cell |
 | `test-equivalence` | Both cores' results diffed word for word |
 | `test-reset` | Reset with a full pipeline, busy, sticky done, queueing, overflow, interrupts |
+
+Alongside those, **13 concurrent assertions** live in the RTL and are evaluated in
+every simulation through Verilator's `--assert`: the OBI rules in
+`cordic_obi_regs.sv`, the FIFO invariants in `cordic_fifo.sv`, and two properties in
+`cordic_core_pipe.sv` aimed at the global-enable scheme, since its whole claim is
+that a stalled consumer costs throughput and nothing else. Asserting them inside the
+RTL means they hold in Croc's own testbench too, without that testbench having to
+know the rules.
 
 **Simulator, stated plainly: Verilator only.** Icarus Verilog 12 cannot build this
 design, aborting with an internal assertion (`netmisc.cc:1821`) when a constant

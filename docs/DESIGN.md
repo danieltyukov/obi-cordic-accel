@@ -475,6 +475,7 @@ either cocotb generation.
 | Throughput and latency | `tb/test_throughput.py` | Retire interval asserted against what `CFG1` advertises, not against a hard-coded number. Per-stage occupancy checked cell by cell. |
 | Variant equivalence | `tb/test_equivalence.py` plus `scripts/check_equivalence.py` | Both variants record the same stimulus and the files are diffed word for word, without the model in between. |
 | Reset and handshake | `tb/test_reset.py` | Reset asserted with a full pipeline leaves no stale result. Busy, done, queueing, overflow and the interrupt path. |
+| Concurrent assertions | `rtl/cordic_obi_regs.sv`, `cordic_fifo.sv`, `cordic_core_pipe.sv` | 13 properties evaluated in every simulation via Verilator's `--assert`, so the OBI and structural rules hold in any integration's own testbench too. |
 | Lint | `make lint` | Zero Verilator warnings at `-Wall` over 10 parameter configurations plus the Croc wrapper against stand-in Croc packages. |
 | Synthesis | `make synth` | Six configurations. No inferred latch, no combinational loop, no unmapped submodule, asserted inside the Yosys script itself. |
 | Driver | `make sw` | The identical driver source runs on the host against a register-accurate peripheral model, 626 checks, and links as a complete RV32IMC image. |
