@@ -47,6 +47,9 @@ CONFIGS = [
 ]
 DEFAULTS = dict(guard_int=2, guard_frac=4, in_depth=4, out_depth=4)
 
+# Leave a couple of cores for everything else.
+THREADS = max(1, (os.cpu_count() or 4) - 2)
+
 # The metrics worth extracting from LibreLane's flat metrics dict.
 METRICS = [
     "design__instance__count",
@@ -210,6 +213,12 @@ def config_for(cfg):
         # [RSZ-0060] Max buffer count reached.
         "RSZ_HOLD_MAX_BUFFER_PCT": 75,
         "RSZ_HOLD_SLACK_MARGIN": 0.05,
+        # KLAYOUT_DRC_THREADS and KLAYOUT_XOR_THREADS default to unset, which means
+        # single-threaded. On a 30k-instance design the maximal sg13g2 DRC runset
+        # then takes longer than the other 78 stages put together; the first attempt
+        # sat in it for over half an hour. Threading it is the whole fix.
+        "KLAYOUT_DRC_THREADS": THREADS,
+        "KLAYOUT_XOR_THREADS": THREADS,
     }
 
 
