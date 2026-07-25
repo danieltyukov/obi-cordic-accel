@@ -297,12 +297,22 @@ sw-host: sw-vectors
 	$(TOP)/build/sw/test_cordic_host
 
 # Skipped rather than failed when the cross toolchain is absent, and it says so.
+# The freestanding link needs only gcc and libgcc, so it runs wherever the cross
+# compiler does. The picolibc link needs a libc that ships separately
+# (picolibc-riscv64-unknown-elf on Debian and Ubuntu), so it is attempted only when
+# picolibc.specs is actually findable, and skipped out loud otherwise.
 sw-rv32: sw-vectors
-	@if command -v riscv64-unknown-elf-gcc >/dev/null 2>&1; then \
+	@if ! command -v riscv64-unknown-elf-gcc >/dev/null 2>&1; then \
+	  echo "== sw: RV32 image SKIPPED, riscv64-unknown-elf-gcc not on PATH"; \
+	elif riscv64-unknown-elf-gcc -specs=picolibc.specs -E -x c /dev/null -o /dev/null \
+	     >/dev/null 2>&1; then \
 	  echo "== sw: RV32 images, freestanding and picolibc"; \
 	  $(MAKE) -s -C $(TOP)/sw rv32 rv32-picolibc; \
 	else \
-	  echo "== sw: RV32 image SKIPPED, riscv64-unknown-elf-gcc not on PATH"; \
+	  echo "== sw: RV32 image, freestanding only"; \
+	  echo "   picolibc.specs not found; install picolibc-riscv64-unknown-elf for the"; \
+	  echo "   second link mode. Croc boots freestanding, so this is the one that matters."; \
+	  $(MAKE) -s -C $(TOP)/sw rv32; \
 	fi
 
 # ---------------------------------------------------------------------------

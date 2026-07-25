@@ -158,18 +158,33 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      # picolibc ships separately from the cross compiler, and the second RV32 link
+      # mode needs its specs file. Both packages are in noble/universe.
       - name: install the RISC-V toolchain
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends gcc-riscv64-unknown-elf
+          sudo apt-get install -y --no-install-recommends \
+            gcc-riscv64-unknown-elf picolibc-riscv64-unknown-elf
           riscv64-unknown-elf-gcc --version | head -1
           riscv64-unknown-elf-gcc -print-multi-lib
       - name: create the venv
         run: make venv
-      # Runs the host build and links the RV32 image. The RV32 image is not
-      # executed: there is no Croc simulation here. See sw/README.md.
-      - name: driver test and RV32 image
+      # Runs the host build and links both RV32 images. Neither is executed: there
+      # is no Croc simulation here. See sw/README.md.
+      - name: driver test and RV32 images
         run: make sw
+      # `make sw` skips the picolibc link when picolibc.specs is missing, which is the
+      # right behaviour for a contributor without it. Here it was installed above, so a
+      # skip would mean silently losing coverage rather than passing.
+      - name: both link modes produced an image
+        run: |
+          for f in build/sw/test_cordic_rv32.elf build/sw/test_cordic_rv32_picolibc.elf; do
+            if [ ! -f "$f" ]; then
+              echo "::error::$f was not built; the picolibc link mode was skipped"
+              exit 1
+            fi
+            riscv64-unknown-elf-size "$f"
+          done
       - name: upload the RV32 image
         if: always()
         uses: actions/upload-artifact@v4

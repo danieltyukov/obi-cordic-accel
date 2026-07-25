@@ -19,7 +19,11 @@ verilator.log
 # synthesis
 build/
 *.json
+# Measured results are committed, so a clone can redraw every figure and check every
+# quoted number without the PDK, which no hosted runner has.
 !docs/synth/*.json
+!docs/pdk/*.json
+!docs/pnr/*.json
 
 # software
 *.elf
