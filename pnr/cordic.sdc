@@ -12,14 +12,20 @@ set clk_port   [get_ports clk_i]
 
 create_clock -name clk -period $clk_period $clk_port
 
-# 5 percent of the period for clock uncertainty, which is a normal allowance for a
-# design of this size before a real CTS result is available.
-set_clock_uncertainty [expr {$clk_period * 0.05}] clk
+# Setup uncertainty only. Applying the same allowance to hold made post-CTS hold
+# repair unsatisfiable: OpenROAD hit its buffer ceiling ([RSZ-0060] Max buffer count
+# reached) trying to pad every short path by 5 percent of the period. Hold gets a
+# small fixed allowance instead, which is what it actually needs.
+set_clock_uncertainty -setup [expr {$clk_period * 0.05}] clk
+set_clock_uncertainty -hold  0.050 clk
 
 # The accelerator is a subordinate on Croc's OBI crossbar. Both the request into it
 # and the response out of it cross the interconnect, so allow a quarter period each
 # way rather than pretending the ports are at the die edge.
 set io_delay [expr {$clk_period * 0.25}]
+# A minimum as well as a maximum, so the IO paths are not treated as arriving at time
+# zero, which would make every one of them a hold violation to be buffered away.
+set io_delay_min [expr {$clk_period * 0.05}]
 
 set all_in  [all_inputs]
 set data_in [list]
@@ -29,8 +35,10 @@ foreach p $all_in {
   }
 }
 
-set_input_delay  $io_delay -clock clk $data_in
-set_output_delay $io_delay -clock clk [all_outputs]
+set_input_delay  -max $io_delay     -clock clk $data_in
+set_input_delay  -min $io_delay_min -clock clk $data_in
+set_output_delay -max $io_delay     -clock clk [all_outputs]
+set_output_delay -min $io_delay_min -clock clk [all_outputs]
 
 # A real driver on the inputs and a real load on the outputs. Without these the
 # tool assumes an ideal zero-slew source and an open-circuit output.

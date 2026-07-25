@@ -65,6 +65,19 @@ z' = z -   d*a_s
 module over the same sequence, which is why they are bit-identical rather than
 merely equivalent.
 
+**No multiplier** is not a claim here, it is an assertion. `make arith` stops Yosys
+before cell mapping and asserts `$mul`, `$div`, `$mod`, `$pow` and `$macc` are all
+absent, then prints what the design does infer:
+
+| Configuration | Arithmetic inferred |
+|---|---|
+| pipelined Q3.29 N=28 | mux 366, add 95, sub 89, pmux 45, neg 8 |
+| iterative Q3.29 N=28 | mux 252, add 15, sub 8, pmux 9, neg 8, **sshr 2** |
+
+Which is the architecture in one line: the folded core has a sixth of the adders and
+the only two real shifters in the design, because the pipelined core's shift amounts
+are constants and compile away to wiring.
+
 ## Functions
 
 

@@ -200,6 +200,11 @@ def config_for(cfg):
         "FP_CORE_UTIL": cfg["util"],
         "PL_TARGET_DENSITY_PCT": cfg["util"] + 10,
         "PDK": "ihp-sg13g2",
+        # Hold repair on a design with this many short register-to-register paths
+        # needs more headroom than the default allows; the first attempt died on
+        # [RSZ-0060] Max buffer count reached.
+        "RSZ_HOLD_MAX_BUFFER_PCT": 75,
+        "RSZ_HOLD_SLACK_MARGIN": 0.05,
     }
 
 

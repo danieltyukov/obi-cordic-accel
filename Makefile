@@ -6,6 +6,7 @@
 #   make venv      create .venv and install requirements
 #   make gen       regenerate every generated file (ROM, register map, sw vectors)
 #   make lint      Verilator -Wall on the core RTL and on the Croc wrapper
+#   make arith     assert the design infers no multiplier, divider or MAC
 #   make test      the whole cocotb suite, both variants, both OBI handshakes
 #   make synth     Yosys generic cells, six configurations, docs/synth
 #   make pdk       real IHP SG13G2 130nm: area in um^2 and Fmax at three
@@ -69,7 +70,7 @@ STREAM_OPS     ?= 256
 .PHONY: all venv gen rom regmap sw-vectors check-gen lint lint-core lint-wrap \
         lint-configs test test-smoke test-accuracy test-domain test-obi \
         test-throughput test-equivalence test-reset synth synth-quick sw sw-host \
-        sw-rv32 images clean distclean tools help pdk pdk-quick pnr layout
+        sw-rv32 images clean distclean tools help pdk pdk-quick pnr layout arith
 
 all: check-tools gen lint test synth pdk sw images
 	@echo
@@ -131,7 +132,14 @@ check-gen: $(VENV_OK)
 # Lint. Zero warnings at -Wall is the bar, and it is enforced by -Wall alone
 # being enough for Verilator to exit non-zero.
 # ---------------------------------------------------------------------------
-lint: lint-core lint-wrap lint-configs
+lint: lint-core lint-wrap lint-configs arith
+
+# The point of CORDIC is that it needs no multiplier, so that is asserted rather than
+# claimed. A separate pass on purpose: adding the passes it needs ahead of `synth`
+# would perturb the optimisation sequence the reported cell counts came from.
+arith: $(VENV_OK)
+	@echo "== arithmetic audit"
+	$(PY) $(TOP)/scripts/check_arithmetic.py
 
 lint-core:
 	@echo "== lint: core RTL, default parameters"
