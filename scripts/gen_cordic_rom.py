@@ -40,14 +40,19 @@ HEADER = """// Copyright 2026 Daniel Tyukov
 //                       never part of the hyperbolic sequence)
 //   Cordic*Rom    [n]  quantity for an n-stage datapath, n = 0 .. CordicRomMaxStg
 //   CordicHypShiftRom[k] shift amount of hyperbolic stage k
+//
+// Include this inside a module body, not at file scope, so the localparams stay
+// module-local. There is deliberately no include guard: each module that needs
+// the tables gets its own copy, and no tool has to support $unit-scope
+// declarations shared across separately compiled files.
+//
+// No module uses every table, so unused-parameter linting is switched off for the
+// span of the file rather than case by case.
 
-`ifndef CORDIC_ROM_SVH
-`define CORDIC_ROM_SVH
+/* verilator lint_off UNUSEDPARAM */
 """
 
-FOOTER = """
-`endif // CORDIC_ROM_SVH
-"""
+FOOTER = "/* verilator lint_on UNUSEDPARAM */\n"
 
 
 def emit_word_table(name, values, width, comment):

@@ -28,6 +28,15 @@ GEN_NOTE_SV = """// Copyright 2026 Daniel Tyukov
 // GENERATED FILE - DO NOT EDIT.
 // Produced by scripts/gen_regmap.py from scripts/cordic_regmap.py.
 // Regenerate with `make regmap`.
+//
+// Include this inside a module body, not at file scope. There is deliberately no
+// include guard: each module that needs the offsets gets its own module-local
+// copy, so no tool has to share $unit-scope declarations across files.
+//
+// No module uses every offset, so unused-parameter linting is switched off for the
+// span of the file rather than case by case.
+
+/* verilator lint_off UNUSEDPARAM */
 """
 
 GEN_NOTE_C = """/* Copyright 2026 Daniel Tyukov
@@ -50,7 +59,7 @@ def camel(snake):
 
 
 def gen_svh():
-    out = [GEN_NOTE_SV, "", "`ifndef CORDIC_REGMAP_SVH", "`define CORDIC_REGMAP_SVH", ""]
+    out = [GEN_NOTE_SV, ""]
     out.append(f"  localparam int unsigned CordicWindowBytes = 'h{rm.WINDOW_BYTES:x};")
     out.append(f"  localparam int unsigned CordicMappedBytes = 'h{rm.MAPPED_BYTES:x};")
     out.append(f"  localparam logic [31:0] CordicIdMagic     = 32'h{rm.MAGIC:08x};")
@@ -91,7 +100,7 @@ def gen_svh():
         out.append(f"  localparam logic [4:0] CordicFunc{camel(fn.name)} = 5'd{fn.code};"
                    f" // {fn.coord} {fn.mode}")
     out.append("")
-    out.append("`endif // CORDIC_REGMAP_SVH")
+    out.append("/* verilator lint_on UNUSEDPARAM */")
     return "\n".join(out) + "\n"
 
 

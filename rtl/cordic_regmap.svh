@@ -4,10 +4,16 @@
 // GENERATED FILE - DO NOT EDIT.
 // Produced by scripts/gen_regmap.py from scripts/cordic_regmap.py.
 // Regenerate with `make regmap`.
+//
+// Include this inside a module body, not at file scope. There is deliberately no
+// include guard: each module that needs the offsets gets its own module-local
+// copy, so no tool has to share $unit-scope declarations across files.
+//
+// No module uses every offset, so unused-parameter linting is switched off for the
+// span of the file rather than case by case.
 
+/* verilator lint_off UNUSEDPARAM */
 
-`ifndef CORDIC_REGMAP_SVH
-`define CORDIC_REGMAP_SVH
 
   localparam int unsigned CordicWindowBytes = 'h1000;
   localparam int unsigned CordicMappedBytes = 'h64;
@@ -181,4 +187,4 @@
   localparam logic [4:0] CordicFuncMul = 5'd8; // linear rotation
   localparam logic [4:0] CordicFuncDiv = 5'd9; // linear vectoring
 
-`endif // CORDIC_REGMAP_SVH
+/* verilator lint_on UNUSEDPARAM */
