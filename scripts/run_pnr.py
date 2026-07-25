@@ -272,6 +272,7 @@ def harvest(run):
 
 
 SIGNOFF_CORNER = "nom_slow_1p08V_125C"
+CORNERS = ["nom_slow_1p08V_125C", "nom_typ_1p20V_25C", "nom_fast_1p32V_m40C"]
 
 
 def resolve_flop(netlist_text, inst):
@@ -342,6 +343,23 @@ def worst_reg_path(run, corner=SIGNOFF_CORNER):
         "endpoint": resolve_flop(text, end) or end,
         "cell_histogram": {c: cells.count(c) for c in sorted(set(cells))},
     }
+
+
+def reg_slack_per_corner(run):
+    """Worst reg-to-reg setup slack at each corner.
+
+    LibreLane's metrics carry only the overall worst slack per corner, and here that
+    is always an IO path, because the SDC charges a quarter of the period to input
+    arrival and output setup. Comparing that against the Fmax in docs/pdk would be
+    comparing two different things, since `make pdk` measures register to register.
+    So the reg-to-reg number is read out of the path reports instead.
+    """
+    out = {}
+    for corner in CORNERS:
+        info = worst_reg_path(run, corner)
+        if info and info["slack_ns"] is not None:
+            out[corner] = info["slack_ns"]
+    return out
 
 
 def main(argv=None):
@@ -417,6 +435,7 @@ def main(argv=None):
         wpath = worst_reg_path(run)
         if wpath:
             picked["worst_reg_path"] = wpath
+            picked["reg_setup_slack_ns"] = reg_slack_per_corner(run)
             print(f"    worst reg-to-reg at the slow corner: "
                   f"{wpath['slack_ns']:+.3f} ns over {wpath['cells']} cells "
                   f"({wpath['buffers']} of them buffers)", flush=True)

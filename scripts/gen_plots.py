@@ -42,6 +42,9 @@ SYNTH = ROOT / "docs" / "synth"
 PDKDIR = ROOT / "docs" / "pdk"
 PNRDIR = ROOT / "docs" / "pnr"
 
+# The corner a design has to close on, so the one worth plotting.
+SLOW_CORNER = "nom_slow_1p08V_125C"
+
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(ROOT / "tb"))
 
@@ -691,9 +694,14 @@ def plot_pnr():
         d = pdk.get(k, {})
         cfg = v["config"]
         period = cfg["period_ns"]
-        ws = v.get("timing__setup__ws__corner:nom_typ_1p20V_25C")
+        # Reg-to-reg slack, not the overall worst. The overall worst path here is
+        # always an IO path, because the SDC charges a quarter of the period to input
+        # arrival and output setup, and docs/pdk measures Fmax register to register.
+        # Comparing the two would be comparing different quantities.
+        slack = v.get("reg_setup_slack_ns") or {}
+        ws = slack.get(SLOW_CORNER)
         if ws is None:
-            ws = v.get("timing__setup__ws")
+            ws = (v.get("worst_reg_path") or {}).get("slack_ns")
         rows.append(dict(
             name=k,
             label=("pipelined" if cfg["variant"] == 0 else "iterative"),
@@ -707,7 +715,7 @@ def plot_pnr():
             power=v.get("power__total"),
             wl=v.get("route__wirelength"),
             fmax_pr=(1000.0 / (period - ws)) if ws is not None else None,
-            fmax_syn=(d.get("corners", {}).get("typ", {}) or {}).get("fmax_mhz"),
+            fmax_syn=(d.get("corners", {}).get("slow", {}) or {}).get("fmax_mhz"),
         ))
 
     fig, axes = plt.subplots(1, 3, figsize=(12.2, 4.4))
@@ -754,8 +762,9 @@ def plot_pnr():
 
     # --- Fmax, synthesis estimate against post-route
     ax = axes[2]
-    for i, (name, key, alpha) in enumerate((("synthesis estimate", "fmax_syn", 0.95),
-                                            ("post-route", "fmax_pr", 0.45))):
+    for i, (name, key, alpha) in enumerate(
+            (("synthesis, period converged to zero slack", "fmax_syn", 0.95),
+             ("post-route, implied by slack at the routed period", "fmax_pr", 0.45))):
         vals = [r[key] or 0 for r in rows]
         ax.bar(x + (i - 0.5) * 0.34, vals, 0.34, label=name, color=colours,
                alpha=alpha, edgecolor="white", linewidth=0.4)
@@ -764,9 +773,9 @@ def plot_pnr():
                 ax.text(xi, vv + 1.0, f"{vv:.1f}", ha="center", fontsize=7.5)
     ax.set_xticks(x)
     ax.set_xticklabels(labels, fontsize=8)
-    ax.set_ylabel("Fmax at the typical corner (MHz)")
+    ax.set_ylabel("frequency at the slow corner (MHz)")
     ax.set_title("Timing, estimate against routed")
-    ax.legend(loc="upper right", fontsize=7.5)
+    ax.legend(loc="upper right", fontsize=6.4)
 
     bits = []
     for r in rows:
@@ -778,8 +787,13 @@ def plot_pnr():
     note(fig, "Growth from mapped cells to routed cells is clock tree and timing "
               "repair, so it tracks register count. A synthesis-only area comparison "
               "therefore flatters the pipelined variant, which has four times the "
-              "registers of the folded one. Timing is at the typical corner, where "
-              "extracted parasitics replace the set_wire_rc estimate.")
+              "registers of the folded one. The two frequencies are not the same "
+              "measurement: the synthesis figure iterates the clock period until "
+              "slack reaches zero, while the post-route figure divides into the "
+              "slack left at the period the design was routed for, which assumes a "
+              "tighter target would not have changed the tool's choices. Both are "
+              "register to register at the slow corner, 1.08 V and 125 C, with "
+              "extracted parasitics post-route instead of a set_wire_rc estimate.")
     save(fig, "pnr_comparison.png")
 
 
