@@ -336,6 +336,7 @@ images: $(VENV_OK)
 	@if [ -f $(TOP)/docs/pnr/summary.json ]; then \
 	  $(PY) $(TOP)/scripts/gen_plots.py pnr_comparison; \
 	  $(TOP)/scripts/run_pnr_render.sh; \
+	  $(PY) $(TOP)/scripts/gen_plots.py pnr_layouts; \
 	else \
 	  echo "docs/pnr/summary.json is missing; skipping the PnR figures and layout renders (run 'make pnr')"; \
 	fi

@@ -88,9 +88,9 @@ while IFS=$'\t' read -r name gds; do
   echo "== $name: whole die, upper metal, from $gds"
   size=$(render -rd gds="$ROOT/$gds" -rd out="$IMG/layout_$name.png" \
            -rd w="$W" -rd h="$H" -rd only_layers="$UPPER" 2>&1 \
-         | sed -n 's/.*die \([0-9.]*\) x .*/\1/p')
+         | sed -n 's/.*extent \([0-9.]*\) x .*/\1/p')
   echo -e "$name\t$size" >> "$ROOT/build/pnr/die_sizes.txt"
-  echo "   die ${size} um across"
+  echo "   ${size} um across at its widest"
 done < "$LIST"
 
 # 1.04 leaves a thin margin so the largest die is not flush against the frame edge.

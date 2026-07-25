@@ -56,6 +56,10 @@ lyp = G.get("lyp")
 only_layers = G.get("only_layers")
 crop_um = float(G.get("crop_um", 0)) or None
 crop_at = str(G.get("crop_at", "0,0"))
+# Net labels are on by default in KLayout and there are tens of thousands of them in a
+# routed design. At full-die scale they overwrite the metal they are naming and the
+# figure turns into a wall of text. Off unless asked for.
+show_text = str(G.get("text", "0")).lower() not in ("0", "false", "no")
 
 if not gds or not out:
     sys.stderr.write("need -rd gds=<file> -rd out=<png>\n")
@@ -64,6 +68,7 @@ if not gds or not out:
 lv = pya.LayoutView()
 lv.load_layout(gds, 0)
 lv.max_hier()
+lv.set_config("text-visible", "true" if show_text else "false")
 
 if lyp:
     lv.load_layer_props(lyp)
@@ -85,7 +90,12 @@ if only_layers:
     sys.stderr.write(f"showing {shown} layer entries, hiding {hidden}\n")
 
 lv.zoom_fit()
-die = lv.box()
+# The layout's own bounding box, not lv.box(). lv.box() is the viewport after
+# zoom_fit, which carries a margin and is forced to the frame's aspect ratio, so on a
+# square frame it reports a square regardless of the die's shape. The extent below is
+# the GDS extent, which is a little larger than the DEF die area: the PDK's fill and
+# well layers run past the routable die edge.
+die = lv.active_cellview().cell.dbbox()
 
 if crop_um:
     fx, fy = (float(v) for v in crop_at.split(","))
@@ -111,4 +121,5 @@ elif um_per_px:
 
 lv.save_image(out, w, h)
 sys.stderr.write(f"wrote {out} ({w}x{h}) from {gds}; "
-                 f"die {die.width():.1f} x {die.height():.1f} um\n")
+                 f"extent {max(die.width(), die.height()):.1f} x "
+                 f"{min(die.width(), die.height()):.1f} um\n")

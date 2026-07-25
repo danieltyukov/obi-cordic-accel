@@ -9,9 +9,10 @@ What this adds over `make pdk`, which stops after synthesis:
     measured. The pipelined variant has four times the registers of the folded
     one and far more wiring, so the two do not inflate by the same factor, and a
     synthesis-only comparison flatters the pipelined design.
-  - DRC: the router's own, iterated to convergence, plus the Magic runset, plus an
-    XOR of Magic's streamed-out GDS against KLayout's. No LVS: the Classic flow
-    for ihp-sg13g2 has no LVS step, so none is claimed. See docs/pnr/README.md.
+  - signoff: the router's own DRC iterated to convergence, the Magic runset, the
+    KLayout sg13g2 runset, an XOR of Magic's streamed-out GDS against KLayout's,
+    and netgen LVS of the extracted layout against the post-route netlist. See
+    docs/pnr/README.md.
   - a GDS, which scripts/render_gds.py turns into a layout figure.
   - post-route timing at all three corners, with extracted parasitics instead of
     the set_wire_rc estimate `make pdk` has to use, and the post-route critical
@@ -83,9 +84,24 @@ METRICS = [
     "timing__hold__ws__corner:nom_typ_1p20V_25C",
     "timing__setup__ws__corner:nom_fast_1p32V_m40C",
     "timing__hold__ws__corner:nom_fast_1p32V_m40C",
+    # `stdcell` is everything but the fill, which is the number to compare against a
+    # synthesis area. `class:standard_cell` says the same thing but only appears in
+    # the per-step metrics, not in final/metrics.json, so both are collected and the
+    # figures fall back from one to the other.
+    "design__instance__area__stdcell",
+    "design__instance__count__stdcell",
     "design__instance__area__class:standard_cell",
     "design__instance__area__class:fill_cell",
     "design__instance__count__class:standard_cell",
+    # The breakdown is what explains post-route growth rather than just recording it:
+    # a clock tree, the buffers the resizer added to meet timing, and the registers
+    # themselves are separable, and they do not scale the same way with variant.
+    "design__instance__area__class:sequential_cell",
+    "design__instance__area__class:multi_input_combinational_cell",
+    "design__instance__area__class:clock_buffer",
+    "design__instance__area__class:clock_inverter",
+    "design__instance__area__class:timing_repair_buffer",
+    "design__instance__area__class:inverter",
     "route__drc_errors",
     "route__wirelength",
     "magic__drc_error__count",
@@ -93,13 +109,19 @@ METRICS = [
     # A non-zero difference means the two tools disagree about what the layout is,
     # which would make every other number here suspect.
     "design__xor_difference__count",
-    # Present for completeness and expected to stay null: the LibreLane Classic flow
-    # for ihp-sg13g2 includes Magic.DRC but no KLayout.DRC step and no LVS step at
-    # all, so these keys have nothing to fill them. Reported as absent rather than
-    # quietly dropped, because "no LVS number" and "LVS passed" are not the same
-    # claim and the README has to say which one it is.
+    # The Classic flow for ihp-sg13g2 runs KLayout's DRC runset as well as Magic's,
+    # and netgen LVS of the extracted layout against the post-route netlist. Both
+    # land near the end, after the DRC stages that take the longest, so a run that is
+    # interrupted holds valid routing numbers with these still null. Null is reported
+    # rather than dropped, because "no LVS number" and "LVS passed" are different
+    # claims and the README has to say which one it is quoting.
     "klayout__drc_error__count",
     "design__lvs_error__count",
+    "design__lvs_device_difference__count",
+    "design__lvs_net_difference__count",
+    "design__lvs_unmatched_device__count",
+    "design__lvs_unmatched_net__count",
+    "design__lvs_unmatched_pin__count",
     "antenna__violating__nets",
     "power__total",
 ]
@@ -262,23 +284,40 @@ def harvest(run):
 
     LibreLane writes final/metrics.json only when every stage completes, and the
     signoff DRC stages are slow enough that a run can hold real, finished results
-    while still working. Each step also drops or_metrics_out.json, so falling back
-    to those means a stalled or aborted signoff does not throw away routing and
-    timing numbers that are already valid. Later steps win on conflict, which is
-    the same precedence the final file would have.
+    while still working. Falling back to the per-step files means a stalled or
+    aborted signoff does not throw away routing and timing numbers that are
+    already valid.
+
+    Two per-step files matter and only one of them is obvious. `or_metrics_out.json`
+    is what an OpenROAD step reports on its own, but the post-route signoff STA does
+    not write one, so reading only those loses every per-corner slack and the summary
+    ends up with nulls where the three signoff corners should be. `state_out.json`
+    carries the cumulative metrics dict LibreLane threads through the flow, which is
+    what final/metrics.json is a copy of, so it has them. Steps are read in order and
+    later ones win, the same precedence the final file would have.
     """
     final = run / "final" / "metrics.json"
     if final.exists():
         return json.loads(final.read_text())
 
     merged = {}
-    for step in sorted((run).glob("*/or_metrics_out.json")):
-        try:
-            merged.update(json.loads(step.read_text()))
-        except (OSError, json.JSONDecodeError):
-            continue
+    # Step directories are zero-padded ("01-" ... "75-"), so a lexical sort is the
+    # flow order.
+    for step in sorted(p for p in run.iterdir() if p.is_dir()):
+        for name, key in (("or_metrics_out.json", None), ("state_out.json", "metrics")):
+            path = step / name
+            if not path.exists():
+                continue
+            try:
+                data = json.loads(path.read_text())
+            except (OSError, json.JSONDecodeError):
+                continue
+            if key is not None:
+                data = data.get(key) or {}
+            merged.update(data)
     if merged:
-        merged["_source"] = "per-step or_metrics_out.json, flow did not reach final"
+        merged["_source"] = ("per-step or_metrics_out.json and state_out.json, "
+                             "flow did not reach final")
     return merged
 
 
@@ -305,28 +344,37 @@ def resolve_flop(netlist_text, inst):
 def worst_reg_path(run, corner=SIGNOFF_CORNER):
     """Pull the worst register-to-register setup path out of the signoff STA.
 
-    Two details make the difference between a diagnostic number and a misleading
-    one. First, only reg-to-reg counts: the worst path overall is an IO path whose
-    delay is mostly the SDC's own input-arrival budget. Second, the clock network
-    appears on both the launch and the capture edge of every path report, so the
-    clock-tree buffers have to be dropped or a 43-cell datapath reads as 60-odd
-    cells that are mostly buffers.
+    Three details make the difference between a diagnostic number and a misleading
+    one. First, both ends have to be flops: the worst path overall is an IO path
+    whose delay is mostly the SDC's own input-arrival budget, and taking the first
+    flop-launched path instead picks up register-to-output paths, which carry the
+    output setup budget. That is not a hypothetical, it is what this function used to
+    do, and at the typ and fast corners it silently reported a reg-to-output slack
+    3.3 ns off the real reg-to-reg one. Second, the worst such path has to be searched
+    for rather than assumed first, since the report is ordered by slack over all path
+    groups. Third, the clock network appears on both the launch and the capture edge
+    of every path report, so the clock-tree buffers have to be dropped or a 43-cell
+    datapath reads as 60-odd cells that are mostly buffers.
     """
     rpt = next(run.glob(f"*stapostpnr/{corner}/max.rpt"), None)
     if rpt is None:
         return None
-    blocks = rpt.read_text().split("Startpoint:")
-    regs = [b for b in blocks
-            if b.splitlines() and "edge-triggered flip-flop" in b.splitlines()[0]]
-    if not regs:
+    blk = start = end = slack = None
+    for b in rpt.read_text().split("Startpoint:")[1:]:
+        head = b.splitlines()[0]
+        if "edge-triggered flip-flop" not in head:
+            continue
+        m = re.search(r"Endpoint:\s*(\S+)\s*\(([^)]*)\)", b)
+        if not m or "edge-triggered flip-flop" not in m.group(2):
+            continue
+        ms = re.search(r"([-\d.]+)\s+slack \((MET|VIOLATED)\)", b)
+        if not ms:
+            continue
+        s = float(ms.group(1))
+        if slack is None or s < slack:
+            blk, slack, start, end = b, s, head.split("(")[0].strip(), m.group(1)
+    if blk is None:
         return None
-    blk = regs[0]          # report_checks emits paths worst first
-
-    start = blk.splitlines()[0].split("(")[0].strip()
-    m = re.search(r"Endpoint:\s*(\S+)", blk)
-    end = m.group(1) if m else None
-    m = re.search(r"([-\d.]+)\s+slack \((MET|VIOLATED)\)", blk)
-    slack = float(m.group(1)) if m else None
 
     cells = []
     for ln in blk.splitlines():
@@ -468,7 +516,18 @@ def main(argv=None):
                   flush=True)
         summary[cfg["name"]] = picked
 
-        gds = next((run / "final" / "gds").glob("*.gds"), None)
+        gds = next((run / "final" / "gds").glob("*.gds"), None) \
+            if (run / "final" / "gds").is_dir() else None
+        # An unfinished run has the streamed-out GDS in the step that wrote it, which
+        # lands well before the signoff DRC stages that take the longest. Magic's
+        # stream-out is the one the flow carries forward, so the plain name is taken
+        # ahead of the .magic. and .klayout. copies beside it.
+        if gds is None:
+            for pat in ("*magic-streamout/*.gds", "*klayout-streamout/*.gds"):
+                cands = sorted(run.glob(pat), key=lambda p: len(p.name))
+                if cands:
+                    gds = cands[0]
+                    break
         if gds:
             picked["gds"] = str(gds.relative_to(ROOT))
         for k in ("design__instance__count", "design__instance__area",

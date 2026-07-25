@@ -27,6 +27,7 @@ import argparse
 import json
 import math
 import pathlib
+import re
 import sys
 
 import matplotlib
@@ -671,11 +672,13 @@ def plot_ppa():
 # 9. Synthesis against post-route, per variant
 # ---------------------------------------------------------------------------
 def plot_pnr():
-    """How much each variant inflates from mapped cells to routed die.
+    """What changes between a synthesis estimate and a routed design, per variant.
 
-    The point of the figure: a synthesis-only area comparison flatters the
-    pipelined variant, because post-route growth comes from clock tree and timing
-    repair, which scale with register count.
+    Both directions matter and they are not the same size. Area: synthesis reports
+    mapped cells, which is neither the routed cell area nor the die. Timing: the
+    synthesis estimate here is drive repair over a virtual placement with wire RC
+    guessed from a layer, and the routed number is the same netlist family placed,
+    clock-treed, resized against real positions and timed on extracted parasitics.
     """
     ppath = PNRDIR / "summary.json"
     dpath = PDKDIR / "summary.json"
@@ -688,37 +691,55 @@ def plot_pnr():
     if not order:
         raise SystemExit("no recognised variant in docs/pnr/summary.json")
 
+    # What the routed standard cell area is made of. Enough to separate the clock
+    # tree and the resizer's timing repair from the logic they were added to.
+    COMPOSITION = (
+        ("registers", "sequential_cell"),
+        ("combinational", "multi_input_combinational_cell"),
+        ("timing repair", "timing_repair_buffer"),
+        ("clock tree", ("clock_buffer", "clock_inverter")),
+        ("other buffers", "inverter"),
+    )
+
     rows = []
     for k in order:
         v = pnr[k]
         d = pdk.get(k, {})
         cfg = v["config"]
-        period = cfg["period_ns"]
-        # Reg-to-reg slack, not the overall worst. The overall worst path here is
-        # always an IO path, because the SDC charges a quarter of the period to input
-        # arrival and output setup, and docs/pdk measures Fmax register to register.
-        # Comparing the two would be comparing different quantities.
-        slack = v.get("reg_setup_slack_ns") or {}
-        ws = slack.get(SLOW_CORNER)
-        if ws is None:
-            ws = (v.get("worst_reg_path") or {}).get("slack_ns")
+
+        def area_class(key):
+            return v.get(f"design__instance__area__class:{key}") or 0.0
+
+        comp = {}
+        for label, keys in COMPOSITION:
+            comp[label] = sum(area_class(x) for x in
+                              ((keys,) if isinstance(keys, str) else keys))
+
+        # The post-route frequency is the one scripts/pnr_fmax.py measures: the
+        # routed netlist re-timed under the same constraint style docs/pdk uses, so
+        # the two numbers differ only in the parasitics and the cells PnR added.
+        # LibreLane's own slack is not used, because its SDC charges a quarter of the
+        # period to IO and 5 percent to setup uncertainty, neither of which docs/pdk
+        # applies.
+        fm = (v.get("postroute_fmax") or {}).get("slow") or {}
         rows.append(dict(
             name=k,
-            label=("pipelined" if cfg["variant"] == 0 else "iterative"),
+            label=("pipelined" if cfg["variant"] == 0 else "folded"),
             variant=cfg["variant"],
             synth=d.get("synth_area_um2"),
-            stdcell=v.get("design__instance__area__class:standard_cell"),
+            stdcell=(v.get("design__instance__area__stdcell")
+                     or v.get("design__instance__area__class:standard_cell")),
             die=v.get("design__die__area"),
             util=v.get("design__instance__utilization"),
-            insts=v.get("design__instance__count__class:standard_cell"),
             drc=v.get("route__drc_errors"),
             power=v.get("power__total"),
             wl=v.get("route__wirelength"),
-            fmax_pr=(1000.0 / (period - ws)) if ws is not None else None,
+            comp=comp,
+            fmax_pr=fm.get("fmax_mhz"),
             fmax_syn=(d.get("corners", {}).get("slow", {}) or {}).get("fmax_mhz"),
         ))
 
-    fig, axes = plt.subplots(1, 3, figsize=(12.2, 4.4))
+    fig, axes = plt.subplots(1, 4, figsize=(14.6, 4.4))
     x = np.arange(len(rows))
     labels = [f"{r['label']}\nQ3.29 N=28" for r in rows]
     colours = [PALETTE[0] if r["variant"] == 0 else PALETTE[1] for r in rows]
@@ -726,7 +747,7 @@ def plot_pnr():
     # --- three area measures side by side
     ax = axes[0]
     wid = 0.26
-    series = (("mapped cells", "synth", 0.95),
+    series = (("mapped cells, synthesis", "synth", 0.95),
               ("routed standard cells", "stdcell", 0.6),
               ("routed die", "die", 0.3))
     for i, (name, key, alpha) in enumerate(series):
@@ -739,10 +760,11 @@ def plot_pnr():
     ax.set_xticks(x)
     ax.set_xticklabels(labels, fontsize=8)
     ax.set_ylabel("area (thousand um^2)")
+    ax.set_ylim(0, max(r["die"] or 0 for r in rows) / 1000.0 * 1.22)
     ax.set_title("Mapped, routed and die area")
-    ax.legend(loc="upper right", fontsize=7.5)
+    ax.legend(loc="upper right", fontsize=7)
 
-    # --- inflation factor, which is the actual finding
+    # --- inflation factor
     ax = axes[1]
     for i, (name, num, den, alpha) in enumerate(
             (("routed cells / mapped", "stdcell", "synth", 0.95),
@@ -752,49 +774,171 @@ def plot_pnr():
                alpha=alpha, edgecolor="white", linewidth=0.4)
         for xi, vv in zip(x + (i - 0.5) * 0.34, vals):
             if vv:
-                ax.text(xi, vv + 0.05, f"{vv:.2f}x", ha="center", fontsize=7.5)
+                ax.text(xi, vv + 0.06, f"{vv:.2f}x", ha="center", fontsize=7.5)
     ax.axhline(1.0, color="#4a4a4a", linewidth=0.8, linestyle=":")
     ax.set_xticks(x)
     ax.set_xticklabels(labels, fontsize=8)
+    ax.set_ylim(0, max((r["die"] / r["synth"]) for r in rows
+                       if r["die"] and r["synth"]) * 1.28)
     ax.set_ylabel("post-route area / mapped cell area")
     ax.set_title("Inflation from synthesis to route")
-    ax.legend(loc="upper left", fontsize=7.5)
+    ax.legend(loc="upper left", fontsize=7)
 
-    # --- Fmax, synthesis estimate against post-route
+    # --- what the routed cell area is made of
     ax = axes[2]
+    bottom = np.zeros(len(rows))
+    for i, (name, _) in enumerate(COMPOSITION):
+        vals = np.array([100.0 * r["comp"][name] / r["stdcell"]
+                         if r["stdcell"] else 0.0 for r in rows])
+        ax.bar(x, vals, 0.5, bottom=bottom, label=name, color=PALETTE[i + 2],
+               edgecolor="white", linewidth=0.5)
+        for xi, vv, bb in zip(x, vals, bottom):
+            if vv > 4:
+                ax.text(xi, bb + vv / 2, f"{vv:.0f}%", ha="center", va="center",
+                        fontsize=7, color="white")
+        bottom += vals
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, fontsize=8)
+    ax.set_ylim(0, 132)
+    ax.set_ylabel("share of routed standard cell area (%)")
+    ax.set_title("What the routed cells are")
+    ax.legend(loc="upper center", fontsize=6.6, ncol=3)
+
+    # --- Fmax, synthesis estimate against the routed measurement
+    ax = axes[3]
     for i, (name, key, alpha) in enumerate(
-            (("synthesis, period converged to zero slack", "fmax_syn", 0.95),
-             ("post-route, implied by slack at the routed period", "fmax_pr", 0.45))):
+            (("synthesis estimate, set_wire_rc", "fmax_syn", 0.95),
+             ("routed, extracted parasitics", "fmax_pr", 0.45))):
         vals = [r[key] or 0 for r in rows]
         ax.bar(x + (i - 0.5) * 0.34, vals, 0.34, label=name, color=colours,
                alpha=alpha, edgecolor="white", linewidth=0.4)
         for xi, vv in zip(x + (i - 0.5) * 0.34, vals):
             if vv:
-                ax.text(xi, vv + 1.0, f"{vv:.1f}", ha="center", fontsize=7.5)
+                ax.text(xi, vv + 1.5, f"{vv:.1f}", ha="center", fontsize=7.5)
     ax.set_xticks(x)
     ax.set_xticklabels(labels, fontsize=8)
+    ax.set_ylim(0, max(max(r["fmax_syn"] or 0, r["fmax_pr"] or 0)
+                       for r in rows) * 1.3)
     ax.set_ylabel("frequency at the slow corner (MHz)")
     ax.set_title("Timing, estimate against routed")
-    ax.legend(loc="upper right", fontsize=6.4)
+    ax.legend(loc="upper left", fontsize=6.6)
 
     bits = []
     for r in rows:
         if r["stdcell"] and r["synth"]:
             bits.append(f"{r['label']} {r['stdcell'] / r['synth']:.2f}x cells, "
-                        f"{r['die'] / r['synth']:.2f}x die")
-    fig.suptitle("LibreLane on IHP SG13G2, Q3.29 with 28 stages. Post-route growth: "
-                 + "; ".join(bits), y=1.02, fontsize=9.5)
-    note(fig, "Growth from mapped cells to routed cells is clock tree and timing "
-              "repair, so it tracks register count. A synthesis-only area comparison "
-              "therefore flatters the pipelined variant, which has four times the "
-              "registers of the folded one. The two frequencies are not the same "
-              "measurement: the synthesis figure iterates the clock period until "
-              "slack reaches zero, while the post-route figure divides into the "
-              "slack left at the period the design was routed for, which assumes a "
-              "tighter target would not have changed the tool's choices. Both are "
-              "register to register at the slow corner, 1.08 V and 125 C, with "
-              "extracted parasitics post-route instead of a set_wire_rc estimate.")
+                        f"{r['die'] / r['synth']:.2f}x die, "
+                        f"{r['fmax_pr'] / r['fmax_syn']:.2f}x frequency"
+                        if r["fmax_pr"] and r["fmax_syn"] else
+                        f"{r['label']} {r['stdcell'] / r['synth']:.2f}x cells")
+    fig.suptitle("LibreLane on IHP SG13G2, Q3.29 with 28 stages. Synthesis to route: "
+                 + "; ".join(bits), y=1.03, fontsize=9.5)
+    note(fig, "The two variants inflate in cell area by almost the same factor, so "
+              "the clock tree does not punish the register-heavy design the way a\n"
+              "register count would suggest: it is 5 percent of the routed cell area "
+              "in both. The die ratios differ because the two floorplans were given\n"
+              "different utilisation targets, 35 and 40 percent, which is a choice "
+              "and not a measurement. Frequency moves the other way and by more: "
+              "both\ndesigns are faster routed than the synthesis estimate said, "
+              "because that estimate is drive repair over a virtual placement, "
+              "while PnR resizes\nagainst real positions. Both frequencies are "
+              "register to register at 1.08 V and 125 C. The routed netlist was "
+              "optimised against the period in\nthe LibreLane config and the tool "
+              "stopped once it met it, so this is that netlist's path delay, not a "
+              "closed-timing Fmax.")
     save(fig, "pnr_comparison.png")
+
+
+# ---------------------------------------------------------------------------
+# 10. The two routed dies at one scale
+# ---------------------------------------------------------------------------
+def die_dims(run, top):
+    """The die rectangle in micrometres, out of the DEF the router wrote.
+
+    Neither die is square, so the square root of the area metric is not the shape.
+    DEF coordinates are in database units and the header says how many per micron.
+    """
+    defs = sorted(run.glob(f"**/{top}.def"))
+    for path in reversed(defs):          # the latest step's DEF is the routed one
+        try:
+            head = path.read_text()[:200000]
+        except OSError:
+            continue
+        m = re.search(r"UNITS DISTANCE MICRONS (\d+)", head)
+        d = re.search(r"DIEAREA \(\s*(-?\d+)\s+(-?\d+)\s*\)\s*\(\s*(\d+)\s+(\d+)\s*\)",
+                      head)
+        if m and d:
+            u = float(m.group(1))
+            x1, y1, x2, y2 = (int(v) for v in d.groups())
+            return (x2 - x1) / u, (y2 - y1) / u
+    return None
+
+
+def plot_layouts():
+    """Both routed variants side by side, at the scale they were rendered at.
+
+    scripts/run_pnr_render.sh writes one PNG per variant over a frame of identical
+    micrometres, so the two are already comparable pixel for pixel. Compositing them
+    into one figure is what makes the comparison unavoidable: zoom-to-fit would blow
+    the smaller die up to the same size and hide the entire point.
+    """
+    ppath = PNRDIR / "summary.json"
+    if not ppath.exists():
+        raise SystemExit(f"missing {ppath}. Run `make pnr` first.")
+    pnr = json.loads(ppath.read_text())
+
+    order = [k for k in ("pipe_q3_29_n28", "iter_q3_29_n28") if k in pnr]
+    tiles = [(k, IMG / f"layout_{k}_scaled.png") for k in order]
+    missing = [str(p) for _, p in tiles if not p.exists()]
+    if missing:
+        raise SystemExit("missing shared-scale renders: " + ", ".join(missing)
+                         + ". Run `make layout` first.")
+
+    fig, axes = plt.subplots(1, len(tiles), figsize=(10.6, 5.9))
+    axes = np.atleast_1d(axes)
+    for ax, (name, path) in zip(axes, tiles):
+        v = pnr[name]
+        cfg = v["config"]
+        label = "pipelined" if cfg["variant"] == 0 else "folded"
+        die = v.get("design__die__area")
+        cells = (v.get("design__instance__area__stdcell")
+                 or v.get("design__instance__area__class:standard_cell"))
+        util = v.get("design__instance__utilization")
+        fmax = ((v.get("postroute_fmax") or {}).get("slow") or {}).get("fmax_mhz")
+
+        ax.imshow(plt.imread(path))
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.grid(False)
+        for s in ax.spines.values():
+            s.set_edgecolor("#4a4a4a")
+        head = f"{label}, Q3.29 N=28"
+        dims = die_dims(ROOT / v["run_dir"], cfg["top"])
+        if dims:
+            head += f"\n{dims[0]:.0f} x {dims[1]:.0f} um"
+        if die:
+            head += f", {die / 1e6:.3f} mm2 of die"
+        ax.set_title(head, fontsize=9.5)
+        bits = []
+        if cells:
+            bits.append(f"{cells / 1000:.0f}k um2 of cells")
+        if util:
+            bits.append(f"{util * 100:.0f}% utilisation")
+        if fmax:
+            bits.append(f"{fmax:.1f} MHz slow corner")
+        if bits:
+            ax.set_xlabel(", ".join(bits), fontsize=8)
+
+    fig.suptitle("The same two designs routed, at one shared scale",
+                 fontsize=10, y=1.05)
+    note(fig, "Both frames cover the same area of silicon, so the folded die is "
+              "smaller in the figure because it is smaller on the wafer.\n"
+              "Lower metal is hidden on purpose: Metal1 pitch is under a micron "
+              "against a die 1.4 mm across, so including it turns either die into a "
+              "solid block.\nThe scale bar in each render is 100 um. Frequency is "
+              "register to register at 1.08 V and 125 C with extracted parasitics, "
+              "measured by scripts/pnr_fmax.py.")
+    save(fig, "pnr_layouts.png")
 
 
 FIGURES = {
@@ -807,6 +951,9 @@ FIGURES = {
     "throughput_latency": plot_throughput,
     "ppa_ihp_sg13g2": plot_ppa,
     "pnr_comparison": plot_pnr,
+    # Needs the shared-scale renders, so it runs after scripts/run_pnr_render.sh
+    # rather than alongside the other figures.
+    "pnr_layouts": plot_layouts,
 }
 
 
