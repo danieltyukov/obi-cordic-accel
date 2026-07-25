@@ -655,16 +655,20 @@ def plot_ppa():
     pipe = next(r for r in rows if r["name"] == "pipe_q3_29_n28")
     itr = next(r for r in rows if r["name"] == "iter_q3_29_n28")
     fig.suptitle(
-        f"IHP SG13G2 130nm, real cells and real Liberty timing. At Q3.29 with 28 "
+        f"IHP SG13G2 130nm, synthesis estimate: real cells and real Liberty timing, "
+        f"no placement. At Q3.29 with 28 "
         f"stages the pipelined core is {pipe['area'] / itr['area']:.1f}x the area "
         f"for {pipe['mres'] / itr['mres']:.0f}x the throughput, so "
         f"{(pipe['mres'] / pipe['area']) / (itr['mres'] / itr['area']):.1f}x the "
         f"results per second per um^2.", y=1.03, fontsize=9.5)
-    note(fig, "Slow corner is 1.08 V and 125 C, the corner a design closes on. "
-              "Throughput is Fmax divided by the measured issue interval, 1 cycle "
-              "pipelined and N+1 folded. Folding costs frequency as well as "
-              "throughput, because its barrel shifter and angle mux sit inside the "
-              "loop where the pipelined core has hardwired shifts.")
+    note(fig, "Corners are the Liberty files this PDK ships: slow 1.08 V and 125 C, "
+              "the one a design closes on; typ 1.20 V and 25 C; fast 1.65 V and\n"
+              "-40 C, which is well above the 1.20 V nominal and so a best-case bound "
+              "rather than an operating point. Throughput is Fmax divided by the\n"
+              "measured issue interval, 1 cycle pipelined and N+1 folded. These are "
+              "synthesis estimates. Two of these configurations have since been "
+              "routed,\nand routing reverses the frequency ranking between the two "
+              "microarchitectures: see docs/img/pnr_comparison.png.")
     save(fig, "ppa_ihp_sg13g2.png")
 
 

@@ -22,8 +22,8 @@ and two interchangeable microarchitectures that produce bit-identical results.
 | Format | Q3.29 in 32 bits by default, parameterised; Q3.13 in 16 bits also verified |
 | Accuracy | 4.5 LSB worst case for sin and cos, 1.5 RMS, measured against double precision |
 | Interfaces | OBI v1.6 subordinate over a 4 KB window, plus a valid/ready streaming port |
-| Pipelined core | 1 result per cycle, 78.6 MHz post-route, 1.954 mm2 of die on IHP 130nm |
-| Iterative core | 1 result per 29 cycles, 90.9 MHz post-route, 0.383 mm2, 5.1x smaller |
+| Pipelined core | 1 result per cycle, 78.6 MHz post-route at 1.08 V and 125 C, 1.954 mm2 of die on IHP 130nm |
+| Iterative core | 1 result per 29 cycles, 90.9 MHz post-route at the same corner, 0.383 mm2, 5.1x smaller |
 | Silicon | Real IHP SG13G2 130nm, the process Croc taped out in. Both variants routed to GDS and LVS clean; the folded one is DRC clean and the pipelined one has one Metal2 minimum-area violation. Area in um2 and Fmax at three corners |
 | Verification | 80 tests, 0 failures: 17,536 accuracy comparisons, 4,237 domain arguments, 28 OBI protocol tests, bit-identity between both cores over 900 operations, plus 13 concurrent assertions in the RTL |
 | Tooling | Verilator lint clean at `-Wall` over 10 configurations, Yosys plus OpenROAD over 6, both RV32 driver images link |
@@ -480,8 +480,23 @@ runs to 1.31x on cell area and 1.88x on frequency.
 | iterative, Q3.29, N=16 | 8,064 | 1,229 | 0.135 mm2 | 50.0 MHz | 77.0 | 159.8 | 2.94 M/s |
 | iterative, Q3.13, N=15 | 4,627 | 748 | 0.079 mm2 | 98.1 MHz | 150.9 | 315.3 | 6.13 M/s |
 
-Slow corner is 1.08 V and 125 C, the one a design has to close on. Throughput is Fmax
-divided by the measured issue interval, so it is a real rate, not a peak claim.
+The three corners are the Liberty files `scripts/run_pdk.py` reads, and their
+conditions are recorded alongside every number in `docs/pdk/summary.json`:
+
+| Column | Liberty | Conditions |
+|---|---|---|
+| slow | `sg13g2_stdcell_slow_1p08V_125C.lib` | 1.08 V, 125 C, the corner a design has to close on |
+| typ | `sg13g2_stdcell_typ_1p20V_25C.lib` | 1.20 V, 25 C |
+| fast | `sg13g2_stdcell_fast_1p65V_m40C.lib` | **1.65 V**, -40 C |
+
+The fast column is worth reading carefully: 1.65 V is well above the 1.20 V nominal, so
+those figures are a best-case bound and not an operating point anyone would design to.
+It is quoted because it is the fast Liberty this PDK ships, not because the design runs
+there. Note also that LibreLane names its own fast corner `nom_fast_1p32V_m40C`, so the
+name and the Liberty disagree about the voltage; slow and typ agree between the two.
+
+Throughput is Fmax divided by the measured issue interval, so it is a real rate, not a
+peak claim.
 
 ![Area, frequency and throughput on IHP SG13G2](docs/img/ppa_ihp_sg13g2.png)
 
