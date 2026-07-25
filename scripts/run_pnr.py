@@ -9,7 +9,9 @@ What this adds over `make pdk`, which stops after synthesis:
     measured. The pipelined variant has four times the registers of the folded
     one and far more wiring, so the two do not inflate by the same factor, and a
     synthesis-only comparison flatters the pipelined design.
-  - DRC and LVS signoff, from magic, KLayout and netgen.
+  - DRC: the router's own, iterated to convergence, plus the Magic runset, plus an
+    XOR of Magic's streamed-out GDS against KLayout's. No LVS: the Classic flow
+    for ihp-sg13g2 has no LVS step, so none is claimed. See docs/pnr/README.md.
   - a GDS, which scripts/render_gds.py turns into a layout figure.
   - post-route timing at all three corners, with extracted parasitics instead of
     the set_wire_rc estimate `make pdk` has to use, and the post-route critical
@@ -376,7 +378,21 @@ def main(argv=None):
     ap.add_argument("--only", action="append", default=None)
     ap.add_argument("--harvest-only", action="store_true",
                     help="re-summarise the newest existing run without routing again")
+    # Routing the two variants in parallel needs them in separate trees, because
+    # LibreLane stages the RTL and the config next to each other and a second driver
+    # writing into a live work directory would pull them out from under the first.
+    # The pipelined variant spends hours in single-threaded Magic DRC, during which
+    # nothing else in a sequential run can start.
+    ap.add_argument("--build-dir", default=None,
+                    help="work tree for this invocation, default build/pnr. Must be "
+                         "passed to --harvest-only for the same run as well.")
     args = ap.parse_args(argv)
+
+    global BUILD
+    if args.build_dir:
+        BUILD = pathlib.Path(args.build_dir)
+        if not BUILD.is_absolute():
+            BUILD = ROOT / BUILD
 
     if shutil.which("librelane") is None and not args.harvest_only:
         print("librelane not on PATH", file=sys.stderr)
