@@ -39,9 +39,20 @@ fi
 
 # The PDK's own layer display properties. Without these KLayout hands out colours in
 # load order and Metal1 comes out the same red as everything else.
+#
+# No KLayout or no PDK is a skip, not a failure: the rendered layouts are committed, so
+# a clone or a CI runner has the figures already and only needs them redrawn if it can.
+# Anything after this point that goes wrong is a real error and exits non-zero.
 PDK_ROOT="${IHP_PDK_ROOT:-$HOME/.local/share/pdk/IHP-Open-PDK/ihp-sg13g2}"
 LYP="$PDK_ROOT/libs.tech/klayout/tech/sg13g2.lyp"
-[ -f "$LYP" ] || { echo "no layer properties at $LYP" >&2; exit 1; }
+if ! command -v klayout >/dev/null 2>&1; then
+  echo "klayout not on PATH; keeping the committed layout renders"
+  exit 0
+fi
+if [ ! -f "$LYP" ]; then
+  echo "no IHP layer properties at $LYP; keeping the committed layout renders"
+  exit 0
+fi
 
 # Metal4, Via4, Metal5, TopVia1, TopMetal1, TopVia2, TopMetal2.
 UPPER="${UPPER:-50,66,67,125,126,133,134}"
@@ -75,6 +86,12 @@ for name, v in s.items():
         gds = str(found[0].relative_to(root))
     print(f"{name}\t{gds}")
 PY
+
+if [ ! -s "$LIST" ]; then
+  echo "no GDS under any run_dir in $SUMMARY; keeping the committed layout renders"
+  echo "  (a clone has docs/pnr/summary.json but not the LibreLane work tree it names)"
+  exit 0
+fi
 
 render() {
   klayout -b -rm "$ROOT/scripts/render_gds.py" -rd lyp="$LYP" "$@"
