@@ -541,7 +541,7 @@ either cocotb generation.
 | Area | Where | What it establishes |
 |------|-------|---------------------|
 | Numerical accuracy | `tb/test_accuracy.py` | 17,536 comparisons against double precision across all eleven functions, plus a bit-exact check against the model on every one. Both the derived and the fixed bound asserted. |
-| Convergence domains | `tb/test_domain.py` | No in-domain argument rejected over 4,200 arguments; every out-of-domain argument rejected with zeroed outputs; the ambiguous band measured, not assumed. |
+| Convergence domains | `tb/test_domain.py` | No in-domain argument rejected over 4,237 arguments; every out-of-domain argument rejected with zeroed outputs; the ambiguous band measured, not assumed. |
 | OBI protocol | `tb/test_obi.py` | 14 tests in each of the two R-channel handshake configurations. The manager doubles as a checker, asserting one beat per accepted beat, in order, with rid echoing aid, continuously. |
 | Throughput and latency | `tb/test_throughput.py` | Retire interval asserted against what `CFG1` advertises, not against a hard-coded number. Per-stage occupancy checked cell by cell. |
 | Variant equivalence | `tb/test_equivalence.py` plus `scripts/check_equivalence.py` | Both variants record the same stimulus and the files are diffed word for word, without the model in between. |

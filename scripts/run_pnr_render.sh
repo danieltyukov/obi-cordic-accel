@@ -72,9 +72,14 @@ import json, pathlib, sys
 s = json.load(open(sys.argv[1]))
 root = pathlib.Path(sys.argv[2])
 for name, v in s.items():
+    # The path recorded in summary.json only means something on the machine that ran
+    # the flow. A clone has the summary and not the work tree it names, so the file
+    # has to be checked for rather than assumed: KLayout reports a missing layout as a
+    # RuntimeError and still exits 0, which turns a missing GDS into a silent no-op
+    # dressed up as a successful render.
     gds = v.get("gds")
-    if not gds:
-        # final/ only gets a GDS once all 79 stages finish; the streamout step's copy
+    if not (gds and (root / gds).is_file()):
+        # final/ only gets a GDS once every stage finishes; the streamout step's copy
         # appears much earlier and is the same layout.
         run = v.get("run_dir")
         if not run:
@@ -82,6 +87,7 @@ for name, v in s.items():
         found = (sorted((root / run).glob("*streamout/*.klayout.gds")) or
                  sorted((root / run).glob("*streamout/*.gds")))
         if not found:
+            print(f"no GDS for {name} under {run}", file=sys.stderr)
             continue
         gds = str(found[0].relative_to(root))
     print(f"{name}\t{gds}")
@@ -106,6 +112,13 @@ while IFS=$'\t' read -r name gds; do
   size=$(render -rd gds="$ROOT/$gds" -rd out="$IMG/layout_$name.png" \
            -rd w="$W" -rd h="$H" -rd only_layers="$UPPER" 2>&1 \
          | sed -n 's/.*extent \([0-9.]*\) x .*/\1/p')
+  # KLayout exits 0 on a load error, so an empty extent is the only signal that the
+  # render did not happen. Without this the shared scale comes out 0 um/px and the
+  # second pass quietly overwrites the committed figures.
+  if [ -z "$size" ]; then
+    echo "render produced no layout extent for $name from $gds" >&2
+    exit 1
+  fi
   echo -e "$name\t$size" >> "$ROOT/build/pnr/die_sizes.txt"
   echo "   ${size} um across at its widest"
 done < "$LIST"

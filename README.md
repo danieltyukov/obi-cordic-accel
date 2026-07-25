@@ -25,7 +25,7 @@ and two interchangeable microarchitectures that produce bit-identical results.
 | Pipelined core | 1 result per cycle, 78.6 MHz post-route, 1.954 mm2 of die on IHP 130nm |
 | Iterative core | 1 result per 29 cycles, 90.9 MHz post-route, 0.383 mm2, 5.1x smaller |
 | Silicon | Real IHP SG13G2 130nm, the process Croc taped out in. Both variants routed to GDS, DRC and LVS clean, area in um2 and Fmax at three corners |
-| Verification | 71 tests: 17,536 accuracy comparisons, 4,200 domain arguments, 28 OBI protocol tests, bit-identity between both cores over 900 operations, plus 13 concurrent assertions in the RTL |
+| Verification | 80 tests, 0 failures: 17,536 accuracy comparisons, 4,237 domain arguments, 28 OBI protocol tests, bit-identity between both cores over 900 operations, plus 13 concurrent assertions in the RTL |
 | Tooling | Verilator lint clean at `-Wall` over 10 configurations, Yosys plus OpenROAD over 6, both RV32 driver images link |
 
 ## Contents
@@ -679,7 +679,7 @@ make all         # all of the above
 | Target | What it establishes |
 |---|---|
 | `test-accuracy` | 17,536 comparisons against double precision, plus bit-exact against the model |
-| `test-domain` | 4,200 in-domain arguments never rejected; every out-of-domain one rejected with zeroed outputs; the ambiguous band measured |
+| `test-domain` | 4,237 in-domain arguments never rejected; every out-of-domain one rejected with zeroed outputs; the ambiguous band measured |
 | `test-obi` | 14 tests in each handshake configuration, 28 total |
 | `test-throughput` | Retire interval asserted against what `CFG1` advertises, per-stage occupancy checked cell by cell |
 | `test-equivalence` | Both cores' results diffed word for word |
