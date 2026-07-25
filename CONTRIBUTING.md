@@ -38,6 +38,23 @@ compiler is absent, `make images` skips the layout renders when there is no GDS,
 `make formal` skips entirely when `sby` is not on PATH. A skip always says so on
 stdout rather than passing quietly.
 
+**Without the IHP PDK, run the subset rather than `make all`.** `make all` begins with
+`check-tools`, which stops on a missing PDK with `IHP SG13G2 PDK not found at ...; set
+IHP_PDK_ROOT`, and `make pdk` stops naming the Liberty files it wanted. Those are hard
+failures on purpose: a PPA number produced without the PDK would not be one. Everything
+that does not need it works, verified from a clean clone with `IHP_PDK_ROOT` pointed at
+a path that does not exist:
+
+```sh
+make lint check-gen test synth sw images   # all of these pass with no PDK
+```
+
+That is the same subset CI runs, on runners that install only Verilator and Yosys and
+have neither the PDK nor OpenROAD. The real-silicon numbers come from a local `make
+pdk` and `make pnr`, and the committed `docs/pdk/summary.json` and
+`docs/pnr/summary.json` are what let a PDK-less clone still redraw every figure and
+check every quoted number.
+
 **Verilator is the only simulator.** Icarus Verilog 12 cannot build this design: it
 aborts with an internal assertion at `netmisc.cc:1821` when a constant function
 indexes a packed 2D localparam, and separately folds `$atan` in a constant function to
