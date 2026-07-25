@@ -21,7 +21,7 @@ module cordic_core_pipe #(
   /// Number of micro-rotations.
   parameter int unsigned NumStages = 28,
   /// Width of the attribute vector, pass CordicAttrWidth.
-  parameter int unsigned AttrWidth = 21
+  parameter int unsigned AttrWidth = 22
 ) (
   input  logic clk_i,
   input  logic rst_ni,

@@ -168,14 +168,14 @@ class CordicModel:
 
     # -- pre ----------------------------------------------------------------
     def pre(self, func, x_fx, y_fx, z_fx):
-        """Returns (coord, mode, x0, y0, z0, dom, chk, pi_ctl, dbl)."""
+        """Returns (coord, mode, x0, y0, z0, dom, chk, pi_ctl, dbl, zero)."""
         xw = self.wrap(self.widen(x_fx))
         yw = self.wrap(self.widen(y_fx))
         zw = self.wrap(self.widen(z_fx))
 
         coord, mode = COORD_CIRC, MODE_ROT
         x0, y0, z0 = xw, yw, zw
-        dom = chk = dbl = False
+        dom = chk = dbl = zero_res = False
         pi_ctl = PI_NONE
 
         if func == FUNC["SIN_COS"]:
@@ -187,6 +187,10 @@ class CordicModel:
             if xw < 0:
                 x0, y0 = -xw, -yw
                 pi_ctl = PI_SUB if yw < 0 else PI_ADD
+            # atan2(0, 0) has no value; vectoring cannot resolve it either, since
+            # d comes from sign(y) and y never moves when x is zero too.
+            if xw == 0 and yw == 0:
+                zero_res = True
         elif func == FUNC["SINH_COSH"]:
             coord, x0, y0 = COORD_HYP, self.inv_k_hyp, 0
         elif func == FUNC["HROTATE"]:
@@ -233,7 +237,7 @@ class CordicModel:
                     dom = True
 
         return (coord, mode, self.wrap(x0), self.wrap(y0), self.wrap(z0),
-                dom, chk, pi_ctl, dbl)
+                dom, chk, pi_ctl, dbl, zero_res)
 
     # -- post ---------------------------------------------------------------
     def pack(self, v):
@@ -249,7 +253,7 @@ class CordicModel:
         last = self.shifts[coord][self.num_stages - 1]
         return max(0, last - self.resid_shift_margin)
 
-    def post(self, coord, mode, x, y, z, dom, chk, pi_ctl, dbl, func, tag):
+    def post(self, coord, mode, x, y, z, dom, chk, pi_ctl, dbl, zero_res, func, tag):
         resid_x, resid_y = x, y
         if chk:
             sh = self.residual_threshold(coord)
@@ -270,6 +274,8 @@ class CordicModel:
         if dom:
             xo = yo = zo = 0
             flags |= FLAG_DOM
+        elif zero_res:
+            xo = yo = zo = 0
         else:
             if sx:
                 flags |= FLAG_SAT_X
@@ -281,12 +287,14 @@ class CordicModel:
 
     # -- whole operation ----------------------------------------------------
     def run(self, func, x_fx=0, y_fx=0, z_fx=0, tag=0):
-        coord, mode, x0, y0, z0, dom, chk, pi_ctl, dbl = self.pre(func, x_fx, y_fx, z_fx)
+        (coord, mode, x0, y0, z0,
+         dom, chk, pi_ctl, dbl, zero_res) = self.pre(func, x_fx, y_fx, z_fx)
         x, y, z = x0, y0, z0
         for s in range(self.num_stages):
             x, y, z = self.micro_rotation(coord, mode, x, y, z,
                                           self.shifts[coord][s], self.angles[coord][s])
-        return self.post(coord, mode, x, y, z, dom, chk, pi_ctl, dbl, func, tag)
+        return self.post(coord, mode, x, y, z, dom, chk, pi_ctl, dbl, zero_res,
+                         func, tag)
 
     # -- documented convergence domains ------------------------------------
     def domain(self, func_name):

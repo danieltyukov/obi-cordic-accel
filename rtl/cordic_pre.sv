@@ -36,7 +36,7 @@ module cordic_pre #(
   /// Number of micro-rotations, selects which gain and radius constants apply.
   parameter int unsigned NumStages = 28,
   /// Width of the attribute vector, pass CordicAttrWidth.
-  parameter int unsigned AttrWidth = 21,
+  parameter int unsigned AttrWidth = 22,
   /// Derived internal datapath width. Do not override.
   parameter int unsigned IntWidth  = DataWidth + GuardInt + GuardFrac
 ) (
@@ -97,6 +97,7 @@ module cordic_pre #(
   logic                       resid_chk;
   logic [1:0]                 pi_ctl;
   logic                       dbl_z;
+  logic                       zero_res;
 
   /// Magnitude of an internal-format value.
   function automatic logic signed [IntWidth-1:0] absv(input logic signed [IntWidth-1:0] v);
@@ -116,6 +117,7 @@ module cordic_pre #(
     resid_chk = 1'b0;
     pi_ctl    = CordicPiNone;
     dbl_z     = 1'b0;
+    zero_res  = 1'b0;
 
     case (func_i)
       // Circular rotation from the reciprocal gain, so cos and sin come out
@@ -137,6 +139,11 @@ module cordic_pre #(
           y0     = -yw;
           pi_ctl = (yw < 0) ? CordicPiSub : CordicPiAdd;
         end
+        // The all-zero vector is the one input vectoring cannot resolve: d comes
+        // from sign(y), and with x zero as well y never moves, so z would ratchet
+        // out to the full convergence radius. atan2(0, 0) has no value anyway, so
+        // return zero, matching what C's atan2 does for (+-0, +0).
+        if ((xw == 0) && (yw == 0)) zero_res = 1'b1;
       end
 
       // Hyperbolic rotation from the reciprocal hyperbolic gain: cosh and sinh.
@@ -248,6 +255,7 @@ module cordic_pre #(
     attr_o[CordicAttrDblBit]                              = dbl_z;
     attr_o[CordicAttrOpLsb+4:CordicAttrOpLsb]             = func_i;
     attr_o[CordicAttrTagLsb+7:CordicAttrTagLsb]           = tag_i;
+    attr_o[CordicAttrZeroBit]                             = zero_res;
   end
 
 endmodule

@@ -30,7 +30,7 @@ module cordic_unit #(
   /// Fractional guard bits of the internal datapath.
   parameter int unsigned GuardFrac = 4,
   /// Width of the attribute vector, pass CordicAttrWidth.
-  parameter int unsigned AttrWidth = 21,
+  parameter int unsigned AttrWidth = 22,
   /// Width of the flag vector, pass CordicFlagWidth.
   parameter int unsigned FlagWidth = 4,
   /// Derived internal datapath width. Do not override.

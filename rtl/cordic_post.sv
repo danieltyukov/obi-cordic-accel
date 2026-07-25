@@ -32,7 +32,7 @@ module cordic_post #(
   /// Number of micro-rotations.
   parameter int unsigned NumStages = 28,
   /// Width of the attribute vector, pass CordicAttrWidth.
-  parameter int unsigned AttrWidth = 21,
+  parameter int unsigned AttrWidth = 22,
   /// Width of the flag vector, pass CordicFlagWidth.
   parameter int unsigned FlagWidth = 4,
   /// Slack on the residual threshold shift. 1 doubles the threshold.
@@ -78,7 +78,7 @@ module cordic_post #(
 
   logic [1:0] coord;
   logic       mode;
-  logic       dom_pre, resid_chk, dbl_z;
+  logic       dom_pre, resid_chk, dbl_z, zero_res;
   logic [1:0] pi_ctl;
 
   assign coord     = attr_i[CordicAttrCoordLsb+1:CordicAttrCoordLsb];
@@ -87,6 +87,7 @@ module cordic_post #(
   assign resid_chk = attr_i[CordicAttrChkBit];
   assign pi_ctl    = attr_i[CordicAttrPiLsb+1:CordicAttrPiLsb];
   assign dbl_z     = attr_i[CordicAttrDblBit];
+  assign zero_res  = attr_i[CordicAttrZeroBit];
   assign func_o    = attr_i[CordicAttrOpLsb+4:CordicAttrOpLsb];
   assign tag_o     = attr_i[CordicAttrTagLsb+7:CordicAttrTagLsb];
 
@@ -159,6 +160,12 @@ module cordic_post #(
       z_o     = '0;
       flags_o = '0;
       flags_o[CordicFlagDomBit] = 1'b1;
+    end else if (zero_res) begin
+      // A defined answer, not an error, so no flag is raised.
+      x_o     = '0;
+      y_o     = '0;
+      z_o     = '0;
+      flags_o = '0;
     end else begin
       x_o     = px[DataWidth-1:0];
       y_o     = py[DataWidth-1:0];

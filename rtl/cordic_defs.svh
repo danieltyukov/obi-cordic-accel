@@ -47,7 +47,8 @@
   localparam int unsigned CordicAttrDblBit   = 7;   // double z on the way out (LN)
   localparam int unsigned CordicAttrOpLsb    = 8;   // [12:8] function code
   localparam int unsigned CordicAttrTagLsb   = 13;  // [20:13] software tag
-  localparam int unsigned CordicAttrWidth    = 21;
+  localparam int unsigned CordicAttrZeroBit  = 21;  // force an exact zero result
+  localparam int unsigned CordicAttrWidth    = 22;
 
   localparam logic [1:0] CordicPiNone = 2'b00;  // leave z alone
   localparam logic [1:0] CordicPiAdd  = 2'b10;  // z += pi
