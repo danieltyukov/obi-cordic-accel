@@ -29,7 +29,7 @@ jobs:
       - name: install tools
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends verilator
+          sudo apt-get install -y --no-install-recommends verilator yosys
           verilator --version
       - uses: actions/setup-python@v5
         with:
@@ -42,7 +42,10 @@ jobs:
       - name: generated files are up to date
         run: make check-gen
       - name: lint
-        run: make lint
+        run: make lint-core lint-wrap lint-configs
+      # Yosys-only, no PDK needed: asserts the design infers no multiplier.
+      - name: arithmetic audit
+        run: make arith
 
   test:
     name: simulation
@@ -104,6 +107,49 @@ jobs:
           name: synth-reports
           path: docs/synth/
 
+  # The real IHP SG13G2 numbers in docs/pdk and docs/pnr are produced locally by
+  # `make pdk` and `make pnr`. They are not regenerated here: the PDK is a large
+  # external tree and OpenROAD comes from a container, neither of which belongs on a
+  # hosted runner. What CI can do is check the committed artefacts are self-consistent
+  # with the figures drawn from them, which the figures job below does.
+  pdk-consistency:
+    name: committed PDK results are consistent
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: create the venv
+        run: make venv
+      - name: every configuration has a report and a summary entry
+        run: |
+          .venv/bin/python - <<'PY'
+          import json, pathlib, sys
+          root = pathlib.Path('.')
+          summary = json.loads((root / 'docs/pdk/summary.json').read_text())
+          rc = 0
+          for name, v in summary.items():
+              rpt = root / 'docs/pdk' / f'{name}.rpt'
+              if not rpt.exists():
+                  print(f'{name}: missing {rpt}', file=sys.stderr); rc = 1
+                  continue
+              text = rpt.read_text()
+              # The area and the slow-corner Fmax in the report must match the JSON
+              # the figures are drawn from.
+              area = f"{v['synth_area_um2']:.1f}"
+              if area not in text:
+                  print(f'{name}: area {area} not in the report', file=sys.stderr)
+                  rc = 1
+              for corner in ('slow', 'typ', 'fast'):
+                  if corner not in v['corners']:
+                      print(f'{name}: no {corner} corner', file=sys.stderr); rc = 1
+              if v['corners']['slow']['fmax_mhz'] is None:
+                  print(f'{name}: no slow-corner Fmax', file=sys.stderr); rc = 1
+          print(f'{len(summary)} configurations, reports and summary agree')
+          sys.exit(rc)
+          PY
+
   software:
     name: driver
     runs-on: ubuntu-24.04
@@ -156,6 +202,9 @@ jobs:
         run: |
           make test ACC_SAMPLES=200 DOMAIN_SAMPLES=100 EQUIV_SAMPLES=200 STREAM_OPS=128
           make synth-quick
+      # The PDK-derived figures are redrawn from the committed docs/pdk/summary.json,
+      # since the PDK itself is not available here. That still catches a plotting
+      # script that no longer matches the data it is given.
       - name: regenerate the figures
         run: make images
       - name: every SVG is well formed
