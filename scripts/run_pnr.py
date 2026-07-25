@@ -11,8 +11,20 @@ What this adds over `make pdk`, which stops after synthesis:
     synthesis-only comparison flatters the pipelined design.
   - DRC and LVS signoff, from magic, KLayout and netgen.
   - a GDS, which scripts/render_gds.py turns into a layout figure.
+  - post-route timing at all three corners, with extracted parasitics instead of
+    the set_wire_rc estimate `make pdk` has to use, and the post-route critical
+    path resolved back to RTL register names.
 
-Timing is deliberately not taken from here. See pnr/README.md.
+On post-route timing: it is real, but it is not the same measurement as the Fmax
+in docs/pdk. This flow closes on one fixed target period and reports the slack
+left over; `make pdk` iterates the period until the slack is zero. Slack at a
+fixed period implies a frequency, but only under the assumption that a tighter
+target would not have made the tool choose differently, which it would. The two
+numbers are reported side by side and labelled, not merged.
+
+The worst path overall is always an IO path here, because the SDC charges a
+quarter of the period to input arrival and output setup. The reg-to-reg path is
+the one that describes the logic, so that is what gets resolved and classified.
 """
 
 import argparse
@@ -259,6 +271,79 @@ def harvest(run):
     return merged
 
 
+SIGNOFF_CORNER = "nom_slow_1p08V_125C"
+
+
+def resolve_flop(netlist_text, inst):
+    """Name the RTL register a flattened flop instance implements.
+
+    Same trick scripts/run_pdk.py uses: ABC renames every cell to _NNNNN_, but
+    Yosys keeps the original signal name on the flop's Q net, so reading that back
+    turns "_85582_" into a real register name.
+    """
+    m = re.search(r"\b\w+\s+" + re.escape(inst) + r"\s*\((.*?)\);",
+                  netlist_text, re.S)
+    if not m:
+        return None
+    conns = dict(re.findall(r"\.(\w+)\(([^)]*)\)", m.group(1)))
+    q = (conns.get("Q") or conns.get("Q_N") or "").strip().lstrip("\\").strip()
+    return q or None
+
+
+def worst_reg_path(run, corner=SIGNOFF_CORNER):
+    """Pull the worst register-to-register setup path out of the signoff STA.
+
+    Two details make the difference between a diagnostic number and a misleading
+    one. First, only reg-to-reg counts: the worst path overall is an IO path whose
+    delay is mostly the SDC's own input-arrival budget. Second, the clock network
+    appears on both the launch and the capture edge of every path report, so the
+    clock-tree buffers have to be dropped or a 43-cell datapath reads as 60-odd
+    cells that are mostly buffers.
+    """
+    rpt = next(run.glob(f"*stapostpnr/{corner}/max.rpt"), None)
+    if rpt is None:
+        return None
+    blocks = rpt.read_text().split("Startpoint:")
+    regs = [b for b in blocks
+            if b.splitlines() and "edge-triggered flip-flop" in b.splitlines()[0]]
+    if not regs:
+        return None
+    blk = regs[0]          # report_checks emits paths worst first
+
+    start = blk.splitlines()[0].split("(")[0].strip()
+    m = re.search(r"Endpoint:\s*(\S+)", blk)
+    end = m.group(1) if m else None
+    m = re.search(r"([-\d.]+)\s+slack \((MET|VIOLATED)\)", blk)
+    slack = float(m.group(1)) if m else None
+
+    cells = []
+    for ln in blk.splitlines():
+        m = re.search(r"\s(\S+)/(\S+)\s+\((sg13g2_\S+)\)", ln)
+        if not m:
+            continue
+        inst, pin, cell = m.groups()
+        if inst.startswith(("clkbuf", "clkload")):
+            continue
+        if pin in ("X", "Y", "Q", "CLK"):
+            continue       # each instance appears twice; count it at its input pin
+        cells.append(cell)
+
+    nl = next(run.glob("*detailedrouting/*.nl.v"), None) or \
+        next(run.glob("*detailedplacement/*.nl.v"), None)
+    text = nl.read_text() if nl else ""
+    return {
+        "corner": corner,
+        "slack_ns": slack,
+        "cells": len(cells),
+        # `fanout*` and `buf`/`inv` cells on the path are what PnR had to add to
+        # drive real wires. Synthesis never charged for them.
+        "buffers": sum(1 for c in cells if "buf" in c or c.startswith("sg13g2_inv")),
+        "startpoint": resolve_flop(text, start) or start,
+        "endpoint": resolve_flop(text, end) or end,
+        "cell_histogram": {c: cells.count(c) for c in sorted(set(cells))},
+    }
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--only", action="append", default=None)
@@ -329,6 +414,14 @@ def main(argv=None):
         picked = {k: metrics.get(k) for k in METRICS}
         picked["run_dir"] = str(run.relative_to(ROOT))
         picked["config"] = cfg
+        wpath = worst_reg_path(run)
+        if wpath:
+            picked["worst_reg_path"] = wpath
+            print(f"    worst reg-to-reg at the slow corner: "
+                  f"{wpath['slack_ns']:+.3f} ns over {wpath['cells']} cells "
+                  f"({wpath['buffers']} of them buffers)", flush=True)
+            print(f"      {wpath['startpoint']}\n      -> {wpath['endpoint']}",
+                  flush=True)
         summary[cfg["name"]] = picked
 
         gds = next((run / "final" / "gds").glob("*.gds"), None)
