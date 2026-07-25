@@ -22,8 +22,8 @@ and two interchangeable microarchitectures that produce bit-identical results.
 | Format | Q3.29 in 32 bits by default, parameterised; Q3.13 in 16 bits also verified |
 | Accuracy | 4.5 LSB worst case for sin and cos, 1.5 RMS, measured against double precision |
 | Interfaces | OBI v1.6 subordinate over a 4 KB window, plus a valid/ready streaming port |
-| Pipelined core | 1 result per cycle, 30 cycles latency, 55,096 cells |
-| Iterative core | 1 result per 29 cycles, 31 cycles latency, 11,101 cells |
+| Pipelined core | 1 result per cycle, 30 cycles end-to-end latency, 55,096 cells |
+| Iterative core | 1 result per 29 cycles, 31 cycles end-to-end latency, 11,101 cells |
 | Verification | 17,536 accuracy comparisons, 4,200 domain arguments, 28 OBI protocol tests, bit-identity between both cores over 900 operations |
 | Tooling | Verilator lint clean at `-Wall` over 10 configurations, Yosys over 6, RV32 driver image links |
 

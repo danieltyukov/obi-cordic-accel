@@ -213,15 +213,16 @@ def plot_error_vs_stages():
             curves[label].append(worst[label])
         reference_line.append(math.atan(2.0 ** -(ns - 1)) / lsb)
 
-    fig, ax = plt.subplots(figsize=(7.2, 4.4))
+    fig, ax = plt.subplots(figsize=(7.6, 4.6))
     for i, (_, _, label) in enumerate(funcs):
         ax.semilogy(stage_counts, curves[label], "o-", markersize=3.0,
                     linewidth=1.2, color=PALETTE[i], label=label)
     ax.semilogy(stage_counts, reference_line, "k--", linewidth=1.0,
                 label="atan(2^-(N-1)), the unresolved final rotation")
     ax.axvline(28, color="#8a8a8a", linestyle=":", linewidth=0.9)
-    ax.text(28.3, ax.get_ylim()[1] * 0.35, "default N=28", fontsize=7.5,
-            color="#5c646e", rotation=90, va="top")
+    # Below the curves rather than up in the legend's corner.
+    ax.text(28.4, ax.get_ylim()[0] * 6.0, "default N=28", fontsize=7.5,
+            color="#5c646e", rotation=90, va="bottom")
     ax.set_xlabel("micro-rotations N")
     ax.set_ylabel("max |error| over 240 arguments (LSB of Q3.29)")
     ax.set_title("Convergence: error falls with stage count until the format's "
@@ -300,14 +301,18 @@ def plot_error_vs_width():
                      color=PALETTE[i], label=label)
     axes[1].set_xlabel("word width W bits")
     axes[1].set_ylabel("max error in LSBs of that format")
-    axes[1].set_title("In LSBs it stays roughly flat, which is the useful result")
+    axes[1].set_title("In LSBs, flat once the stage count tracks the format")
     axes[1].legend(loc="upper left")
     fig.suptitle("Accuracy versus fixed-point width, three integer bits throughout, "
                  "N = max(15, W-3)", y=1.02)
-    note(fig, "Swept over the bit-accurate model. Error in LSBs barely moves with "
-              "width because both the micro-rotation residual and the truncation "
-              "walk scale with the format, so a wider word buys proportionally "
-              "more precision rather than relatively better behaviour.")
+    note(fig, "Swept over the bit-accurate model. Absolute error tracks one LSB "
+              "across the whole range, so a wider word buys precision "
+              "proportionally. In LSBs, sin, cos and atan2 sit near 2.5 once N "
+              "follows the format. exp climbs from 1 to 12 LSB over W = 12 to 20 "
+              "for a specific reason: N is clamped at 15 below W = 18 (the "
+              "hyperbolic sequence needs 5, or 15 and up), so those points carry "
+              "more stages than their format warrants, and exp amplifies the "
+              "residual by its own derivative on top.")
     save(fig, "error_vs_width.png")
 
 

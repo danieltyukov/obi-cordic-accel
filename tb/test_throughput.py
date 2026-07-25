@@ -15,7 +15,7 @@ import pathlib
 import cocotb
 from cocotb.triggers import ClockCycles, RisingEdge
 
-from cordic_tb import (CordicDut, FUNC, get_field, make_field, stream_pop,
+from cordic_tb import (CLK_PERIOD_NS, CordicDut, FUNC, get_field, stream_pop,
                        stream_push, to_signed)
 
 RESULT_DIR = pathlib.Path(os.environ.get(
@@ -26,7 +26,9 @@ N_STREAM = int(os.environ.get("CORDIC_STREAM_OPS", "256"))
 
 
 def cycles():
-    return cocotb.utils.get_sim_time("ns") // 10
+    """Simulation time in whole clock cycles. int, not float, so the numbers that
+    end up in the figures and the README read as cycle counts."""
+    return int(cocotb.utils.get_sim_time("ns")) // CLK_PERIOD_NS
 
 
 def write_results(name, payload):
