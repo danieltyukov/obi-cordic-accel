@@ -365,13 +365,15 @@ offset above `0x063`, and a write to any of the 17 read-only registers.
 and angle sequence, so results are **bit-identical**, asserted over 900 operations by
 recording both runs and diffing the files word for word.
 
-Post-route on IHP SG13G2, which is the only comparison that settles anything:
+Post-route on IHP SG13G2, which is the only comparison that settles anything. Every
+frequency below is at the slow signoff corner, `nom_slow_1p08V_125C`, which is 1.08 V
+and 125 C:
 
 | | Pipelined (`Variant = 0`) | Iterative (`Variant = 1`) | Ratio |
 |---|---|---|---|
 | Structure | N register banks, shifts are wiring | one stage reused, barrel shifter in the loop | |
 | Routed cells, Q3.29 N=28 | 54,177 | 10,840 | 5.0x |
-| Flip-flops | 4,921 | 1,229 | 4.0x |
+| Flip-flops, from synthesis | 4,921 | 1,229 | 4.0x |
 | Routed cell area | 0.796 mm2 | 0.179 mm2 | **4.4x** |
 | Die area | 1.954 mm2 | 0.383 mm2 | 5.1x |
 | Fmax, slow corner | 78.6 MHz | **90.9 MHz** | 0.86x |
@@ -379,6 +381,11 @@ Post-route on IHP SG13G2, which is the only comparison that settles anything:
 | Throughput | 78.6 M results/s | 3.13 M results/s | **25.1x** |
 | Results/s per mm2 of cells | 98.8 M | 17.5 M | **5.6x** |
 | Latency, end to end | 30 cycles | 31 cycles | |
+
+Every row there is post-route except the flip-flop count, which is the synthesised one:
+LibreLane reports sequential-cell area rather than a flop count, and the two areas,
+246,292 um2 against 60,663, stand in the same 4.06x ratio, so the flops survive the
+flow. Marked rather than quietly mixed in.
 
 Folding is a worse deal than 1/N: 4.4x the cell area buys 25x the throughput, so the
 pipelined core is 5.6x better per square millimetre of cells. What it does not cost is
@@ -544,16 +551,24 @@ This is the part worth reading, because synthesis numbers are what most open
 accelerator repositories quote as if they were final. They are not, and they are not
 wrong in a single direction either.
 
+Both frequency rows are at the slow signoff corner, 1.08 V and 125 C, named
+`nom_slow_1p08V_125C` in the LibreLane metrics and `slow` in
+[docs/pdk/summary.json](docs/pdk/summary.json). The area rows come from
+`design__instance__area__stdcell` and `design__die__area` in
+[docs/pnr/summary.json](docs/pnr/summary.json) and from `synth_area_um2` in the PDK
+summary, so every cell in this table can be checked against a committed file without
+rerunning anything.
+
 | Q3.29, N=28 | Pipelined | Iterative |
 |---|---:|---:|
 | Mapped cell area, synthesis | 607,386 um2 | 135,442 um2 |
-| Routed standard cell area | 795,596 um2 | 179,054 um2 |
+| Routed standard cell area, post-route | 795,596 um2 | 179,054 um2 |
 | **Cell area inflation** | **1.31x** | **1.32x** |
-| Die area | 1,954,180 um2 | 383,154 um2 |
+| Die area, post-route | 1,954,180 um2 | 383,154 um2 |
 | Die / mapped cells | 3.22x | 2.83x |
-| Utilisation achieved | 42.0% | 50.1% |
+| Utilisation achieved, post-route | 42.0% | 50.1% |
 | Fmax slow, synthesis estimate | 61.6 MHz | 48.5 MHz |
-| Fmax slow, routed | 78.6 MHz | 90.9 MHz |
+| Fmax slow, post-route | 78.6 MHz | 90.9 MHz |
 | **Frequency change** | **1.28x** | **1.88x** |
 
 ![Synthesis against post-route](docs/img/pnr_comparison.png)
@@ -724,6 +739,11 @@ carries two shims so the suite runs unchanged on either cocotb generation.
 
 Waveforms: `make -C tb WAVES=1 MODULE=test_smoke`.
 
+[CONTRIBUTING.md](CONTRIBUTING.md) has the rest: running one suite at a time, the
+elaboration parameters as environment variables, the PDK and PnR flows, the STA
+gotchas that cost an afternoon each, and the bar a change has to clear before it
+lands.
+
 ## Repository layout
 
 ```
@@ -744,7 +764,10 @@ integration/croc/          drop-in wrapper, example user_pkg and user_domain,
 tb/                        cocotb suite, the bit-accurate model, the error bounds
 sw/                        driver, self-test, host peripheral model, RV32 build
 scripts/                   constant and register-map generators, synthesis, figures
-docs/                      DESIGN.md, CROC_INTEGRATION.md, REGISTERS.md, img/, synth/
+formal/                    SymbiYosys miter and OBI properties, and what came of them
+docs/                      DESIGN.md, CROC_INTEGRATION.md, REGISTERS.md, img/, synth/,
+                           pdk/, pnr/
+CONTRIBUTING.md            how to run every flow here, and what a change has to clear
 ```
 
 Everything generated is committed and `make check-gen` fails if any of it is stale,
