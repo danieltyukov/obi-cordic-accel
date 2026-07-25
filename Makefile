@@ -76,7 +76,8 @@ STREAM_OPS     ?= 256
 .PHONY: all venv gen rom regmap sw-vectors check-gen lint lint-core lint-wrap \
         lint-configs test test-smoke test-accuracy test-domain test-obi \
         test-throughput test-equivalence test-reset synth synth-quick sw sw-host \
-        sw-rv32 images clean distclean tools help pdk pdk-quick pnr layout arith
+        sw-rv32 images clean distclean tools help pdk pdk-quick pnr pnr-harvest \
+        layout arith formal
 
 all: check-tools gen lint test synth pdk sw images
 	@echo
@@ -264,8 +265,26 @@ pdk-quick: $(VENV_OK)
 pnr: $(VENV_OK)
 	$(PY) $(TOP)/scripts/run_pnr.py
 
+# Re-read the newest existing routing run into docs/pnr/summary.json. Useful when the
+# metric list changes; routing again would take hours and give a different layout from
+# the one already rendered and committed.
+pnr-harvest: $(VENV_OK)
+	$(PY) $(TOP)/scripts/run_pnr.py --harvest-only
+
 layout:
 	$(TOP)/scripts/run_pnr_render.sh
+
+# ---------------------------------------------------------------------------
+# Formal. Bounded equivalence of the two microarchitectures, which is a stronger
+# claim than the random-vector equivalence test in tb/test_equivalence.py.
+# Not part of `make all`: SymbiYosys is a separate install, and the bound is deep
+# enough that the run is measured in minutes rather than seconds.
+# ---------------------------------------------------------------------------
+formal:
+	@command -v sby >/dev/null 2>&1 || { \
+	  echo "sby (SymbiYosys) not on PATH; skipping the bounded equivalence proof"; \
+	  exit 0; }
+	cd $(TOP)/formal && sby -f equiv_q3_13.sby
 
 # ---------------------------------------------------------------------------
 # Software

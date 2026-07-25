@@ -60,8 +60,15 @@ METRICS = [
     "timing__setup__ws",
     "timing__hold__ws",
     "timing__setup__tns",
+    # LibreLane's mid-PnR STA runs the default corner only; the post-route signoff
+    # STA runs everything in STA_CORNERS, which for sg13g2 is all three. The slow
+    # corner is the one a design has to close on, so it is the number worth quoting.
+    "timing__setup__ws__corner:nom_slow_1p08V_125C",
+    "timing__hold__ws__corner:nom_slow_1p08V_125C",
     "timing__setup__ws__corner:nom_typ_1p20V_25C",
     "timing__hold__ws__corner:nom_typ_1p20V_25C",
+    "timing__setup__ws__corner:nom_fast_1p32V_m40C",
+    "timing__hold__ws__corner:nom_fast_1p32V_m40C",
     "design__instance__area__class:standard_cell",
     "design__instance__area__class:fill_cell",
     "design__instance__count__class:standard_cell",
@@ -255,9 +262,11 @@ def harvest(run):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--only", action="append", default=None)
+    ap.add_argument("--harvest-only", action="store_true",
+                    help="re-summarise the newest existing run without routing again")
     args = ap.parse_args(argv)
 
-    if shutil.which("librelane") is None:
+    if shutil.which("librelane") is None and not args.harvest_only:
         print("librelane not on PATH", file=sys.stderr)
         return 1
 
@@ -275,29 +284,39 @@ def main(argv=None):
     summary = {}
     for cfg in configs:
         work = BUILD / cfg["name"]
-        work.mkdir(parents=True, exist_ok=True)
-        # Both live next to the config, since dir:: resolves relative to it.
-        shutil.copy(PNR / "cordic.sdc", work / "cordic.sdc")
-        stage_rtl(work)
-        write_wrapper(cfg, work / f"{cfg['top']}.sv")
-        cfg_path = work / "config.json"
-        cfg_path.write_text(json.dumps(config_for(cfg), indent=1))
-
-        print(f"[{cfg['name']}] place and route at {cfg['period_ns']} ns, "
-              f"utilisation {cfg['util']}%", flush=True)
         log = BUILD / f"{cfg['name']}.log"
-        with log.open("w") as fh:
-            rc = subprocess.run(["librelane", "config.json"], cwd=work,
-                                stdout=fh, stderr=subprocess.STDOUT).returncode
-        text = log.read_text()
-        if "fallback SDC" in text:
-            print("  WARNING: LibreLane fell back to a generic SDC; timing from "
-                  "this run is not trustworthy", file=sys.stderr)
-        if rc != 0:
-            print(f"  librelane failed, see {log}", file=sys.stderr)
-            tail = "\n".join(text.splitlines()[-40:])
-            print(tail, file=sys.stderr)
-            return 1
+
+        # --harvest-only exists because the metric list grows faster than a routing
+        # run finishes. Re-reading a completed run costs a second; repeating it costs
+        # hours, and would produce a different layout from the one already rendered.
+        if args.harvest_only:
+            print(f"[{cfg['name']}] harvesting the newest existing run", flush=True)
+            if log.exists() and "fallback SDC" in log.read_text():
+                print("  WARNING: that run fell back to a generic SDC; its timing is "
+                      "not trustworthy", file=sys.stderr)
+        else:
+            work.mkdir(parents=True, exist_ok=True)
+            # Both live next to the config, since dir:: resolves relative to it.
+            shutil.copy(PNR / "cordic.sdc", work / "cordic.sdc")
+            stage_rtl(work)
+            write_wrapper(cfg, work / f"{cfg['top']}.sv")
+            cfg_path = work / "config.json"
+            cfg_path.write_text(json.dumps(config_for(cfg), indent=1))
+
+            print(f"[{cfg['name']}] place and route at {cfg['period_ns']} ns, "
+                  f"utilisation {cfg['util']}%", flush=True)
+            with log.open("w") as fh:
+                rc = subprocess.run(["librelane", "config.json"], cwd=work,
+                                    stdout=fh, stderr=subprocess.STDOUT).returncode
+            text = log.read_text()
+            if "fallback SDC" in text:
+                print("  WARNING: LibreLane fell back to a generic SDC; timing from "
+                      "this run is not trustworthy", file=sys.stderr)
+            if rc != 0:
+                print(f"  librelane failed, see {log}", file=sys.stderr)
+                tail = "\n".join(text.splitlines()[-40:])
+                print(tail, file=sys.stderr)
+                return 1
 
         run = latest_run(work / "runs")
         if run is None:
