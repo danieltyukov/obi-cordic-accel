@@ -1,0 +1,27 @@
+obi-cordic-accel
+Copyright 2026 Daniel Tyukov
+
+This product includes software developed by Daniel Tyukov, licensed under the
+Apache License, Version 2.0. See LICENSE.
+
+Third-party material
+--------------------
+
+integration/croc/user_pkg.sv.example and integration/croc/user_domain.sv.example
+reproduce scaffolding from pulp-platform/croc (ETH Zurich and University of
+Bologna), which is licensed under the Solderpad Hardware License, Version 0.51.
+Those two files are provided as diff references for an integrator; only the
+CORDIC-specific parts of them are covered by this repository's licence.
+
+integration/croc/lint/obi_pkg.sv and integration/croc/lint/croc_pkg.sv reproduce
+the type and configuration field lists from pulp-platform/obi and
+pulp-platform/croc, same licence, so that the integration wrapper can be
+elaborated for linting without a Croc checkout. They are for linting only and
+must never be compiled into a Croc build.
+
+The CORDIC algorithm itself is due to Jack Volder (1959) for the circular case
+and John Walther (1971) for the unified circular, linear and hyperbolic form,
+including the repeated-iteration rule for hyperbolic convergence. Both are
+published prior art, not code.
+
+No source code from any other project is included in rtl/, tb/, sw/ or scripts/.
