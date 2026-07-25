@@ -608,11 +608,16 @@ leftover slack, and for what that number does and does not claim.
 | LVS unmatched nets, devices, pins | 0, 0, 0 | 0, 0, 0 |
 | Antenna violations after diode insertion | 13 | 6 |
 | Routed wirelength | 1,685,814 um | 418,654 um |
-| Switching power at typ | 0.117 W | 0.018 W |
+| Total power, OpenSTA estimate at typ | 0.117 W | 0.018 W |
 
 **The folded variant closes DRC clean and the pipelined one does not.** Both variants
 pass LVS: netgen reports circuits match uniquely against the extracted layout, with no
 unmatched net, device or pin on either.
+
+The power figures are the weakest numbers in that table and are labelled accordingly.
+They are OpenSTA's own estimate over the routed netlist with its default switching
+activity, not a simulation-driven one, so the 6.5x ratio between the variants carries
+more than either absolute value does.
 
 The two DRC decks agree on what is wrong. KLayout reports exactly one violation on the
 pipelined layout, a Metal2 minimum-area failure (`M2.d`). Magic reports 7 in the raw
