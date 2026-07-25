@@ -52,9 +52,13 @@ module cordic_core_pipe #(
   `include "cordic_defs.svh"
   `include "cordic_rom_fx.svh"
 
-  logic signed [NumStages-1:0][Width-1:0]     xq, yq, zq;
-  logic        [NumStages-1:0][AttrWidth-1:0] aq;
-  logic        [NumStages-1:0]                vq;
+  // Stage storage as flat vectors rather than packed 2D arrays: Yosys 0.33
+  // rejects `logic [N-1:0][W-1:0]` declarations outright. Stage s owns bits
+  // [s*Width + Width-1 : s*Width], and every access below uses a genvar, so the
+  // offsets are elaboration-time constants and no shifter is inferred.
+  logic signed [NumStages*Width-1:0]     xq, yq, zq;
+  logic        [NumStages*AttrWidth-1:0] aq;
+  logic        [NumStages-1:0]           vq;
 
   // Freeze everything when the tail holds a result nobody is taking.
   logic pipe_en;
@@ -85,10 +89,10 @@ module cordic_core_pipe #(
       assign a_in = attr_i;
       assign v_in = valid_i;
     end else begin : gen_body
-      assign x_in = xq[s-1];
-      assign y_in = yq[s-1];
-      assign z_in = zq[s-1];
-      assign a_in = aq[s-1];
+      assign x_in = xq[(s-1)*Width +: Width];
+      assign y_in = yq[(s-1)*Width +: Width];
+      assign z_in = zq[(s-1)*Width +: Width];
+      assign a_in = aq[(s-1)*AttrWidth +: AttrWidth];
       assign v_in = vq[s-1];
     end
 
@@ -154,19 +158,19 @@ module cordic_core_pipe #(
     // wide words.
     always_ff @(posedge clk_i) begin
       if (pipe_en && v_in) begin
-        xq[s] <= x_st;
-        yq[s] <= y_st;
-        zq[s] <= z_st;
-        aq[s] <= a_in;
+        xq[s*Width +: Width]         <= x_st;
+        yq[s*Width +: Width]         <= y_st;
+        zq[s*Width +: Width]         <= z_st;
+        aq[s*AttrWidth +: AttrWidth] <= a_in;
       end
     end
   end
 
   assign valid_o = vq[NumStages-1];
-  assign x_o     = xq[NumStages-1];
-  assign y_o     = yq[NumStages-1];
-  assign z_o     = zq[NumStages-1];
-  assign attr_o  = aq[NumStages-1];
+  assign x_o     = xq[(NumStages-1)*Width +: Width];
+  assign y_o     = yq[(NumStages-1)*Width +: Width];
+  assign z_o     = zq[(NumStages-1)*Width +: Width];
+  assign attr_o  = aq[(NumStages-1)*AttrWidth +: AttrWidth];
   assign busy_o  = |vq;
 
   assign dbg_stage_valid_o = {vq, valid_i && ready_o};

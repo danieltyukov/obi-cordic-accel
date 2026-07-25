@@ -1,0 +1,58 @@
+CORDIC accelerator synthesis report: pipe_q3_13_n15
+========================================================================
+
+Produced by scripts/run_synth.py, which runs scripts/synth.ys.in
+through Yosys. Technology-independent mapping (abc -g cmos4), so the
+counts are gate equivalents, comparable between configurations but
+not IHP 130nm areas.
+
+Configuration
+------------------------------------------------------------------------
+  top          cordic_accel
+  variant      0
+  data_width   16
+  frac_bits    13
+  num_stages   15
+  guard_int    2
+  guard_frac   4
+  in_depth     4
+  out_depth    4
+  id_width     3
+  use_rready   0
+  format       Q3.13
+  variant      fully pipelined
+
+Totals
+------------------------------------------------------------------------
+  wires                  16168
+  wire bits              27026
+  cells                  18670
+  flip-flops             1988
+  combinational cells    16682
+  longest logic depth    46 (register to register, gates)
+
+Checks
+------------------------------------------------------------------------
+  hierarchy -check       passed, no undefined module instantiated
+  check -assert          passed, no combinational loop, no
+                         multiply-driven or undriven wire
+  inferred latches       none ($dlatch, $_DLATCH_*, $sr, $_SR_*
+                         all asserted empty, before and after
+                         technology mapping)
+  unmapped submodules    none, every cell is a Yosys primitive
+  tristate               none
+
+Cells by type
+------------------------------------------------------------------------
+  $_NOR_                       4872
+  $_NAND_                      4846
+  $_NOT_                       2956
+  $_OAI3_                      1852
+  $_DFFE_PP_                   1820
+  $_AOI3_                      1793
+  $_AOI4_                       300
+  $_DFFE_PN0P_                  145
+  $_OAI4_                        63
+  $_DFF_PN0_                     20
+  $_SDFFCE_PN0P_                  3
+

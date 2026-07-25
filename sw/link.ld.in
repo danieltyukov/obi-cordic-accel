@@ -1,0 +1,71 @@
+/* Copyright 2026 Daniel Tyukov
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Linker script for the freestanding RV32 driver test.
+ *
+ * Preprocessed by sw/Makefile, which supplies CORDIC_RAM_ORIGIN and
+ * CORDIC_RAM_LENGTH. The defaults match Croc's SRAM as croc_pkg.sv configures it:
+ * bank 0 at 0x1000_0000, NumSramBanks banks of SramBankNumWords 32-bit words, so
+ * 8 KB for the default two banks of 1024 words. Change RV_RAM_SIZE in the Makefile
+ * to match a Croc with more SRAM.
+ */
+
+#ifndef CORDIC_RAM_ORIGIN
+#define CORDIC_RAM_ORIGIN 0x10000000
+#endif
+#ifndef CORDIC_RAM_LENGTH
+#define CORDIC_RAM_LENGTH 8K
+#endif
+#ifndef CORDIC_STACK_SIZE
+#define CORDIC_STACK_SIZE 1K
+#endif
+
+MEMORY {
+  ram (rwx) : ORIGIN = CORDIC_RAM_ORIGIN, LENGTH = CORDIC_RAM_LENGTH
+}
+
+ENTRY(_start)
+
+SECTIONS {
+  .text : {
+    KEEP(*(.text.init))
+    *(.text .text.*)
+    *(.rodata .rodata.*)
+    *(.srodata .srodata.*)
+  } > ram
+
+  . = ALIGN(4);
+  _sidata = .;
+  .data : {
+    _sdata = .;
+    *(.data .data.*)
+    *(.sdata .sdata.*)
+    . = ALIGN(4);
+    /* gp-relative addressing wants the global pointer in the middle of the small
+     * data area. */
+    PROVIDE(__global_pointer$ = . + 0x800);
+    _edata = .;
+  } > ram
+
+  .bss (NOLOAD) : {
+    . = ALIGN(4);
+    _sbss = .;
+    *(.bss .bss.*)
+    *(.sbss .sbss.*)
+    *(COMMON)
+    . = ALIGN(4);
+    _ebss = .;
+  } > ram
+
+  . = ALIGN(16);
+  _heap_start = .;
+
+  /* Stack at the top of RAM. */
+  _stack_bottom = ORIGIN(ram) + LENGTH(ram) - CORDIC_STACK_SIZE;
+  _stack_top = ORIGIN(ram) + LENGTH(ram);
+
+  ASSERT(_heap_start < _stack_bottom,
+         "image plus stack does not fit in the configured RAM")
+
+  /DISCARD/ : { *(.comment) *(.note.*) *(.eh_frame) }
+}

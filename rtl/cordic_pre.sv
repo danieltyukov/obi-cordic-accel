@@ -65,18 +65,18 @@ module cordic_pre #(
   localparam logic signed [IntWidth-1:0] HalfPi =
       IntWidth'(cordic_rom_to_fx(CordicHalfPiRom, IntFrac));
   localparam logic signed [IntWidth-1:0] InvKCirc =
-      IntWidth'(cordic_rom_to_fx(CordicInvKCircRom[NumStages], IntFrac));
+      IntWidth'(cordic_rom_to_fx(cordic_inv_k_circ_rom(NumStages), IntFrac));
   localparam logic signed [IntWidth-1:0] InvKHyp =
-      IntWidth'(cordic_rom_to_fx(CordicInvKHypRom[NumStages], IntFrac));
+      IntWidth'(cordic_rom_to_fx(cordic_inv_k_hyp_rom(NumStages), IntFrac));
   // Radii are quantised to the interface format first, then widened, so the value
   // read from LIM_CIRC, LIM_HYP or LIM_LIN is exactly the largest accepted
   // argument.
   localparam logic signed [IntWidth-1:0] LimCirc =
-      IntWidth'(cordic_limit_to_int(CordicLimCircRom[NumStages], FracBits, GuardFrac));
+      IntWidth'(cordic_limit_to_int(cordic_lim_circ_rom(NumStages), FracBits, GuardFrac));
   localparam logic signed [IntWidth-1:0] LimHyp =
-      IntWidth'(cordic_limit_to_int(CordicLimHypRom[NumStages], FracBits, GuardFrac));
+      IntWidth'(cordic_limit_to_int(cordic_lim_hyp_rom(NumStages), FracBits, GuardFrac));
   localparam logic signed [IntWidth-1:0] LimLin =
-      IntWidth'(cordic_limit_to_int(CordicLimLinRom[NumStages], FracBits, GuardFrac));
+      IntWidth'(cordic_limit_to_int(cordic_lim_lin_rom(NumStages), FracBits, GuardFrac));
   /// One half in the internal format, used to build the LN operand pair.
   localparam logic signed [IntWidth-1:0] Half = IntWidth'(1) <<< (IntFrac - 1);
 

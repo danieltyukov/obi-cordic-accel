@@ -289,14 +289,14 @@ module cordic_obi_regs #(
       CordicResYWord:    rdata_sel = res_valid_i ? sext(res_y_i) : 32'b0;
       CordicResZWord:    rdata_sel = res_valid_i ? sext(res_z_i) : 32'b0;
       CordicResFlagsWord: rdata_sel = flags_word;
-      CordicKCircWord:   rdata_sel = rom_word(CordicKCircRom[NumStages]);
-      CordicIkCircWord:  rdata_sel = rom_word(CordicInvKCircRom[NumStages]);
-      CordicKHypWord:    rdata_sel = rom_word(CordicKHypRom[NumStages]);
-      CordicIkHypWord:   rdata_sel = rom_word(CordicInvKHypRom[NumStages]);
-      CordicLimCircWord: rdata_sel = limit_word(CordicLimCircRom[NumStages]);
-      CordicLimHypWord:  rdata_sel = limit_word(CordicLimHypRom[NumStages]);
-      CordicLimLinWord:  rdata_sel = limit_word(CordicLimLinRom[NumStages]);
-      CordicTanhLimHypWord: rdata_sel = limit_word(CordicTanhLimHypRom[NumStages]);
+      CordicKCircWord:   rdata_sel = rom_word(cordic_k_circ_rom(NumStages));
+      CordicIkCircWord:  rdata_sel = rom_word(cordic_inv_k_circ_rom(NumStages));
+      CordicKHypWord:    rdata_sel = rom_word(cordic_k_hyp_rom(NumStages));
+      CordicIkHypWord:   rdata_sel = rom_word(cordic_inv_k_hyp_rom(NumStages));
+      CordicLimCircWord: rdata_sel = limit_word(cordic_lim_circ_rom(NumStages));
+      CordicLimHypWord:  rdata_sel = limit_word(cordic_lim_hyp_rom(NumStages));
+      CordicLimLinWord:  rdata_sel = limit_word(cordic_lim_lin_rom(NumStages));
+      CordicTanhLimHypWord: rdata_sel = limit_word(cordic_tanh_lim_hyp_rom(NumStages));
       CordicScratchWord: rdata_sel = scratch_q;
       default: begin
         rdata_sel = CordicBadAccessData;

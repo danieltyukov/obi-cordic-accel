@@ -11,12 +11,17 @@
 // `cordic_rom_to_fx` in cordic_fx.svh re-rounds an entry to the working format.
 //
 // Indexing conventions:
-//   CordicAtanRom [s]  atan(2**-s)               s = 0 .. CordicRomMaxIdx-1
-//   CordicAtanhRom[s]  atanh(2**-s)              s = 1 .. CordicRomMaxIdx-1
+// Tables are flat vectors: entry i of a table with W-bit entries occupies bits
+// [i*W + W-1 : i*W]. Read them through the accessors in cordic_rom_fx.svh rather
+// than indexing directly. They are flat because Yosys 0.33 cannot parse a packed
+// 2D localparam declaration at all.
+//
+//   CordicAtanRom      atan(2**-s)   for s = 0 .. CordicRomMaxIdx-1
+//   CordicAtanhRom     atanh(2**-s)  for s = 1 .. CordicRomMaxIdx-1
 //                      (entry 0 is zero: atanh(1) is infinite and shift 0 is
 //                       never part of the hyperbolic sequence)
-//   Cordic*Rom    [n]  quantity for an n-stage datapath, n = 0 .. CordicRomMaxStg
-//   CordicHypShiftRom[k] shift amount of hyperbolic stage k
+//   Cordic*Rom         quantity for an n-stage datapath, n = 0 .. CordicRomMaxStg
+//   CordicHypShiftRom  shift amount of hyperbolic stage k
 //
 // Include this inside a module body, not at file scope, so the localparams stay
 // module-local. There is deliberately no include guard: each module that needs
@@ -41,7 +46,8 @@
 
   // atan(2**-s): circular micro-rotation angles
   localparam int unsigned CordicAtanRomDepth = 56;
-  localparam logic [55:0][63:0] CordicAtanRom = {
+  localparam int unsigned CordicAtanRomBits  = 64;
+  localparam logic [3583:0] CordicAtanRom = {
     64'h0000000000000040, // [55]
     64'h0000000000000080, // [54]
     64'h0000000000000100, // [53]
@@ -102,7 +108,8 @@
 
   // atanh(2**-s): hyperbolic micro-rotation angles
   localparam int unsigned CordicAtanhRomDepth = 56;
-  localparam logic [55:0][63:0] CordicAtanhRom = {
+  localparam int unsigned CordicAtanhRomBits  = 64;
+  localparam logic [3583:0] CordicAtanhRom = {
     64'h0000000000000040, // [55]
     64'h0000000000000080, // [54]
     64'h0000000000000100, // [53]
@@ -163,7 +170,8 @@
 
   // circular gain K = prod sqrt(1 + 2**-2s)
   localparam int unsigned CordicKCircRomDepth = 49;
-  localparam logic [48:0][63:0] CordicKCircRom = {
+  localparam int unsigned CordicKCircRomBits  = 64;
+  localparam logic [3135:0] CordicKCircRom = {
     64'h34b242919f709a20, // [48]
     64'h34b242919f709a20, // [47]
     64'h34b242919f709a20, // [46]
@@ -217,7 +225,8 @@
 
   // reciprocal circular gain 1/K, loaded as x0 for gain-free sin/cos
   localparam int unsigned CordicInvKCircRomDepth = 49;
-  localparam logic [48:0][63:0] CordicInvKCircRom = {
+  localparam int unsigned CordicInvKCircRomBits  = 64;
+  localparam logic [3135:0] CordicInvKCircRom = {
     64'h136e9db5086bcb4d, // [48]
     64'h136e9db5086bcb4d, // [47]
     64'h136e9db5086bcb4d, // [46]
@@ -271,7 +280,8 @@
 
   // hyperbolic gain Kh = prod sqrt(1 - 2**-2s)
   localparam int unsigned CordicKHypRomDepth = 49;
-  localparam logic [48:0][63:0] CordicKHypRom = {
+  localparam int unsigned CordicKHypRomBits  = 64;
+  localparam logic [3135:0] CordicKHypRom = {
     64'h1a80480f66698e62, // [48]
     64'h1a80480f66698e62, // [47]
     64'h1a80480f66698e62, // [46]
@@ -325,7 +335,8 @@
 
   // reciprocal hyperbolic gain 1/Kh, loaded as x0 for sinh/cosh/exp
   localparam int unsigned CordicInvKHypRomDepth = 49;
-  localparam logic [48:0][63:0] CordicInvKHypRom = {
+  localparam int unsigned CordicInvKHypRomBits  = 64;
+  localparam logic [3135:0] CordicInvKHypRom = {
     64'h26a3d0e401dd8465, // [48]
     64'h26a3d0e401dd8465, // [47]
     64'h26a3d0e401dd8465, // [46]
@@ -379,7 +390,8 @@
 
   // circular convergence radius sum atan(2**-s)
   localparam int unsigned CordicLimCircRomDepth = 49;
-  localparam logic [48:0][63:0] CordicLimCircRom = {
+  localparam int unsigned CordicLimCircRomBits  = 64;
+  localparam logic [3135:0] CordicLimCircRom = {
     64'h37c90105cf750372, // [48]
     64'h37c90105cf74c372, // [47]
     64'h37c90105cf744372, // [46]
@@ -433,7 +445,8 @@
 
   // hyperbolic convergence radius sum atanh(2**-s)
   localparam int unsigned CordicLimHypRomDepth = 49;
-  localparam logic [48:0][63:0] CordicLimHypRom = {
+  localparam int unsigned CordicLimHypRomBits  = 64;
+  localparam logic [3135:0] CordicLimHypRom = {
     64'h23c812c69e96d4bc, // [48]
     64'h23c812c69e95d4bc, // [47]
     64'h23c812c69e93d4bc, // [46]
@@ -487,7 +500,8 @@
 
   // linear convergence radius sum 2**-s
   localparam int unsigned CordicLimLinRomDepth = 49;
-  localparam logic [48:0][63:0] CordicLimLinRom = {
+  localparam int unsigned CordicLimLinRomBits  = 64;
+  localparam logic [3135:0] CordicLimLinRom = {
     64'h3fffffffffffc000, // [48]
     64'h3fffffffffff8000, // [47]
     64'h3fffffffffff0000, // [46]
@@ -541,7 +555,8 @@
 
   // tanh of the hyperbolic radius: the largest |y/x| atanh can resolve
   localparam int unsigned CordicTanhLimHypRomDepth = 49;
-  localparam logic [48:0][63:0] CordicTanhLimHypRom = {
+  localparam int unsigned CordicTanhLimHypRomBits  = 64;
+  localparam logic [3135:0] CordicTanhLimHypRom = {
     64'h19d26417e17686ce, // [48]
     64'h19d26417e1762d7f, // [47]
     64'h19d26417e1757ae1, // [46]
@@ -595,7 +610,8 @@
 
   // hyperbolic stage shift amounts, with 4 and 13 repeated
   localparam int unsigned CordicHypShiftRomDepth = 48;
-  localparam logic [47:0][7:0] CordicHypShiftRom = {
+  localparam int unsigned CordicHypShiftRomBits  = 8;
+  localparam logic [383:0] CordicHypShiftRom = {
     8'h2d, // [47]
     8'h2c, // [46]
     8'h2b, // [45]

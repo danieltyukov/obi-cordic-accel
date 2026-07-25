@@ -34,12 +34,17 @@ HEADER = """// Copyright 2026 Daniel Tyukov
 // `cordic_rom_to_fx` in cordic_fx.svh re-rounds an entry to the working format.
 //
 // Indexing conventions:
-//   CordicAtanRom [s]  atan(2**-s)               s = 0 .. CordicRomMaxIdx-1
-//   CordicAtanhRom[s]  atanh(2**-s)              s = 1 .. CordicRomMaxIdx-1
+// Tables are flat vectors: entry i of a table with W-bit entries occupies bits
+// [i*W + W-1 : i*W]. Read them through the accessors in cordic_rom_fx.svh rather
+// than indexing directly. They are flat because Yosys 0.33 cannot parse a packed
+// 2D localparam declaration at all.
+//
+//   CordicAtanRom      atan(2**-s)   for s = 0 .. CordicRomMaxIdx-1
+//   CordicAtanhRom     atanh(2**-s)  for s = 1 .. CordicRomMaxIdx-1
 //                      (entry 0 is zero: atanh(1) is infinite and shift 0 is
 //                       never part of the hyperbolic sequence)
-//   Cordic*Rom    [n]  quantity for an n-stage datapath, n = 0 .. CordicRomMaxStg
-//   CordicHypShiftRom[k] shift amount of hyperbolic stage k
+//   Cordic*Rom         quantity for an n-stage datapath, n = 0 .. CordicRomMaxStg
+//   CordicHypShiftRom  shift amount of hyperbolic stage k
 //
 // Include this inside a module body, not at file scope, so the localparams stay
 // module-local. There is deliberately no include guard: each module that needs
@@ -56,13 +61,22 @@ FOOTER = "/* verilator lint_on UNUSEDPARAM */\n"
 
 
 def emit_word_table(name, values, width, comment):
-    """Emit a packed 2D localparam. Concatenations are MSB-first, so the table
-    is written from the highest index down."""
+    """Emit a flat 1-D packed localparam plus its depth.
+
+    Flat rather than a packed 2D array on purpose: Yosys 0.33 rejects
+    `localparam logic [N-1:0][W-1:0]` outright ("syntax error, unexpected '['").
+    A single wide vector parses everywhere, and cordic_rom_fx.svh reads entries
+    back with an indexed part-select, which constant-folds at elaboration.
+
+    Concatenations are MSB-first, so the table is written from the highest index
+    down; entry i then lands at bit offset i*width.
+    """
     n = len(values)
     digits = (width + 3) // 4
     lines = [f"  // {comment}"]
     lines.append(f"  localparam int unsigned {name}Depth = {n};")
-    lines.append(f"  localparam logic [{n - 1}:0][{width - 1}:0] {name} = {{")
+    lines.append(f"  localparam int unsigned {name}Bits  = {width};")
+    lines.append(f"  localparam logic [{n * width - 1}:0] {name} = {{")
     for pos, i in enumerate(reversed(range(n))):
         masked = values[i] & ((1 << width) - 1)
         sep = "" if pos == n - 1 else ","

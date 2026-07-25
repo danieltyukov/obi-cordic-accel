@@ -71,17 +71,22 @@ module cordic_core_iter #(
   logic [AttrWidth-1:0]    ar_q, ar_d;
 
   // ---------------------------------------------------------------------------
-  // Constant angle tables, one entry per stage per coordinate system. The
-  // synthesiser folds them into a mux over literals.
+  // Constant angle tables, one entry per stage per coordinate system.
   // ---------------------------------------------------------------------------
-  logic signed [NumStages-1:0][Width-1:0]      angle_circ, angle_lin, angle_hyp;
-  logic        [NumStages-1:0][ShiftWidth-1:0] shift_hyp;
+  // Flat vectors, not packed 2D arrays: Yosys 0.33 rejects the 2D declaration.
+  // Entry s of a W-bit table sits at bits [s*W + W-1 : s*W].
+  logic signed [NumStages*Width-1:0]      angle_circ, angle_lin, angle_hyp;
+  logic        [NumStages*ShiftWidth-1:0] shift_hyp;
 
   for (genvar s = 0; s < NumStages; s++) begin : gen_tables
-    assign angle_circ[s] = Width'(cordic_stage_angle(CordicCoordCirc, s, FracBits));
-    assign angle_lin[s]  = Width'(cordic_stage_angle(CordicCoordLin, s, FracBits));
-    assign angle_hyp[s]  = Width'(cordic_stage_angle(CordicCoordHyp, s, FracBits));
-    assign shift_hyp[s]  = ShiftWidth'(cordic_stage_shift(CordicCoordHyp, s));
+    assign angle_circ[s*Width +: Width] =
+        Width'(cordic_stage_angle(CordicCoordCirc, s, FracBits));
+    assign angle_lin[s*Width +: Width] =
+        Width'(cordic_stage_angle(CordicCoordLin, s, FracBits));
+    assign angle_hyp[s*Width +: Width] =
+        Width'(cordic_stage_angle(CordicCoordHyp, s, FracBits));
+    assign shift_hyp[s*ShiftWidth +: ShiftWidth] =
+        ShiftWidth'(cordic_stage_shift(CordicCoordHyp, s));
   end
 
   logic [1:0] coord;
@@ -97,19 +102,41 @@ module cordic_core_iter #(
 
   assign idx = (cnt_q < IdxWidth'(NumStages)) ? cnt_q : IdxWidth'(NumStages - 1);
 
+  // One entry is selected per coordinate system, then the coordinate system
+  // picks between them. The loop is written out at elaboration, so each offset is
+  // constant and this becomes a mux over literals rather than a barrel shifter
+  // over the whole table.
+  logic signed [Width-1:0]      angle_circ_sel, angle_lin_sel, angle_hyp_sel;
+  logic        [ShiftWidth-1:0] shift_hyp_sel;
+
+  always_comb begin
+    angle_circ_sel = '0;
+    angle_lin_sel  = '0;
+    angle_hyp_sel  = '0;
+    shift_hyp_sel  = '0;
+    for (int unsigned s = 0; s < NumStages; s++) begin
+      if (s == idx) begin
+        angle_circ_sel = angle_circ[s*Width +: Width];
+        angle_lin_sel  = angle_lin[s*Width +: Width];
+        angle_hyp_sel  = angle_hyp[s*Width +: Width];
+        shift_hyp_sel  = shift_hyp[s*ShiftWidth +: ShiftWidth];
+      end
+    end
+  end
+
   always_comb begin
     case (coord)
       CordicCoordHyp: begin
-        shift_sel = shift_hyp[idx];
-        angle_sel = angle_hyp[idx];
+        shift_sel = shift_hyp_sel;
+        angle_sel = angle_hyp_sel;
       end
       CordicCoordLin: begin
         shift_sel = ShiftWidth'(idx);
-        angle_sel = angle_lin[idx];
+        angle_sel = angle_lin_sel;
       end
       default: begin
         shift_sel = ShiftWidth'(idx);
-        angle_sel = angle_circ[idx];
+        angle_sel = angle_circ_sel;
       end
     endcase
   end

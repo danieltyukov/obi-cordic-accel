@@ -1,0 +1,59 @@
+CORDIC accelerator synthesis report: iter_q3_29_n28
+========================================================================
+
+Produced by scripts/run_synth.py, which runs scripts/synth.ys.in
+through Yosys. Technology-independent mapping (abc -g cmos4), so the
+counts are gate equivalents, comparable between configurations but
+not IHP 130nm areas.
+
+Configuration
+------------------------------------------------------------------------
+  top          cordic_accel
+  variant      1
+  data_width   32
+  frac_bits    29
+  num_stages   28
+  guard_int    2
+  guard_frac   4
+  in_depth     4
+  out_depth    4
+  id_width     3
+  use_rready   0
+  format       Q3.29
+  variant      iterative (folded)
+
+Totals
+------------------------------------------------------------------------
+  wires                  9714
+  wire bits              20051
+  cells                  11101
+  flip-flops             1229
+  combinational cells    9872
+  longest logic depth    59 (register to register, gates)
+
+Checks
+------------------------------------------------------------------------
+  hierarchy -check       passed, no undefined module instantiated
+  check -assert          passed, no combinational loop, no
+                         multiply-driven or undriven wire
+  inferred latches       none ($dlatch, $_DLATCH_*, $sr, $_SR_*
+                         all asserted empty, before and after
+                         technology mapping)
+  unmapped submodules    none, every cell is a Yosys primitive
+  tristate               none
+
+Cells by type
+------------------------------------------------------------------------
+  $_NAND_                      2696
+  $_NOR_                       2510
+  $_AOI3_                      1610
+  $_OAI3_                      1500
+  $_NOT_                       1322
+  $_DFFE_PP_                   1018
+  $_DFFE_PN0P_                  185
+  $_AOI4_                       158
+  $_OAI4_                        76
+  $_DFF_PN0_                     20
+  $_SDFFCE_PN0P_                  3
+  $_SDFFCE_PP0P_                  3
+

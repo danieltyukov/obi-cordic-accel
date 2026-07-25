@@ -1,0 +1,68 @@
+# Copyright 2026 Daniel Tyukov
+# SPDX-License-Identifier: Apache-2.0
+#
+# Yosys synthesis script template. scripts/run_synth.py substitutes @NAME@ and
+# runs it, then composes the committed report in docs/synth/ from the outputs.
+#
+# Generic (technology-independent) mapping: this repository targets no particular
+# standard-cell library, so what comes out is gate-equivalent cell counts and
+# logic depth. Those are directly comparable between the two variants and across
+# stage counts, because both go through exactly this script. They are not a
+# substitute for a real IHP 130nm run through Croc's OpenROAD flow.
+
+read_verilog -sv -DSYNTHESIS -I@RTLDIR@ \
+  @RTLDIR@/cordic_stage.sv \
+  @RTLDIR@/cordic_core_pipe.sv \
+  @RTLDIR@/cordic_core_iter.sv \
+  @RTLDIR@/cordic_pre.sv \
+  @RTLDIR@/cordic_post.sv \
+  @RTLDIR@/cordic_unit.sv \
+  @RTLDIR@/cordic_fifo.sv \
+  @RTLDIR@/cordic_obi_regs.sv \
+  @RTLDIR@/cordic_accel.sv
+
+# Elaborate with the configuration under test.
+chparam -set DataWidth @DATA_WIDTH@ -set FracBits @FRAC_BITS@ \
+        -set NumStages @NUM_STAGES@ -set Variant @VARIANT@ \
+        -set GuardInt @GUARD_INT@ -set GuardFrac @GUARD_FRAC@ \
+        -set InDepth @IN_DEPTH@ -set OutDepth @OUT_DEPTH@ \
+        -set IdWidth @ID_WIDTH@ -set UseRReady @USE_RREADY@ \
+        @TOP@
+
+# -check fails on an instantiated module that has no definition, which is what a
+# blackbox would look like here.
+hierarchy -check -top @TOP@
+
+synth -top @TOP@ -flatten
+
+# Fails the run on a combinational loop, a multiply-driven wire, or a wire that is
+# used but never driven.
+check -assert
+
+# No inferred latches, anywhere. A latch here would mean an always_comb that does
+# not assign every output on every path.
+select -assert-none t:$dlatch
+select -assert-none t:$_DLATCH_N_
+select -assert-none t:$_DLATCH_P_
+select -assert-none t:$_DLATCHSR_NNN_ t:$_DLATCHSR_NNP_ t:$_DLATCHSR_NPN_ t:$_DLATCHSR_NPP_
+select -assert-none t:$_DLATCHSR_PNN_ t:$_DLATCHSR_PNP_ t:$_DLATCHSR_PPN_ t:$_DLATCHSR_PPP_
+select -assert-none t:$sr
+select -assert-none t:$_SR_NN_ t:$_SR_NP_ t:$_SR_PN_ t:$_SR_PP_
+
+# No memories left unmapped, and no tristate.
+select -assert-none t:$mem t:$mem_v2
+select -assert-none t:$tribuf t:$_TBUF_
+
+# Generic gate mapping so the counts mean the same thing for both variants.
+techmap
+opt -full
+abc -g cmos4
+opt_clean
+
+# Re-check after mapping.
+check -assert
+select -assert-none t:$dlatch t:$_DLATCH_N_ t:$_DLATCH_P_
+
+tee -q -o @STATFILE@ stat -width
+tee -q -o @LTPFILE@ ltp -noff
+write_json @JSON@
