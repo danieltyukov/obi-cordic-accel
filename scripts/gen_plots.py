@@ -12,6 +12,9 @@ Sources, all of them real:
   docs/pdk/summary.json             Yosys plus OpenROAD on the real IHP SG13G2 PDK,
                                     written by scripts/run_pdk.py: real um^2 and
                                     real MHz at three corners
+  docs/pnr/summary.json             LibreLane place and route, written by
+                                    scripts/run_pnr.py: post-route die area, DRC and
+                                    LVS counts, routed timing
 
 Two studies sweep the bit-accurate model instead of the RTL, and say so on the
 figure: error versus stage count and error versus word width would each need dozens
@@ -37,6 +40,7 @@ RESULTS = ROOT / "build" / "results"
 IMG = ROOT / "docs" / "img"
 SYNTH = ROOT / "docs" / "synth"
 PDKDIR = ROOT / "docs" / "pdk"
+PNRDIR = ROOT / "docs" / "pnr"
 
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(ROOT / "tb"))
@@ -659,6 +663,126 @@ def plot_ppa():
     save(fig, "ppa_ihp_sg13g2.png")
 
 
+
+# ---------------------------------------------------------------------------
+# 9. Synthesis against post-route, per variant
+# ---------------------------------------------------------------------------
+def plot_pnr():
+    """How much each variant inflates from mapped cells to routed die.
+
+    The point of the figure: a synthesis-only area comparison flatters the
+    pipelined variant, because post-route growth comes from clock tree and timing
+    repair, which scale with register count.
+    """
+    ppath = PNRDIR / "summary.json"
+    dpath = PDKDIR / "summary.json"
+    if not ppath.exists():
+        raise SystemExit(f"missing {ppath}. Run `make pnr` first.")
+    pnr = json.loads(ppath.read_text())
+    pdk = json.loads(dpath.read_text())
+
+    order = [k for k in ("pipe_q3_29_n28", "iter_q3_29_n28") if k in pnr]
+    if not order:
+        raise SystemExit("no recognised variant in docs/pnr/summary.json")
+
+    rows = []
+    for k in order:
+        v = pnr[k]
+        d = pdk.get(k, {})
+        cfg = v["config"]
+        period = cfg["period_ns"]
+        ws = v.get("timing__setup__ws__corner:nom_typ_1p20V_25C")
+        if ws is None:
+            ws = v.get("timing__setup__ws")
+        rows.append(dict(
+            name=k,
+            label=("pipelined" if cfg["variant"] == 0 else "iterative"),
+            variant=cfg["variant"],
+            synth=d.get("synth_area_um2"),
+            stdcell=v.get("design__instance__area__class:standard_cell"),
+            die=v.get("design__die__area"),
+            util=v.get("design__instance__utilization"),
+            insts=v.get("design__instance__count__class:standard_cell"),
+            drc=v.get("route__drc_errors"),
+            power=v.get("power__total"),
+            wl=v.get("route__wirelength"),
+            fmax_pr=(1000.0 / (period - ws)) if ws is not None else None,
+            fmax_syn=(d.get("corners", {}).get("typ", {}) or {}).get("fmax_mhz"),
+        ))
+
+    fig, axes = plt.subplots(1, 3, figsize=(12.2, 4.4))
+    x = np.arange(len(rows))
+    labels = [f"{r['label']}\nQ3.29 N=28" for r in rows]
+    colours = [PALETTE[0] if r["variant"] == 0 else PALETTE[1] for r in rows]
+
+    # --- three area measures side by side
+    ax = axes[0]
+    wid = 0.26
+    series = (("mapped cells", "synth", 0.95),
+              ("routed standard cells", "stdcell", 0.6),
+              ("routed die", "die", 0.3))
+    for i, (name, key, alpha) in enumerate(series):
+        vals = [(r[key] or 0) / 1000.0 for r in rows]
+        ax.bar(x + (i - 1) * wid, vals, wid, label=name, color=colours,
+               alpha=alpha, edgecolor="white", linewidth=0.4)
+        for xi, vv in zip(x + (i - 1) * wid, vals):
+            if vv:
+                ax.text(xi, vv * 1.02, f"{vv:.0f}k", ha="center", fontsize=6.8)
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, fontsize=8)
+    ax.set_ylabel("area (thousand um^2)")
+    ax.set_title("Mapped, routed and die area")
+    ax.legend(loc="upper right", fontsize=7.5)
+
+    # --- inflation factor, which is the actual finding
+    ax = axes[1]
+    for i, (name, num, den, alpha) in enumerate(
+            (("routed cells / mapped", "stdcell", "synth", 0.95),
+             ("die / mapped", "die", "synth", 0.45))):
+        vals = [(r[num] / r[den]) if (r[num] and r[den]) else 0 for r in rows]
+        ax.bar(x + (i - 0.5) * 0.34, vals, 0.34, label=name, color=colours,
+               alpha=alpha, edgecolor="white", linewidth=0.4)
+        for xi, vv in zip(x + (i - 0.5) * 0.34, vals):
+            if vv:
+                ax.text(xi, vv + 0.05, f"{vv:.2f}x", ha="center", fontsize=7.5)
+    ax.axhline(1.0, color="#4a4a4a", linewidth=0.8, linestyle=":")
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, fontsize=8)
+    ax.set_ylabel("post-route area / mapped cell area")
+    ax.set_title("Inflation from synthesis to route")
+    ax.legend(loc="upper left", fontsize=7.5)
+
+    # --- Fmax, synthesis estimate against post-route
+    ax = axes[2]
+    for i, (name, key, alpha) in enumerate((("synthesis estimate", "fmax_syn", 0.95),
+                                            ("post-route", "fmax_pr", 0.45))):
+        vals = [r[key] or 0 for r in rows]
+        ax.bar(x + (i - 0.5) * 0.34, vals, 0.34, label=name, color=colours,
+               alpha=alpha, edgecolor="white", linewidth=0.4)
+        for xi, vv in zip(x + (i - 0.5) * 0.34, vals):
+            if vv:
+                ax.text(xi, vv + 1.0, f"{vv:.1f}", ha="center", fontsize=7.5)
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, fontsize=8)
+    ax.set_ylabel("Fmax at the typical corner (MHz)")
+    ax.set_title("Timing, estimate against routed")
+    ax.legend(loc="upper right", fontsize=7.5)
+
+    bits = []
+    for r in rows:
+        if r["stdcell"] and r["synth"]:
+            bits.append(f"{r['label']} {r['stdcell'] / r['synth']:.2f}x cells, "
+                        f"{r['die'] / r['synth']:.2f}x die")
+    fig.suptitle("LibreLane on IHP SG13G2, Q3.29 with 28 stages. Post-route growth: "
+                 + "; ".join(bits), y=1.02, fontsize=9.5)
+    note(fig, "Growth from mapped cells to routed cells is clock tree and timing "
+              "repair, so it tracks register count. A synthesis-only area comparison "
+              "therefore flatters the pipelined variant, which has four times the "
+              "registers of the folded one. Timing is at the typical corner, where "
+              "extracted parasitics replace the set_wire_rc estimate.")
+    save(fig, "pnr_comparison.png")
+
+
 FIGURES = {
     "error_vs_angle": plot_error_vs_angle,
     "error_histograms": plot_error_histograms,
@@ -668,6 +792,7 @@ FIGURES = {
     "area_comparison": plot_area,
     "throughput_latency": plot_throughput,
     "ppa_ihp_sg13g2": plot_ppa,
+    "pnr_comparison": plot_pnr,
 }
 
 

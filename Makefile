@@ -58,6 +58,12 @@ GENERATED := \
   $(TOP)/docs/REGISTERS.md \
   $(TOP)/docs/img/regmap.svg
 
+# Figures that need only simulation and synthesis data. pnr_comparison is drawn
+# separately, since it needs a place-and-route result.
+PLOTS_NO_PNR := error_vs_angle error_histograms error_vs_stages error_vs_width \
+                convergence_trajectory area_comparison throughput_latency \
+                ppa_ihp_sg13g2
+
 VERILATOR ?= verilator
 YOSYS     ?= yosys
 
@@ -292,9 +298,18 @@ images: $(VENV_OK)
 	  echo "docs/synth/summary.json is missing; run 'make synth' first"; exit 1; fi
 	@if [ ! -f $(TOP)/docs/pdk/summary.json ]; then \
 	  echo "docs/pdk/summary.json is missing; run 'make pdk' first"; exit 1; fi
-	$(PY) $(TOP)/scripts/gen_plots.py
+	$(PY) $(TOP)/scripts/gen_plots.py $(PLOTS_NO_PNR)
 	$(PY) $(TOP)/scripts/gen_svg.py
 	$(PY) $(TOP)/scripts/gen_regmap.py
+	@# The PnR figures and the layout renders need a place-and-route result. Skipped
+	@# rather than failed when there is none, since PnR takes far longer than the rest
+	@# of the flow and the other figures should not be held hostage to it.
+	@if [ -f $(TOP)/docs/pnr/summary.json ]; then \
+	  $(PY) $(TOP)/scripts/gen_plots.py pnr_comparison; \
+	  $(TOP)/scripts/run_pnr_render.sh; \
+	else \
+	  echo "docs/pnr/summary.json is missing; skipping the PnR figures and layout renders (run 'make pnr')"; \
+	fi
 	$(PY) $(TOP)/scripts/check_svg.py
 
 # ---------------------------------------------------------------------------
