@@ -1,0 +1,159 @@
+
+ /----------------------------------------------------------------------------\
+ |                                                                            |
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |                                                                            |
+ |  Copyright (C) 2012 - 2020  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |                                                                            |
+ |  Permission to use, copy, modify, and/or distribute this software for any  |
+ |  purpose with or without fee is hereby granted, provided that the above    |
+ |  copyright notice and this permission notice appear in all copies.         |
+ |                                                                            |
+ |  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES  |
+ |  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF          |
+ |  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR   |
+ |  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES    |
+ |  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN     |
+ |  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF   |
+ |  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.            |
+ |                                                                            |
+ \----------------------------------------------------------------------------/
+
+ Yosys 0.33 (git sha1 2584903a060)
+
+
+-- Executing script file `design_prep.ys' --
+
+1. Executing RTLIL frontend.
+Input filename: design.il
+
+2. Executing SCC pass (detecting logic loops).
+Found 0 SCCs in module cordic_equiv_miter.
+Found 0 SCCs in module $paramod\cordic_stage\Width=32'00000000000000000000000000010110.
+Found 0 SCCs in module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit.
+Found 0 SCCs in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Found 0 SCCs in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.
+Found 0 SCCs in module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.
+Found 0 SCCs in module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.
+Found 0 SCCs in module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit.
+Found 0 SCCs.
+
+3. Executing SIMPLEMAP pass (map simple cells to gate primitives).
+
+4. Executing MEMORY_NORDFF pass (extracting $dff cells from memories).
+
+5. Executing ASYNC2SYNC pass.
+Replacing cordic_equiv_miter.$procdff$2113 ($adff): ARST=\rst_ni, D=$0\i_cnt[7:0], Q=\i_cnt
+Replacing cordic_equiv_miter.$procdff$2112 ($adff): ARST=\rst_ni, D=$0\p_cnt[7:0], Q=\p_cnt
+Replacing $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procdff$2188 ($adff): ARST=\rst_ni, D=$0\vq[0:0], Q=\vq [0]
+Replacing $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procdff$2183 ($adff): ARST=\rst_ni, D=$0\vq[1:1], Q=\vq [1]
+Replacing $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procdff$2178 ($adff): ARST=\rst_ni, D=$0\vq[2:2], Q=\vq [2]
+Replacing $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procdff$2173 ($adff): ARST=\rst_ni, D=$0\vq[3:3], Q=\vq [3]
+Replacing $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procdff$2168 ($adff): ARST=\rst_ni, D=$0\vq[4:4], Q=\vq [4]
+Replacing $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procdff$2163 ($adff): ARST=\rst_ni, D=$0\vq[5:5], Q=\vq [5]
+Replacing $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procdff$2158 ($adff): ARST=\rst_ni, D=$0\vq[6:6], Q=\vq [6]
+Replacing $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procdff$2153 ($adff): ARST=\rst_ni, D=$0\vq[7:7], Q=\vq [7]
+Replacing $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procdff$2148 ($adff): ARST=\rst_ni, D=$0\vq[8:8], Q=\vq [8]
+Replacing $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procdff$2143 ($adff): ARST=\rst_ni, D=$0\vq[9:9], Q=\vq [9]
+Replacing $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procdff$2138 ($adff): ARST=\rst_ni, D=$0\vq[10:10], Q=\vq [10]
+Replacing $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procdff$2133 ($adff): ARST=\rst_ni, D=$0\vq[11:11], Q=\vq [11]
+Replacing $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procdff$2128 ($adff): ARST=\rst_ni, D=$0\vq[12:12], Q=\vq [12]
+Replacing $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procdff$2123 ($adff): ARST=\rst_ni, D=$0\vq[13:13], Q=\vq [13]
+Replacing $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procdff$2118 ($adff): ARST=\rst_ni, D=$0\vq[14:14], Q=\vq [14]
+Replacing $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$procdff$2194 ($adff): ARST=\rst_ni, D=$0\cnt_q[3:0], Q=\cnt_q
+Replacing $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$procdff$2193 ($adff): ARST=\rst_ni, D=$0\state_q[1:0], Q=\state_q
+
+6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \cordic_equiv_miter..
+Finding unused cells or wires in module $paramod\cordic_stage\Width=32'00000000000000000000000000010110..
+Finding unused cells or wires in module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit..
+Finding unused cells or wires in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe..
+Finding unused cells or wires in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter..
+Finding unused cells or wires in module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre..
+Finding unused cells or wires in module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post..
+Finding unused cells or wires in module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit..
+
+7. Executing FORMALFF pass.
+
+8. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit..
+Finding unused cells or wires in module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post..
+Finding unused cells or wires in module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre..
+Finding unused cells or wires in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter..
+Finding unused cells or wires in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe..
+Finding unused cells or wires in module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit..
+Finding unused cells or wires in module $paramod\cordic_stage\Width=32'00000000000000000000000000010110..
+Finding unused cells or wires in module \cordic_equiv_miter..
+Removed 11 unused cells and 11 unused wires.
+<suppressed ~14 debug messages>
+
+9. Executing CHECK pass (checking for obvious problems).
+Checking module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit...
+Checking module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post...
+Checking module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre...
+Checking module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter...
+Checking module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe...
+Checking module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit...
+Checking module $paramod\cordic_stage\Width=32'00000000000000000000000000010110...
+Checking module cordic_equiv_miter...
+Found and reported 0 problems.
+
+10. Executing SETUNDEF pass (replace undef values with defined constants).
+
+11. Executing OPT pass (performing simple optimizations).
+
+11.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit.
+Optimizing module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.
+Optimizing module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.
+Optimizing module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.
+Optimizing module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Optimizing module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit.
+Optimizing module $paramod\cordic_stage\Width=32'00000000000000000000000000010110.
+Optimizing module cordic_equiv_miter.
+
+11.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit'.
+Finding identical cells in module `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post'.
+Finding identical cells in module `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre'.
+Finding identical cells in module `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter'.
+Finding identical cells in module `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe'.
+Finding identical cells in module `$paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit'.
+Finding identical cells in module `$paramod\cordic_stage\Width=32'00000000000000000000000000010110'.
+Finding identical cells in module `\cordic_equiv_miter'.
+Removed a total of 0 cells.
+
+11.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+11.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit..
+Finding unused cells or wires in module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post..
+Finding unused cells or wires in module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre..
+Finding unused cells or wires in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter..
+Finding unused cells or wires in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe..
+Finding unused cells or wires in module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit..
+Finding unused cells or wires in module $paramod\cordic_stage\Width=32'00000000000000000000000000010110..
+Finding unused cells or wires in module \cordic_equiv_miter..
+Removed 15 unused cells and 30 unused wires.
+<suppressed ~32 debug messages>
+
+11.5. Finished fast OPT passes.
+
+12. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit..
+Finding unused cells or wires in module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post..
+Finding unused cells or wires in module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre..
+Finding unused cells or wires in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter..
+Finding unused cells or wires in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe..
+Finding unused cells or wires in module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit..
+Finding unused cells or wires in module $paramod\cordic_stage\Width=32'00000000000000000000000000010110..
+Finding unused cells or wires in module \cordic_equiv_miter..
+Removed 0 unused cells and 16 unused wires.
+<suppressed ~2 debug messages>
+
+13. Executing RTLIL backend.
+Output filename: ../model/design_prep.il
+
+End of script. Logfile hash: f3ff72a57c, CPU: user 0.75s system 0.02s, MEM: 17.44 MB peak
+Yosys 0.33 (git sha1 2584903a060)
+Time spent: 41% 4x opt_clean (0 sec), 19% 1x check (0 sec), ...

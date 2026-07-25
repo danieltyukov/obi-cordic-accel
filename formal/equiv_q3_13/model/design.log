@@ -1,0 +1,1998 @@
+
+ /----------------------------------------------------------------------------\
+ |                                                                            |
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |                                                                            |
+ |  Copyright (C) 2012 - 2020  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |                                                                            |
+ |  Permission to use, copy, modify, and/or distribute this software for any  |
+ |  purpose with or without fee is hereby granted, provided that the above    |
+ |  copyright notice and this permission notice appear in all copies.         |
+ |                                                                            |
+ |  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES  |
+ |  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF          |
+ |  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR   |
+ |  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES    |
+ |  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN     |
+ |  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF   |
+ |  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.            |
+ |                                                                            |
+ \----------------------------------------------------------------------------/
+
+ Yosys 0.33 (git sha1 2584903a060)
+
+
+-- Executing script file `../model/design.ys' --
+
+1. Executing Verilog-2005 frontend: cordic_stage.sv
+Parsing formal SystemVerilog input from `cordic_stage.sv' to AST representation.
+Storing AST representation for module `$abstract\cordic_stage'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: cordic_core_pipe.sv
+Parsing formal SystemVerilog input from `cordic_core_pipe.sv' to AST representation.
+Storing AST representation for module `$abstract\cordic_core_pipe'.
+Successfully finished Verilog frontend.
+
+3. Executing Verilog-2005 frontend: cordic_core_iter.sv
+Parsing formal SystemVerilog input from `cordic_core_iter.sv' to AST representation.
+Storing AST representation for module `$abstract\cordic_core_iter'.
+Successfully finished Verilog frontend.
+
+4. Executing Verilog-2005 frontend: cordic_pre.sv
+Parsing formal SystemVerilog input from `cordic_pre.sv' to AST representation.
+Storing AST representation for module `$abstract\cordic_pre'.
+Successfully finished Verilog frontend.
+
+5. Executing Verilog-2005 frontend: cordic_post.sv
+Parsing formal SystemVerilog input from `cordic_post.sv' to AST representation.
+Storing AST representation for module `$abstract\cordic_post'.
+Successfully finished Verilog frontend.
+
+6. Executing Verilog-2005 frontend: cordic_unit.sv
+Parsing formal SystemVerilog input from `cordic_unit.sv' to AST representation.
+Storing AST representation for module `$abstract\cordic_unit'.
+Successfully finished Verilog frontend.
+
+7. Executing Verilog-2005 frontend: cordic_equiv_miter.sv
+Parsing formal SystemVerilog input from `cordic_equiv_miter.sv' to AST representation.
+Storing AST representation for module `$abstract\cordic_equiv_miter'.
+Successfully finished Verilog frontend.
+Parameter \DataWidth = 16
+Parameter \FracBits = 13
+Parameter \NumStages = 15
+
+8. Executing AST frontend in derive mode using pre-parsed AST for module `\cordic_equiv_miter'.
+Parameter \DataWidth = 16
+Parameter \FracBits = 13
+Parameter \NumStages = 15
+Generating RTLIL representation for module `$paramod$4629d45b9f64c18284ae0d791395327258e2a7c2\cordic_equiv_miter'.
+
+9. Executing PREP pass.
+
+9.1. Executing HIERARCHY pass (managing design hierarchy).
+
+9.2. Executing AST frontend in derive mode using pre-parsed AST for module `\cordic_equiv_miter'.
+Generating RTLIL representation for module `\cordic_equiv_miter'.
+
+9.2.1. Analyzing design hierarchy..
+Top module:  \cordic_equiv_miter
+Parameter \DataWidth = 16
+Parameter \FracBits = 13
+Parameter \NumStages = 15
+Parameter \Variant = 1
+Parameter \GuardInt = 2
+Parameter \GuardFrac = 4
+Parameter \AttrWidth = 22
+Parameter \FlagWidth = 4
+
+9.2.2. Executing AST frontend in derive mode using pre-parsed AST for module `\cordic_unit'.
+Parameter \DataWidth = 16
+Parameter \FracBits = 13
+Parameter \NumStages = 15
+Parameter \Variant = 1
+Parameter \GuardInt = 2
+Parameter \GuardFrac = 4
+Parameter \AttrWidth = 22
+Parameter \FlagWidth = 4
+Generating RTLIL representation for module `$paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit'.
+Parameter \DataWidth = 16
+Parameter \FracBits = 13
+Parameter \NumStages = 15
+Parameter \Variant = 0
+Parameter \GuardInt = 2
+Parameter \GuardFrac = 4
+Parameter \AttrWidth = 22
+Parameter \FlagWidth = 4
+
+9.2.3. Executing AST frontend in derive mode using pre-parsed AST for module `\cordic_unit'.
+Parameter \DataWidth = 16
+Parameter \FracBits = 13
+Parameter \NumStages = 15
+Parameter \Variant = 0
+Parameter \GuardInt = 2
+Parameter \GuardFrac = 4
+Parameter \AttrWidth = 22
+Parameter \FlagWidth = 4
+Generating RTLIL representation for module `$paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit'.
+
+9.2.4. Analyzing design hierarchy..
+Top module:  \cordic_equiv_miter
+Used module:     $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit
+Used module:     $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit
+Parameter \Width = 22
+Parameter \FracBits = 17
+Parameter \NumStages = 15
+Parameter \AttrWidth = 22
+
+9.2.5. Executing AST frontend in derive mode using pre-parsed AST for module `\cordic_core_iter'.
+Parameter \Width = 22
+Parameter \FracBits = 17
+Parameter \NumStages = 15
+Parameter \AttrWidth = 22
+Generating RTLIL representation for module `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter'.
+Parameter \DataWidth = 16
+Parameter \FracBits = 13
+Parameter \GuardInt = 2
+Parameter \GuardFrac = 4
+Parameter \NumStages = 15
+Parameter \AttrWidth = 22
+Parameter \FlagWidth = 4
+
+9.2.6. Executing AST frontend in derive mode using pre-parsed AST for module `\cordic_post'.
+Parameter \DataWidth = 16
+Parameter \FracBits = 13
+Parameter \GuardInt = 2
+Parameter \GuardFrac = 4
+Parameter \NumStages = 15
+Parameter \AttrWidth = 22
+Parameter \FlagWidth = 4
+Generating RTLIL representation for module `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post'.
+Parameter \DataWidth = 16
+Parameter \FracBits = 13
+Parameter \GuardInt = 2
+Parameter \GuardFrac = 4
+Parameter \NumStages = 15
+Parameter \AttrWidth = 22
+
+9.2.7. Executing AST frontend in derive mode using pre-parsed AST for module `\cordic_pre'.
+Parameter \DataWidth = 16
+Parameter \FracBits = 13
+Parameter \GuardInt = 2
+Parameter \GuardFrac = 4
+Parameter \NumStages = 15
+Parameter \AttrWidth = 22
+Generating RTLIL representation for module `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre'.
+Parameter \Width = 22
+Parameter \FracBits = 17
+Parameter \NumStages = 15
+Parameter \AttrWidth = 22
+
+9.2.8. Executing AST frontend in derive mode using pre-parsed AST for module `\cordic_core_pipe'.
+Parameter \Width = 22
+Parameter \FracBits = 17
+Parameter \NumStages = 15
+Parameter \AttrWidth = 22
+Generating RTLIL representation for module `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe'.
+Parameter \DataWidth = 16
+Parameter \FracBits = 13
+Parameter \GuardInt = 2
+Parameter \GuardFrac = 4
+Parameter \NumStages = 15
+Parameter \AttrWidth = 22
+Parameter \FlagWidth = 4
+Found cached RTLIL representation for module `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post'.
+Parameter \DataWidth = 16
+Parameter \FracBits = 13
+Parameter \GuardInt = 2
+Parameter \GuardFrac = 4
+Parameter \NumStages = 15
+Parameter \AttrWidth = 22
+Found cached RTLIL representation for module `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre'.
+
+9.2.9. Analyzing design hierarchy..
+Top module:  \cordic_equiv_miter
+Used module:     $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit
+Used module:         $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter
+Used module:         $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post
+Used module:         $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre
+Used module:     $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit
+Used module:         $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe
+Parameter \Width = 22
+
+9.2.10. Executing AST frontend in derive mode using pre-parsed AST for module `\cordic_stage'.
+Parameter \Width = 22
+Generating RTLIL representation for module `$paramod\cordic_stage\Width=32'00000000000000000000000000010110'.
+Parameter \Width = 22
+Found cached RTLIL representation for module `$paramod\cordic_stage\Width=32'00000000000000000000000000010110'.
+Parameter \Width = 22
+Found cached RTLIL representation for module `$paramod\cordic_stage\Width=32'00000000000000000000000000010110'.
+Parameter \Width = 22
+Found cached RTLIL representation for module `$paramod\cordic_stage\Width=32'00000000000000000000000000010110'.
+Parameter \Width = 22
+Found cached RTLIL representation for module `$paramod\cordic_stage\Width=32'00000000000000000000000000010110'.
+Parameter \Width = 22
+Found cached RTLIL representation for module `$paramod\cordic_stage\Width=32'00000000000000000000000000010110'.
+Parameter \Width = 22
+Found cached RTLIL representation for module `$paramod\cordic_stage\Width=32'00000000000000000000000000010110'.
+Parameter \Width = 22
+Found cached RTLIL representation for module `$paramod\cordic_stage\Width=32'00000000000000000000000000010110'.
+Parameter \Width = 22
+Found cached RTLIL representation for module `$paramod\cordic_stage\Width=32'00000000000000000000000000010110'.
+Parameter \Width = 22
+Found cached RTLIL representation for module `$paramod\cordic_stage\Width=32'00000000000000000000000000010110'.
+Parameter \Width = 22
+Found cached RTLIL representation for module `$paramod\cordic_stage\Width=32'00000000000000000000000000010110'.
+Parameter \Width = 22
+Found cached RTLIL representation for module `$paramod\cordic_stage\Width=32'00000000000000000000000000010110'.
+Parameter \Width = 22
+Found cached RTLIL representation for module `$paramod\cordic_stage\Width=32'00000000000000000000000000010110'.
+Parameter \Width = 22
+Found cached RTLIL representation for module `$paramod\cordic_stage\Width=32'00000000000000000000000000010110'.
+Parameter \Width = 22
+Found cached RTLIL representation for module `$paramod\cordic_stage\Width=32'00000000000000000000000000010110'.
+Parameter \Width = 22
+Found cached RTLIL representation for module `$paramod\cordic_stage\Width=32'00000000000000000000000000010110'.
+
+9.2.11. Analyzing design hierarchy..
+Top module:  \cordic_equiv_miter
+Used module:     $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit
+Used module:         $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter
+Used module:             $paramod\cordic_stage\Width=32'00000000000000000000000000010110
+Used module:         $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post
+Used module:         $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre
+Used module:     $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit
+Used module:         $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe
+
+9.2.12. Analyzing design hierarchy..
+Top module:  \cordic_equiv_miter
+Used module:     $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit
+Used module:         $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter
+Used module:             $paramod\cordic_stage\Width=32'00000000000000000000000000010110
+Used module:         $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post
+Used module:         $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre
+Used module:     $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit
+Used module:         $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe
+Removing unused module `$abstract\cordic_equiv_miter'.
+Removing unused module `$abstract\cordic_unit'.
+Removing unused module `$abstract\cordic_post'.
+Removing unused module `$abstract\cordic_pre'.
+Removing unused module `$abstract\cordic_core_iter'.
+Removing unused module `$abstract\cordic_core_pipe'.
+Removing unused module `$abstract\cordic_stage'.
+Removed 7 unused modules.
+Module cordic_equiv_miter directly or indirectly contains formal properties -> setting "keep" attribute.
+
+9.3. Executing PROC pass (convert processes to netlists).
+
+9.3.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+9.3.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 1 switch rules as full_case in process $proc$cordic_equiv_miter.sv:113$81 in module cordic_equiv_miter.
+Marked 1 switch rules as full_case in process $proc$cordic_stage.sv:0$923 in module $paramod\cordic_stage\Width=32'00000000000000000000000000010110.
+Marked 2 switch rules as full_case in process $proc$cordic_core_pipe.sv:146$916 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 1 switch rules as full_case in process $proc$cordic_core_pipe.sv:0$909 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 2 switch rules as full_case in process $proc$cordic_core_pipe.sv:146$905 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 1 switch rules as full_case in process $proc$cordic_core_pipe.sv:0$898 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 2 switch rules as full_case in process $proc$cordic_core_pipe.sv:146$894 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 1 switch rules as full_case in process $proc$cordic_core_pipe.sv:0$887 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 2 switch rules as full_case in process $proc$cordic_core_pipe.sv:146$883 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 1 switch rules as full_case in process $proc$cordic_core_pipe.sv:0$876 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 2 switch rules as full_case in process $proc$cordic_core_pipe.sv:146$872 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 1 switch rules as full_case in process $proc$cordic_core_pipe.sv:0$865 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 2 switch rules as full_case in process $proc$cordic_core_pipe.sv:146$861 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 1 switch rules as full_case in process $proc$cordic_core_pipe.sv:0$854 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 2 switch rules as full_case in process $proc$cordic_core_pipe.sv:146$850 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 1 switch rules as full_case in process $proc$cordic_core_pipe.sv:0$843 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 2 switch rules as full_case in process $proc$cordic_core_pipe.sv:146$839 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 1 switch rules as full_case in process $proc$cordic_core_pipe.sv:0$832 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 2 switch rules as full_case in process $proc$cordic_core_pipe.sv:146$828 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 1 switch rules as full_case in process $proc$cordic_core_pipe.sv:0$821 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 2 switch rules as full_case in process $proc$cordic_core_pipe.sv:146$817 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 1 switch rules as full_case in process $proc$cordic_core_pipe.sv:0$810 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 2 switch rules as full_case in process $proc$cordic_core_pipe.sv:146$806 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 1 switch rules as full_case in process $proc$cordic_core_pipe.sv:0$799 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 2 switch rules as full_case in process $proc$cordic_core_pipe.sv:146$795 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 1 switch rules as full_case in process $proc$cordic_core_pipe.sv:0$788 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 2 switch rules as full_case in process $proc$cordic_core_pipe.sv:146$784 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 1 switch rules as full_case in process $proc$cordic_core_pipe.sv:0$777 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 2 switch rules as full_case in process $proc$cordic_core_pipe.sv:146$773 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 1 switch rules as full_case in process $proc$cordic_core_pipe.sv:0$766 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 2 switch rules as full_case in process $proc$cordic_core_pipe.sv:146$762 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 1 switch rules as full_case in process $proc$cordic_core_pipe.sv:0$755 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Marked 15 switch rules as full_case in process $proc$cordic_pre.sv:0$466 in module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.
+Marked 2 switch rules as full_case in process $proc$cordic_post.sv:0$431 in module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.
+Marked 2 switch rules as full_case in process $proc$cordic_post.sv:0$420 in module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.
+Marked 2 switch rules as full_case in process $proc$cordic_post.sv:0$409 in module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.
+Marked 2 switch rules as full_case in process $proc$cordic_post.sv:0$408 in module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.
+Marked 1 switch rules as full_case in process $proc$cordic_post.sv:0$402 in module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.
+Marked 2 switch rules as full_case in process $proc$cordic_core_iter.sv:210$359 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.
+Marked 4 switch rules as full_case in process $proc$cordic_core_iter.sv:0$356 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.
+Marked 1 switch rules as full_case in process $proc$cordic_core_iter.sv:0$348 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.
+Marked 15 switch rules as full_case in process $proc$cordic_core_iter.sv:0$331 in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.
+Removed a total of 0 dead cases.
+
+9.3.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 2 redundant assignments.
+Promoted 131 assignments to connections.
+
+9.3.4. Executing PROC_INIT pass (extract init attributes).
+Found init rule in `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$131'.
+  Set init value: $formal$cordic_equiv_miter.sv:166$76_EN = 1'0
+Found init rule in `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$129'.
+  Set init value: $formal$cordic_equiv_miter.sv:165$75_EN = 1'0
+Found init rule in `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$127'.
+  Set init value: $formal$cordic_equiv_miter.sv:156$74_EN = 1'0
+Found init rule in `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$125'.
+  Set init value: $formal$cordic_equiv_miter.sv:155$73_EN = 1'0
+Found init rule in `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$123'.
+  Set init value: $formal$cordic_equiv_miter.sv:154$72_EN = 1'0
+Found init rule in `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$121'.
+  Set init value: $formal$cordic_equiv_miter.sv:153$71_EN = 1'0
+Found init rule in `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$119'.
+  Set init value: $formal$cordic_equiv_miter.sv:152$70_EN = 1'0
+Found init rule in `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$117'.
+  Set init value: $formal$cordic_equiv_miter.sv:151$69_EN = 1'0
+
+9.3.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \rst_ni in `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:113$81'.
+Found async reset \rst_ni in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$916'.
+Found async reset \rst_ni in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$905'.
+Found async reset \rst_ni in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$894'.
+Found async reset \rst_ni in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$883'.
+Found async reset \rst_ni in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$872'.
+Found async reset \rst_ni in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$861'.
+Found async reset \rst_ni in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$850'.
+Found async reset \rst_ni in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$839'.
+Found async reset \rst_ni in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$828'.
+Found async reset \rst_ni in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$817'.
+Found async reset \rst_ni in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$806'.
+Found async reset \rst_ni in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$795'.
+Found async reset \rst_ni in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$784'.
+Found async reset \rst_ni in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$773'.
+Found async reset \rst_ni in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$762'.
+Found async reset \rst_ni in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:210$359'.
+
+9.3.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~112 debug messages>
+
+9.3.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$131'.
+Creating decoders for process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$129'.
+Creating decoders for process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$127'.
+Creating decoders for process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$125'.
+Creating decoders for process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$123'.
+Creating decoders for process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$121'.
+Creating decoders for process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$119'.
+Creating decoders for process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$117'.
+Creating decoders for process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:163$109'.
+     1/4: $0$formal$cordic_equiv_miter.sv:165$75_EN[0:0]$111
+     2/4: $0$formal$cordic_equiv_miter.sv:165$75_CHECK[0:0]$110
+     3/4: $0$formal$cordic_equiv_miter.sv:166$76_EN[0:0]$113
+     4/4: $0$formal$cordic_equiv_miter.sv:166$76_CHECK[0:0]$112
+Creating decoders for process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:149$89'.
+     1/12: $0$formal$cordic_equiv_miter.sv:151$69_EN[0:0]$91
+     2/12: $0$formal$cordic_equiv_miter.sv:151$69_CHECK[0:0]$90
+     3/12: $0$formal$cordic_equiv_miter.sv:152$70_EN[0:0]$93
+     4/12: $0$formal$cordic_equiv_miter.sv:152$70_CHECK[0:0]$92
+     5/12: $0$formal$cordic_equiv_miter.sv:153$71_EN[0:0]$95
+     6/12: $0$formal$cordic_equiv_miter.sv:153$71_CHECK[0:0]$94
+     7/12: $0$formal$cordic_equiv_miter.sv:154$72_EN[0:0]$97
+     8/12: $0$formal$cordic_equiv_miter.sv:154$72_CHECK[0:0]$96
+     9/12: $0$formal$cordic_equiv_miter.sv:155$73_EN[0:0]$99
+    10/12: $0$formal$cordic_equiv_miter.sv:155$73_CHECK[0:0]$98
+    11/12: $0$formal$cordic_equiv_miter.sv:156$74_EN[0:0]$101
+    12/12: $0$formal$cordic_equiv_miter.sv:156$74_CHECK[0:0]$100
+Creating decoders for process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:123$85'.
+     1/12: $0\i_ct[7:0]
+     2/12: $0\p_ct[7:0]
+     3/12: $0\i_cfn[4:0]
+     4/12: $0\p_cfn[4:0]
+     5/12: $0\i_cf[3:0]
+     6/12: $0\p_cf[3:0]
+     7/12: $0\i_cz[15:0]
+     8/12: $0\i_cy[15:0]
+     9/12: $0\i_cx[15:0]
+    10/12: $0\p_cz[15:0]
+    11/12: $0\p_cy[15:0]
+    12/12: $0\p_cx[15:0]
+Creating decoders for process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:113$81'.
+     1/2: $0\i_cnt[7:0]
+     2/2: $0\p_cnt[7:0]
+Creating decoders for process `$paramod\cordic_stage\Width=32'00000000000000000000000000010110.$proc$cordic_stage.sv:0$923'.
+     1/1: $1\x_o[21:0]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$918'.
+     1/4: $0\aq[329:308]
+     2/4: $0\zq[329:308]
+     3/4: $0\yq[329:308]
+     4/4: $0\xq[329:308]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$916'.
+     1/1: $0\vq[14:14]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$909'.
+     1/3: $1\gen_stage[14].angle[21:0]
+     2/3: $1\gen_stage[14].y_sh[21:0]
+     3/3: $1\gen_stage[14].x_sh[21:0]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$907'.
+     1/4: $0\aq[307:286]
+     2/4: $0\zq[307:286]
+     3/4: $0\yq[307:286]
+     4/4: $0\xq[307:286]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$905'.
+     1/1: $0\vq[13:13]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$898'.
+     1/3: $1\gen_stage[13].angle[21:0]
+     2/3: $1\gen_stage[13].y_sh[21:0]
+     3/3: $1\gen_stage[13].x_sh[21:0]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$896'.
+     1/4: $0\aq[285:264]
+     2/4: $0\zq[285:264]
+     3/4: $0\yq[285:264]
+     4/4: $0\xq[285:264]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$894'.
+     1/1: $0\vq[12:12]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$887'.
+     1/3: $1\gen_stage[12].angle[21:0]
+     2/3: $1\gen_stage[12].y_sh[21:0]
+     3/3: $1\gen_stage[12].x_sh[21:0]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$885'.
+     1/4: $0\aq[263:242]
+     2/4: $0\zq[263:242]
+     3/4: $0\yq[263:242]
+     4/4: $0\xq[263:242]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$883'.
+     1/1: $0\vq[11:11]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$876'.
+     1/3: $1\gen_stage[11].angle[21:0]
+     2/3: $1\gen_stage[11].y_sh[21:0]
+     3/3: $1\gen_stage[11].x_sh[21:0]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$874'.
+     1/4: $0\aq[241:220]
+     2/4: $0\zq[241:220]
+     3/4: $0\yq[241:220]
+     4/4: $0\xq[241:220]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$872'.
+     1/1: $0\vq[10:10]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$865'.
+     1/3: $1\gen_stage[10].angle[21:0]
+     2/3: $1\gen_stage[10].y_sh[21:0]
+     3/3: $1\gen_stage[10].x_sh[21:0]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$863'.
+     1/4: $0\aq[219:198]
+     2/4: $0\zq[219:198]
+     3/4: $0\yq[219:198]
+     4/4: $0\xq[219:198]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$861'.
+     1/1: $0\vq[9:9]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$854'.
+     1/3: $1\gen_stage[9].angle[21:0]
+     2/3: $1\gen_stage[9].y_sh[21:0]
+     3/3: $1\gen_stage[9].x_sh[21:0]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$852'.
+     1/4: $0\aq[197:176]
+     2/4: $0\zq[197:176]
+     3/4: $0\yq[197:176]
+     4/4: $0\xq[197:176]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$850'.
+     1/1: $0\vq[8:8]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$843'.
+     1/3: $1\gen_stage[8].angle[21:0]
+     2/3: $1\gen_stage[8].y_sh[21:0]
+     3/3: $1\gen_stage[8].x_sh[21:0]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$841'.
+     1/4: $0\aq[175:154]
+     2/4: $0\zq[175:154]
+     3/4: $0\yq[175:154]
+     4/4: $0\xq[175:154]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$839'.
+     1/1: $0\vq[7:7]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$832'.
+     1/3: $1\gen_stage[7].angle[21:0]
+     2/3: $1\gen_stage[7].y_sh[21:0]
+     3/3: $1\gen_stage[7].x_sh[21:0]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$830'.
+     1/4: $0\aq[153:132]
+     2/4: $0\zq[153:132]
+     3/4: $0\yq[153:132]
+     4/4: $0\xq[153:132]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$828'.
+     1/1: $0\vq[6:6]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$821'.
+     1/3: $1\gen_stage[6].angle[21:0]
+     2/3: $1\gen_stage[6].y_sh[21:0]
+     3/3: $1\gen_stage[6].x_sh[21:0]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$819'.
+     1/4: $0\aq[131:110]
+     2/4: $0\zq[131:110]
+     3/4: $0\yq[131:110]
+     4/4: $0\xq[131:110]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$817'.
+     1/1: $0\vq[5:5]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$810'.
+     1/3: $1\gen_stage[5].angle[21:0]
+     2/3: $1\gen_stage[5].y_sh[21:0]
+     3/3: $1\gen_stage[5].x_sh[21:0]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$808'.
+     1/4: $0\aq[109:88]
+     2/4: $0\zq[109:88]
+     3/4: $0\yq[109:88]
+     4/4: $0\xq[109:88]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$806'.
+     1/1: $0\vq[4:4]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$799'.
+     1/3: $1\gen_stage[4].angle[21:0]
+     2/3: $1\gen_stage[4].y_sh[21:0]
+     3/3: $1\gen_stage[4].x_sh[21:0]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$797'.
+     1/4: $0\aq[87:66]
+     2/4: $0\zq[87:66]
+     3/4: $0\yq[87:66]
+     4/4: $0\xq[87:66]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$795'.
+     1/1: $0\vq[3:3]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$788'.
+     1/3: $1\gen_stage[3].angle[21:0]
+     2/3: $1\gen_stage[3].y_sh[21:0]
+     3/3: $1\gen_stage[3].x_sh[21:0]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$786'.
+     1/4: $0\aq[65:44]
+     2/4: $0\zq[65:44]
+     3/4: $0\yq[65:44]
+     4/4: $0\xq[65:44]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$784'.
+     1/1: $0\vq[2:2]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$777'.
+     1/3: $1\gen_stage[2].angle[21:0]
+     2/3: $1\gen_stage[2].y_sh[21:0]
+     3/3: $1\gen_stage[2].x_sh[21:0]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$775'.
+     1/4: $0\aq[43:22]
+     2/4: $0\zq[43:22]
+     3/4: $0\yq[43:22]
+     4/4: $0\xq[43:22]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$773'.
+     1/1: $0\vq[1:1]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$766'.
+     1/3: $1\gen_stage[1].angle[21:0]
+     2/3: $1\gen_stage[1].y_sh[21:0]
+     3/3: $1\gen_stage[1].x_sh[21:0]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$764'.
+     1/4: $0\aq[21:0]
+     2/4: $0\zq[21:0]
+     3/4: $0\yq[21:0]
+     4/4: $0\xq[21:0]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$762'.
+     1/1: $0\vq[0:0]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$755'.
+     1/3: $1\gen_stage[0].angle[21:0]
+     2/3: $1\gen_stage[0].y_sh[21:0]
+     3/3: $1\gen_stage[0].x_sh[21:0]
+Creating decoders for process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$536'.
+Creating decoders for process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$532'.
+Creating decoders for process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$528'.
+Creating decoders for process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$527'.
+Creating decoders for process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$466'.
+     1/50: $9\dom_err[0:0]
+     2/50: $8\dom_err[0:0]
+     3/50: $7\dom_err[0:0]
+     4/50: $8\y0[21:0]
+     5/50: $8\x0[21:0]
+     6/50: $5\z0[21:0]
+     7/50: $7\y0[21:0]
+     8/50: $7\x0[21:0]
+     9/50: $4\z0[21:0]
+    10/50: $6\dom_err[0:0]
+    11/50: $2\absv$func$cordic_pre.sv:239$460.$result[21:0]$501
+    12/50: $2\absv$func$cordic_pre.sv:239$460.v[21:0]$502
+    13/50: $3\z0[21:0]
+    14/50: $6\y0[21:0]
+    15/50: $6\x0[21:0]
+    16/50: $2\absv$func$cordic_pre.sv:242$462.v[21:0]$506
+    17/50: $2\absv$func$cordic_pre.sv:242$462.$result[21:0]$505
+    18/50: $2\absv$func$cordic_pre.sv:241$461.v[21:0]$504
+    19/50: $2\absv$func$cordic_pre.sv:241$461.$result[21:0]$503
+    20/50: $1\absv$func$cordic_pre.sv:242$462.v[21:0]$500
+    21/50: $1\absv$func$cordic_pre.sv:242$462.$result[21:0]$499
+    22/50: $1\absv$func$cordic_pre.sv:241$461.v[21:0]$498
+    23/50: $1\absv$func$cordic_pre.sv:241$461.$result[21:0]$497
+    24/50: $1\absv$func$cordic_pre.sv:239$460.v[21:0]$496
+    25/50: $1\absv$func$cordic_pre.sv:239$460.$result[21:0]$495
+    26/50: $2\z0[21:0]
+    27/50: $5\y0[21:0]
+    28/50: $5\x0[21:0]
+    29/50: $5\dom_err[0:0]
+    30/50: $4\dom_err[0:0]
+    31/50: $4\y0[21:0]
+    32/50: $4\x0[21:0]
+    33/50: $3\dom_err[0:0]
+    34/50: $2\dom_err[0:0]
+    35/50: $3\y0[21:0]
+    36/50: $3\x0[21:0]
+    37/50: $2\zero_res[0:0]
+    38/50: $2\pi_ctl[1:0]
+    39/50: $2\y0[21:0]
+    40/50: $2\x0[21:0]
+    41/50: $1\y0[21:0]
+    42/50: $1\x0[21:0]
+    43/50: $1\z0[21:0]
+    44/50: $1\dom_err[0:0]
+    45/50: $1\pi_ctl[1:0]
+    46/50: $1\zero_res[0:0]
+    47/50: $1\dbl_z[0:0]
+    48/50: $1\resid_chk[0:0]
+    49/50: $1\mode[0:0]
+    50/50: $1\coord[1:0]
+Creating decoders for process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$431'.
+     1/2: $2\pack$func$cordic_post.sv:151$377.$result[16:0]$441
+     2/2: $1\pack$func$cordic_post.sv:151$377.$result[16:0]$439
+Creating decoders for process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$420'.
+     1/2: $2\pack$func$cordic_post.sv:150$376.$result[16:0]$430
+     2/2: $1\pack$func$cordic_post.sv:150$376.$result[16:0]$428
+Creating decoders for process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$409'.
+     1/2: $2\pack$func$cordic_post.sv:149$375.$result[16:0]$419
+     2/2: $1\pack$func$cordic_post.sv:149$375.$result[16:0]$417
+Creating decoders for process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$408'.
+     1/12: $2\flags_o[3:0] [3]
+     2/12: $2\flags_o[3:0] [2]
+     3/12: $2\flags_o[3:0] [1]
+     4/12: $2\flags_o[3:0] [0]
+     5/12: $2\z_o[15:0]
+     6/12: $2\y_o[15:0]
+     7/12: $2\x_o[15:0]
+     8/12: $1\flags_o[3:0] [3:1]
+     9/12: $1\flags_o[3:0] [0]
+    10/12: $1\z_o[15:0]
+    11/12: $1\y_o[15:0]
+    12/12: $1\x_o[15:0]
+Creating decoders for process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$402'.
+     1/1: $1\z_corr[21:0]
+Creating decoders for process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$378'.
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:223$361'.
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:210$359'.
+     1/2: $0\cnt_q[3:0]
+     2/2: $0\state_q[1:0]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:0$356'.
+     1/13: $4\state_d[1:0]
+     2/13: $2\cnt_d[3:0]
+     3/13: $1\ar_d[21:0]
+     4/13: $2\zr_d[21:0]
+     5/13: $2\yr_d[21:0]
+     6/13: $2\xr_d[21:0]
+     7/13: $3\state_d[1:0]
+     8/13: $2\state_d[1:0]
+     9/13: $1\state_d[1:0]
+    10/13: $1\cnt_d[3:0]
+    11/13: $1\zr_d[21:0]
+    12/13: $1\yr_d[21:0]
+    13/13: $1\xr_d[21:0]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:0$348'.
+     1/2: $1\angle_sel[21:0]
+     2/2: $1\shift_sel[5:0]
+Creating decoders for process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:0$331'.
+     1/60: $15\shift_hyp_sel[5:0]
+     2/60: $15\angle_hyp_sel[21:0]
+     3/60: $15\angle_lin_sel[21:0]
+     4/60: $15\angle_circ_sel[21:0]
+     5/60: $14\shift_hyp_sel[5:0]
+     6/60: $14\angle_hyp_sel[21:0]
+     7/60: $14\angle_lin_sel[21:0]
+     8/60: $14\angle_circ_sel[21:0]
+     9/60: $13\shift_hyp_sel[5:0]
+    10/60: $13\angle_hyp_sel[21:0]
+    11/60: $13\angle_lin_sel[21:0]
+    12/60: $13\angle_circ_sel[21:0]
+    13/60: $12\shift_hyp_sel[5:0]
+    14/60: $12\angle_hyp_sel[21:0]
+    15/60: $12\angle_lin_sel[21:0]
+    16/60: $12\angle_circ_sel[21:0]
+    17/60: $11\shift_hyp_sel[5:0]
+    18/60: $11\angle_hyp_sel[21:0]
+    19/60: $11\angle_lin_sel[21:0]
+    20/60: $11\angle_circ_sel[21:0]
+    21/60: $10\shift_hyp_sel[5:0]
+    22/60: $10\angle_hyp_sel[21:0]
+    23/60: $10\angle_lin_sel[21:0]
+    24/60: $10\angle_circ_sel[21:0]
+    25/60: $9\shift_hyp_sel[5:0]
+    26/60: $9\angle_hyp_sel[21:0]
+    27/60: $9\angle_lin_sel[21:0]
+    28/60: $9\angle_circ_sel[21:0]
+    29/60: $8\shift_hyp_sel[5:0]
+    30/60: $8\angle_hyp_sel[21:0]
+    31/60: $8\angle_lin_sel[21:0]
+    32/60: $8\angle_circ_sel[21:0]
+    33/60: $7\shift_hyp_sel[5:0]
+    34/60: $7\angle_hyp_sel[21:0]
+    35/60: $7\angle_lin_sel[21:0]
+    36/60: $7\angle_circ_sel[21:0]
+    37/60: $6\shift_hyp_sel[5:0]
+    38/60: $6\angle_hyp_sel[21:0]
+    39/60: $6\angle_lin_sel[21:0]
+    40/60: $6\angle_circ_sel[21:0]
+    41/60: $5\shift_hyp_sel[5:0]
+    42/60: $5\angle_hyp_sel[21:0]
+    43/60: $5\angle_lin_sel[21:0]
+    44/60: $5\angle_circ_sel[21:0]
+    45/60: $4\shift_hyp_sel[5:0]
+    46/60: $4\angle_hyp_sel[21:0]
+    47/60: $4\angle_lin_sel[21:0]
+    48/60: $4\angle_circ_sel[21:0]
+    49/60: $3\shift_hyp_sel[5:0]
+    50/60: $3\angle_hyp_sel[21:0]
+    51/60: $3\angle_lin_sel[21:0]
+    52/60: $3\angle_circ_sel[21:0]
+    53/60: $2\shift_hyp_sel[5:0]
+    54/60: $2\angle_hyp_sel[21:0]
+    55/60: $2\angle_lin_sel[21:0]
+    56/60: $2\angle_circ_sel[21:0]
+    57/60: $1\shift_hyp_sel[5:0]
+    58/60: $1\angle_hyp_sel[21:0]
+    59/60: $1\angle_lin_sel[21:0]
+    60/60: $1\angle_circ_sel[21:0]
+
+9.3.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `$paramod\cordic_stage\Width=32'00000000000000000000000000010110.\x_o' from process `$paramod\cordic_stage\Width=32'00000000000000000000000000010110.$proc$cordic_stage.sv:0$923'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[14].x_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$909'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[14].y_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$909'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[14].angle' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$909'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[13].x_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$898'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[13].y_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$898'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[13].angle' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$898'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[12].x_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$887'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[12].y_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$887'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[12].angle' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$887'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[11].x_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$876'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[11].y_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$876'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[11].angle' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$876'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[10].x_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$865'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[10].y_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$865'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[10].angle' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$865'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[9].x_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$854'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[9].y_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$854'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[9].angle' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$854'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[8].x_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$843'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[8].y_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$843'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[8].angle' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$843'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[7].x_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$832'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[7].y_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$832'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[7].angle' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$832'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[6].x_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$821'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[6].y_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$821'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[6].angle' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$821'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[5].x_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$810'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[5].y_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$810'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[5].angle' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$810'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[4].x_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$799'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[4].y_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$799'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[4].angle' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$799'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[3].x_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$788'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[3].y_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$788'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[3].angle' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$788'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[2].x_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$777'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[2].y_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$777'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[2].angle' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$777'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[1].x_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$766'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[1].y_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$766'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[1].angle' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$766'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[0].x_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$755'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[0].y_sh' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$755'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\gen_stage[0].angle' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$755'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\widen$func$cordic_pre.sv:94$459.$result' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$536'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\widen$func$cordic_pre.sv:94$465.$result' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$536'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\widen$func$cordic_pre.sv:94$465.v' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$536'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\widen$func$cordic_pre.sv:93$458.$result' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$532'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\widen$func$cordic_pre.sv:93$464.$result' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$532'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\widen$func$cordic_pre.sv:93$464.v' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$532'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\widen$func$cordic_pre.sv:92$457.$result' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$528'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\widen$func$cordic_pre.sv:92$463.$result' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$528'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\widen$func$cordic_pre.sv:92$463.v' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$528'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\attr_o' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$527'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\coord' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$466'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\mode' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$466'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\resid_chk' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$466'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\dbl_z' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$466'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\zero_res' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$466'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\pi_ctl' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$466'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\dom_err' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$466'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\x0' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$466'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\y0' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$466'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\z0' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$466'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\absv$func$cordic_pre.sv:239$460.$result' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$466'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\absv$func$cordic_pre.sv:239$460.v' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$466'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\absv$func$cordic_pre.sv:241$461.$result' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$466'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\absv$func$cordic_pre.sv:241$461.v' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$466'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\absv$func$cordic_pre.sv:242$462.$result' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$466'.
+No latch inferred for signal `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.\absv$func$cordic_pre.sv:242$462.v' from process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$466'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\pack$func$cordic_post.sv:151$374.$result' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$431'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\pack$func$cordic_post.sv:151$377.$result' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$431'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\pack$func$cordic_post.sv:151$377.v' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$431'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\pack$func$cordic_post.sv:151$377.r' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$431'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\pack$func$cordic_post.sv:150$373.$result' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$420'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\pack$func$cordic_post.sv:150$376.$result' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$420'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\pack$func$cordic_post.sv:150$376.v' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$420'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\pack$func$cordic_post.sv:150$376.r' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$420'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\pack$func$cordic_post.sv:149$372.$result' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$409'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\pack$func$cordic_post.sv:149$375.$result' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$409'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\pack$func$cordic_post.sv:149$375.v' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$409'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\pack$func$cordic_post.sv:149$375.r' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$409'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\x_o' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$408'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\y_o' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$408'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\z_o' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$408'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\flags_o' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$408'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\z_corr' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$402'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\z_final' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$402'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\resid_thresh' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$378'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\dom_resid' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$378'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\absv$func$cordic_post.sv:107$369.$result' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$378'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\absv$func$cordic_post.sv:107$369.v' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$378'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\absv$func$cordic_post.sv:108$370.$result' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$378'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\absv$func$cordic_post.sv:108$370.v' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$378'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\absv$func$cordic_post.sv:110$371.$result' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$378'.
+No latch inferred for signal `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.\absv$func$cordic_post.sv:110$371.v' from process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$378'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.\state_d' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:0$356'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.\cnt_d' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:0$356'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.\xr_d' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:0$356'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.\yr_d' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:0$356'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.\zr_d' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:0$356'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.\ar_d' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:0$356'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.\shift_sel' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:0$348'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.\angle_sel' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:0$348'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.\angle_circ_sel' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:0$331'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.\angle_lin_sel' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:0$331'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.\angle_hyp_sel' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:0$331'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.\shift_hyp_sel' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:0$331'.
+No latch inferred for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$fordecl_block$3.s' from process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:0$331'.
+
+9.3.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\cordic_equiv_miter.$formal$cordic_equiv_miter.sv:165$75_CHECK' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:163$109'.
+  created $dff cell `$procdff$2084' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.$formal$cordic_equiv_miter.sv:165$75_EN' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:163$109'.
+  created $dff cell `$procdff$2085' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.$formal$cordic_equiv_miter.sv:166$76_CHECK' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:163$109'.
+  created $dff cell `$procdff$2086' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.$formal$cordic_equiv_miter.sv:166$76_EN' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:163$109'.
+  created $dff cell `$procdff$2087' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.$formal$cordic_equiv_miter.sv:151$69_CHECK' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:149$89'.
+  created $dff cell `$procdff$2088' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.$formal$cordic_equiv_miter.sv:151$69_EN' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:149$89'.
+  created $dff cell `$procdff$2089' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.$formal$cordic_equiv_miter.sv:152$70_CHECK' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:149$89'.
+  created $dff cell `$procdff$2090' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.$formal$cordic_equiv_miter.sv:152$70_EN' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:149$89'.
+  created $dff cell `$procdff$2091' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.$formal$cordic_equiv_miter.sv:153$71_CHECK' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:149$89'.
+  created $dff cell `$procdff$2092' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.$formal$cordic_equiv_miter.sv:153$71_EN' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:149$89'.
+  created $dff cell `$procdff$2093' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.$formal$cordic_equiv_miter.sv:154$72_CHECK' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:149$89'.
+  created $dff cell `$procdff$2094' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.$formal$cordic_equiv_miter.sv:154$72_EN' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:149$89'.
+  created $dff cell `$procdff$2095' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.$formal$cordic_equiv_miter.sv:155$73_CHECK' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:149$89'.
+  created $dff cell `$procdff$2096' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.$formal$cordic_equiv_miter.sv:155$73_EN' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:149$89'.
+  created $dff cell `$procdff$2097' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.$formal$cordic_equiv_miter.sv:156$74_CHECK' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:149$89'.
+  created $dff cell `$procdff$2098' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.$formal$cordic_equiv_miter.sv:156$74_EN' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:149$89'.
+  created $dff cell `$procdff$2099' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.\p_cx' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:123$85'.
+  created $dff cell `$procdff$2100' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.\p_cy' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:123$85'.
+  created $dff cell `$procdff$2101' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.\p_cz' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:123$85'.
+  created $dff cell `$procdff$2102' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.\i_cx' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:123$85'.
+  created $dff cell `$procdff$2103' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.\i_cy' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:123$85'.
+  created $dff cell `$procdff$2104' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.\i_cz' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:123$85'.
+  created $dff cell `$procdff$2105' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.\p_cf' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:123$85'.
+  created $dff cell `$procdff$2106' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.\i_cf' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:123$85'.
+  created $dff cell `$procdff$2107' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.\p_cfn' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:123$85'.
+  created $dff cell `$procdff$2108' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.\i_cfn' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:123$85'.
+  created $dff cell `$procdff$2109' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.\p_ct' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:123$85'.
+  created $dff cell `$procdff$2110' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.\i_ct' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:123$85'.
+  created $dff cell `$procdff$2111' with positive edge clock.
+Creating register for signal `\cordic_equiv_miter.\p_cnt' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:113$81'.
+  created $adff cell `$procdff$2112' with positive edge clock and negative level reset.
+Creating register for signal `\cordic_equiv_miter.\i_cnt' using process `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:113$81'.
+  created $adff cell `$procdff$2113' with positive edge clock and negative level reset.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\xq [329:308]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$918'.
+  created $dff cell `$procdff$2114' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\yq [329:308]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$918'.
+  created $dff cell `$procdff$2115' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\zq [329:308]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$918'.
+  created $dff cell `$procdff$2116' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\aq [329:308]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$918'.
+  created $dff cell `$procdff$2117' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\vq [14]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$916'.
+  created $adff cell `$procdff$2118' with positive edge clock and negative level reset.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\xq [307:286]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$907'.
+  created $dff cell `$procdff$2119' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\yq [307:286]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$907'.
+  created $dff cell `$procdff$2120' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\zq [307:286]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$907'.
+  created $dff cell `$procdff$2121' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\aq [307:286]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$907'.
+  created $dff cell `$procdff$2122' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\vq [13]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$905'.
+  created $adff cell `$procdff$2123' with positive edge clock and negative level reset.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\xq [285:264]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$896'.
+  created $dff cell `$procdff$2124' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\yq [285:264]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$896'.
+  created $dff cell `$procdff$2125' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\zq [285:264]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$896'.
+  created $dff cell `$procdff$2126' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\aq [285:264]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$896'.
+  created $dff cell `$procdff$2127' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\vq [12]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$894'.
+  created $adff cell `$procdff$2128' with positive edge clock and negative level reset.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\xq [263:242]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$885'.
+  created $dff cell `$procdff$2129' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\yq [263:242]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$885'.
+  created $dff cell `$procdff$2130' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\zq [263:242]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$885'.
+  created $dff cell `$procdff$2131' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\aq [263:242]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$885'.
+  created $dff cell `$procdff$2132' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\vq [11]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$883'.
+  created $adff cell `$procdff$2133' with positive edge clock and negative level reset.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\xq [241:220]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$874'.
+  created $dff cell `$procdff$2134' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\yq [241:220]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$874'.
+  created $dff cell `$procdff$2135' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\zq [241:220]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$874'.
+  created $dff cell `$procdff$2136' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\aq [241:220]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$874'.
+  created $dff cell `$procdff$2137' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\vq [10]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$872'.
+  created $adff cell `$procdff$2138' with positive edge clock and negative level reset.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\xq [219:198]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$863'.
+  created $dff cell `$procdff$2139' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\yq [219:198]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$863'.
+  created $dff cell `$procdff$2140' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\zq [219:198]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$863'.
+  created $dff cell `$procdff$2141' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\aq [219:198]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$863'.
+  created $dff cell `$procdff$2142' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\vq [9]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$861'.
+  created $adff cell `$procdff$2143' with positive edge clock and negative level reset.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\xq [197:176]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$852'.
+  created $dff cell `$procdff$2144' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\yq [197:176]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$852'.
+  created $dff cell `$procdff$2145' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\zq [197:176]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$852'.
+  created $dff cell `$procdff$2146' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\aq [197:176]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$852'.
+  created $dff cell `$procdff$2147' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\vq [8]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$850'.
+  created $adff cell `$procdff$2148' with positive edge clock and negative level reset.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\xq [175:154]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$841'.
+  created $dff cell `$procdff$2149' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\yq [175:154]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$841'.
+  created $dff cell `$procdff$2150' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\zq [175:154]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$841'.
+  created $dff cell `$procdff$2151' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\aq [175:154]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$841'.
+  created $dff cell `$procdff$2152' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\vq [7]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$839'.
+  created $adff cell `$procdff$2153' with positive edge clock and negative level reset.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\xq [153:132]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$830'.
+  created $dff cell `$procdff$2154' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\yq [153:132]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$830'.
+  created $dff cell `$procdff$2155' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\zq [153:132]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$830'.
+  created $dff cell `$procdff$2156' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\aq [153:132]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$830'.
+  created $dff cell `$procdff$2157' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\vq [6]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$828'.
+  created $adff cell `$procdff$2158' with positive edge clock and negative level reset.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\xq [131:110]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$819'.
+  created $dff cell `$procdff$2159' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\yq [131:110]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$819'.
+  created $dff cell `$procdff$2160' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\zq [131:110]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$819'.
+  created $dff cell `$procdff$2161' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\aq [131:110]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$819'.
+  created $dff cell `$procdff$2162' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\vq [5]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$817'.
+  created $adff cell `$procdff$2163' with positive edge clock and negative level reset.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\xq [109:88]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$808'.
+  created $dff cell `$procdff$2164' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\yq [109:88]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$808'.
+  created $dff cell `$procdff$2165' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\zq [109:88]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$808'.
+  created $dff cell `$procdff$2166' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\aq [109:88]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$808'.
+  created $dff cell `$procdff$2167' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\vq [4]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$806'.
+  created $adff cell `$procdff$2168' with positive edge clock and negative level reset.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\xq [87:66]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$797'.
+  created $dff cell `$procdff$2169' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\yq [87:66]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$797'.
+  created $dff cell `$procdff$2170' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\zq [87:66]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$797'.
+  created $dff cell `$procdff$2171' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\aq [87:66]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$797'.
+  created $dff cell `$procdff$2172' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\vq [3]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$795'.
+  created $adff cell `$procdff$2173' with positive edge clock and negative level reset.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\xq [65:44]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$786'.
+  created $dff cell `$procdff$2174' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\yq [65:44]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$786'.
+  created $dff cell `$procdff$2175' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\zq [65:44]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$786'.
+  created $dff cell `$procdff$2176' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\aq [65:44]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$786'.
+  created $dff cell `$procdff$2177' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\vq [2]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$784'.
+  created $adff cell `$procdff$2178' with positive edge clock and negative level reset.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\xq [43:22]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$775'.
+  created $dff cell `$procdff$2179' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\yq [43:22]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$775'.
+  created $dff cell `$procdff$2180' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\zq [43:22]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$775'.
+  created $dff cell `$procdff$2181' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\aq [43:22]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$775'.
+  created $dff cell `$procdff$2182' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\vq [1]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$773'.
+  created $adff cell `$procdff$2183' with positive edge clock and negative level reset.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\xq [21:0]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$764'.
+  created $dff cell `$procdff$2184' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\yq [21:0]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$764'.
+  created $dff cell `$procdff$2185' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\zq [21:0]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$764'.
+  created $dff cell `$procdff$2186' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\aq [21:0]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$764'.
+  created $dff cell `$procdff$2187' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.\vq [0]' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$762'.
+  created $adff cell `$procdff$2188' with positive edge clock and negative level reset.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.\xr_q' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:223$361'.
+  created $dff cell `$procdff$2189' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.\yr_q' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:223$361'.
+  created $dff cell `$procdff$2190' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.\zr_q' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:223$361'.
+  created $dff cell `$procdff$2191' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.\ar_q' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:223$361'.
+  created $dff cell `$procdff$2192' with positive edge clock.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.\state_q' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:210$359'.
+  created $adff cell `$procdff$2193' with positive edge clock and negative level reset.
+Creating register for signal `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.\cnt_q' using process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:210$359'.
+  created $adff cell `$procdff$2194' with positive edge clock and negative level reset.
+
+9.3.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+9.3.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Removing empty process `cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$131'.
+Removing empty process `cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$129'.
+Removing empty process `cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$127'.
+Removing empty process `cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$125'.
+Removing empty process `cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$123'.
+Removing empty process `cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$121'.
+Removing empty process `cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$119'.
+Removing empty process `cordic_equiv_miter.$proc$cordic_equiv_miter.sv:0$117'.
+Found and cleaned up 1 empty switch in `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:163$109'.
+Removing empty process `cordic_equiv_miter.$proc$cordic_equiv_miter.sv:163$109'.
+Found and cleaned up 1 empty switch in `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:149$89'.
+Removing empty process `cordic_equiv_miter.$proc$cordic_equiv_miter.sv:149$89'.
+Found and cleaned up 2 empty switches in `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:123$85'.
+Removing empty process `cordic_equiv_miter.$proc$cordic_equiv_miter.sv:123$85'.
+Found and cleaned up 2 empty switches in `\cordic_equiv_miter.$proc$cordic_equiv_miter.sv:113$81'.
+Removing empty process `cordic_equiv_miter.$proc$cordic_equiv_miter.sv:113$81'.
+Found and cleaned up 1 empty switch in `$paramod\cordic_stage\Width=32'00000000000000000000000000010110.$proc$cordic_stage.sv:0$923'.
+Removing empty process `$paramod\cordic_stage\Width=32'00000000000000000000000000010110.$proc$cordic_stage.sv:0$923'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$918'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$918'.
+Found and cleaned up 2 empty switches in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$916'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$916'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$909'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$909'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$907'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$907'.
+Found and cleaned up 2 empty switches in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$905'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$905'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$898'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$898'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$896'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$896'.
+Found and cleaned up 2 empty switches in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$894'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$894'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$887'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$887'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$885'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$885'.
+Found and cleaned up 2 empty switches in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$883'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$883'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$876'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$876'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$874'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$874'.
+Found and cleaned up 2 empty switches in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$872'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$872'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$865'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$865'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$863'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$863'.
+Found and cleaned up 2 empty switches in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$861'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$861'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$854'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$854'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$852'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$852'.
+Found and cleaned up 2 empty switches in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$850'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$850'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$843'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$843'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$841'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$841'.
+Found and cleaned up 2 empty switches in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$839'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$839'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$832'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$832'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$830'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$830'.
+Found and cleaned up 2 empty switches in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$828'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$828'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$821'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$821'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$819'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$819'.
+Found and cleaned up 2 empty switches in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$817'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$817'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$810'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$810'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$808'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$808'.
+Found and cleaned up 2 empty switches in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$806'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$806'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$799'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$799'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$797'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$797'.
+Found and cleaned up 2 empty switches in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$795'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$795'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$788'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$788'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$786'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$786'.
+Found and cleaned up 2 empty switches in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$784'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$784'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$777'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$777'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$775'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$775'.
+Found and cleaned up 2 empty switches in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$773'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$773'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$766'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$766'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$764'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:159$764'.
+Found and cleaned up 2 empty switches in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$762'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:146$762'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$755'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$proc$cordic_core_pipe.sv:0$755'.
+Removing empty process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$536'.
+Removing empty process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$532'.
+Removing empty process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$528'.
+Removing empty process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$527'.
+Found and cleaned up 15 empty switches in `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$466'.
+Removing empty process `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$proc$cordic_pre.sv:0$466'.
+Found and cleaned up 2 empty switches in `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$431'.
+Removing empty process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$431'.
+Found and cleaned up 2 empty switches in `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$420'.
+Removing empty process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$420'.
+Found and cleaned up 2 empty switches in `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$409'.
+Removing empty process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$409'.
+Found and cleaned up 2 empty switches in `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$408'.
+Removing empty process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$408'.
+Found and cleaned up 1 empty switch in `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$402'.
+Removing empty process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$402'.
+Removing empty process `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$proc$cordic_post.sv:0$378'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:223$361'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:210$359'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:210$359'.
+Found and cleaned up 4 empty switches in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:0$356'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:0$356'.
+Found and cleaned up 1 empty switch in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:0$348'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:0$348'.
+Found and cleaned up 15 empty switches in `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:0$331'.
+Removing empty process `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$proc$cordic_core_iter.sv:0$331'.
+Cleaned up 112 empty switches.
+
+9.3.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module cordic_equiv_miter.
+<suppressed ~1 debug messages>
+Optimizing module $paramod\cordic_stage\Width=32'00000000000000000000000000010110.
+<suppressed ~2 debug messages>
+Optimizing module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+<suppressed ~105 debug messages>
+Optimizing module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.
+<suppressed ~55 debug messages>
+Optimizing module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.
+<suppressed ~6 debug messages>
+Optimizing module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.
+<suppressed ~4 debug messages>
+Optimizing module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit.
+Optimizing module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit.
+
+9.4. Executing OPT_EXPR pass (perform const folding).
+Optimizing module cordic_equiv_miter.
+Optimizing module $paramod\cordic_stage\Width=32'00000000000000000000000000010110.
+Optimizing module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Optimizing module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.
+Optimizing module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.
+Optimizing module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.
+Optimizing module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit.
+Optimizing module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit.
+
+9.5. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \cordic_equiv_miter..
+Finding unused cells or wires in module $paramod\cordic_stage\Width=32'00000000000000000000000000010110..
+Finding unused cells or wires in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe..
+Finding unused cells or wires in module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre..
+Finding unused cells or wires in module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post..
+Finding unused cells or wires in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter..
+Finding unused cells or wires in module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit..
+Finding unused cells or wires in module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit..
+Removed 45 unused cells and 938 unused wires.
+<suppressed ~52 debug messages>
+
+9.6. Executing CHECK pass (checking for obvious problems).
+Checking module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit...
+Checking module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post...
+Checking module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre...
+Checking module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter...
+Checking module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe...
+Checking module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit...
+Checking module $paramod\cordic_stage\Width=32'00000000000000000000000000010110...
+Checking module cordic_equiv_miter...
+Found and reported 0 problems.
+
+9.7. Executing OPT pass (performing simple optimizations).
+
+9.7.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit.
+Optimizing module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.
+Optimizing module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.
+Optimizing module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.
+Optimizing module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Optimizing module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit.
+Optimizing module $paramod\cordic_stage\Width=32'00000000000000000000000000010110.
+Optimizing module cordic_equiv_miter.
+
+9.7.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit'.
+Finding identical cells in module `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post'.
+<suppressed ~6 debug messages>
+Finding identical cells in module `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre'.
+<suppressed ~210 debug messages>
+Finding identical cells in module `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter'.
+<suppressed ~30 debug messages>
+Finding identical cells in module `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe'.
+<suppressed ~132 debug messages>
+Finding identical cells in module `$paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit'.
+Finding identical cells in module `$paramod\cordic_stage\Width=32'00000000000000000000000000010110'.
+<suppressed ~6 debug messages>
+Finding identical cells in module `\cordic_equiv_miter'.
+Removed a total of 128 cells.
+
+9.7.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 1/2 on $mux $procmux$1757.
+    dead port 1/2 on $mux $procmux$1766.
+    dead port 1/2 on $mux $procmux$1775.
+    dead port 1/2 on $mux $procmux$1784.
+    dead port 1/2 on $mux $procmux$1790.
+    dead port 1/2 on $mux $procmux$1796.
+    dead port 1/2 on $mux $procmux$1801.
+    dead port 1/2 on $mux $procmux$1807.
+    dead port 1/2 on $mux $procmux$1813.
+    dead port 1/2 on $mux $procmux$1819.
+Running muxtree optimizer on module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 1/2 on $mux $procmux$1470.
+    dead port 1/2 on $mux $procmux$1491.
+    dead port 1/2 on $mux $procmux$1498.
+    dead port 1/2 on $mux $procmux$1505.
+    dead port 2/2 on $mux $procmux$1567.
+    dead port 2/2 on $mux $procmux$1573.
+    dead port 2/2 on $mux $procmux$1587.
+    dead port 2/2 on $mux $procmux$1597.
+    dead port 2/2 on $mux $procmux$1607.
+    dead port 2/2 on $mux $procmux$1630.
+    dead port 2/2 on $mux $procmux$1643.
+    dead port 2/2 on $mux $procmux$1656.
+    dead port 2/2 on $mux $procmux$1669.
+    dead port 1/3 on $pmux $procmux$1372.
+    dead port 2/3 on $pmux $procmux$1372.
+    dead port 1/2 on $mux $procmux$1375.
+    dead port 2/2 on $mux $procmux$1382.
+    dead port 1/2 on $mux $procmux$1384.
+    dead port 2/2 on $mux $procmux$1392.
+    dead port 1/2 on $mux $procmux$1394.
+    dead port 1/2 on $mux $procmux$1403.
+    dead port 2/2 on $mux $procmux$1405.
+    dead port 1/2 on $mux $procmux$1407.
+    dead port 1/2 on $mux $procmux$1416.
+    dead port 2/2 on $mux $procmux$1418.
+    dead port 1/2 on $mux $procmux$1420.
+    dead port 1/2 on $mux $procmux$1429.
+    dead port 2/2 on $mux $procmux$1431.
+    dead port 1/2 on $mux $procmux$1433.
+    dead port 2/2 on $mux $procmux$1441.
+    dead port 1/2 on $mux $procmux$1443.
+    dead port 2/2 on $mux $procmux$1451.
+    dead port 1/2 on $mux $procmux$1453.
+Running muxtree optimizer on module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 2/2 on $mux $procmux$1867.
+    dead port 2/2 on $mux $procmux$1874.
+Running muxtree optimizer on module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod\cordic_stage\Width=32'00000000000000000000000000010110..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \cordic_equiv_miter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 45 multiplexer ports.
+<suppressed ~186 debug messages>
+
+9.7.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit.
+  Optimizing cells in module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.
+  Optimizing cells in module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.
+    New ctrl vector for $pmux cell $procmux$1672: { $procmux$1631_CMP $procmux$1598_CMP $procmux$1676_CMP $procmux$1588_CMP $auto$opt_reduce.cc:134:opt_pmux$2196 $procmux$1568_CMP }
+    New ctrl vector for $pmux cell $procmux$1682: { $procmux$1680_CMP $procmux$1631_CMP $procmux$1598_CMP $auto$opt_reduce.cc:134:opt_pmux$2198 $procmux$1588_CMP $procmux$1568_CMP }
+    New ctrl vector for $pmux cell $procmux$1691: $auto$opt_reduce.cc:134:opt_pmux$2200
+    New ctrl vector for $pmux cell $procmux$1697: { $procmux$1598_CMP $procmux$1588_CMP $auto$opt_reduce.cc:134:opt_pmux$2202 $procmux$1568_CMP }
+    New ctrl vector for $pmux cell $procmux$1734: $auto$opt_reduce.cc:134:opt_pmux$2204
+    New ctrl vector for $pmux cell $procmux$1739: $auto$opt_reduce.cc:134:opt_pmux$2206
+    New ctrl vector for $pmux cell $procmux$1745: { $auto$opt_reduce.cc:134:opt_pmux$2210 $auto$opt_reduce.cc:134:opt_pmux$2208 }
+  Optimizing cells in module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.
+  Optimizing cells in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.
+  Optimizing cells in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+    New ctrl vector for $pmux cell $procmux$1018: $procmux$1016_CMP
+    New ctrl vector for $pmux cell $procmux$1022: $procmux$1016_CMP
+    New ctrl vector for $pmux cell $procmux$1285: $procmux$1283_CMP
+    New ctrl vector for $pmux cell $procmux$1289: $procmux$1283_CMP
+    New ctrl vector for $pmux cell $procmux$1310: $procmux$1308_CMP
+    New ctrl vector for $pmux cell $procmux$1314: $procmux$1308_CMP
+    New ctrl vector for $pmux cell $procmux$1335: $procmux$1333_CMP
+    New ctrl vector for $pmux cell $procmux$1339: $procmux$1333_CMP
+    New ctrl vector for $pmux cell $procmux$1360: $procmux$1358_CMP
+    New ctrl vector for $pmux cell $procmux$1364: $procmux$1358_CMP
+  Optimizing cells in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+  Optimizing cells in module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit.
+  Optimizing cells in module $paramod\cordic_stage\Width=32'00000000000000000000000000010110.
+  Optimizing cells in module \cordic_equiv_miter.
+Performed a total of 37 changes.
+
+9.7.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit'.
+Finding identical cells in module `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post'.
+<suppressed ~3 debug messages>
+Finding identical cells in module `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre'.
+<suppressed ~18 debug messages>
+Finding identical cells in module `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter'.
+Finding identical cells in module `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe'.
+Finding identical cells in module `$paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit'.
+Finding identical cells in module `$paramod\cordic_stage\Width=32'00000000000000000000000000010110'.
+Finding identical cells in module `\cordic_equiv_miter'.
+<suppressed ~36 debug messages>
+Removed a total of 19 cells.
+
+9.7.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit..
+Finding unused cells or wires in module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post..
+Finding unused cells or wires in module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre..
+Finding unused cells or wires in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter..
+Finding unused cells or wires in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe..
+Finding unused cells or wires in module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit..
+Finding unused cells or wires in module $paramod\cordic_stage\Width=32'00000000000000000000000000010110..
+Finding unused cells or wires in module \cordic_equiv_miter..
+Removed 17 unused cells and 206 unused wires.
+<suppressed ~23 debug messages>
+
+9.7.7. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit.
+Optimizing module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.
+Optimizing module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.
+Optimizing module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.
+Optimizing module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Optimizing module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit.
+Optimizing module $paramod\cordic_stage\Width=32'00000000000000000000000000010110.
+Optimizing module cordic_equiv_miter.
+
+9.7.8. Rerunning OPT passes. (Maybe there is more to do..)
+
+9.7.9. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod\cordic_stage\Width=32'00000000000000000000000000010110..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \cordic_equiv_miter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~160 debug messages>
+
+9.7.10. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit.
+  Optimizing cells in module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.
+  Optimizing cells in module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.
+    New ctrl vector for $pmux cell $procmux$1672: { $procmux$1676_CMP $procmux$1588_CMP $auto$opt_reduce.cc:134:opt_pmux$2196 $auto$opt_reduce.cc:134:opt_pmux$2212 }
+  Optimizing cells in module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.
+  Optimizing cells in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.
+  Optimizing cells in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+  Optimizing cells in module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit.
+  Optimizing cells in module $paramod\cordic_stage\Width=32'00000000000000000000000000010110.
+  Optimizing cells in module \cordic_equiv_miter.
+Performed a total of 1 changes.
+
+9.7.11. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit'.
+Finding identical cells in module `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post'.
+Finding identical cells in module `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre'.
+Finding identical cells in module `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter'.
+Finding identical cells in module `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe'.
+Finding identical cells in module `$paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit'.
+Finding identical cells in module `$paramod\cordic_stage\Width=32'00000000000000000000000000010110'.
+Finding identical cells in module `\cordic_equiv_miter'.
+Removed a total of 0 cells.
+
+9.7.12. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit..
+Finding unused cells or wires in module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post..
+Finding unused cells or wires in module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre..
+Finding unused cells or wires in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter..
+Finding unused cells or wires in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe..
+Finding unused cells or wires in module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit..
+Finding unused cells or wires in module $paramod\cordic_stage\Width=32'00000000000000000000000000010110..
+Finding unused cells or wires in module \cordic_equiv_miter..
+
+9.7.13. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit.
+Optimizing module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.
+Optimizing module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.
+Optimizing module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.
+Optimizing module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Optimizing module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit.
+Optimizing module $paramod\cordic_stage\Width=32'00000000000000000000000000010110.
+Optimizing module cordic_equiv_miter.
+
+9.7.14. Rerunning OPT passes. (Maybe there is more to do..)
+
+9.7.15. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod\cordic_stage\Width=32'00000000000000000000000000010110..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \cordic_equiv_miter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~160 debug messages>
+
+9.7.16. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit.
+  Optimizing cells in module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.
+  Optimizing cells in module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.
+  Optimizing cells in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.
+  Optimizing cells in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+  Optimizing cells in module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit.
+  Optimizing cells in module $paramod\cordic_stage\Width=32'00000000000000000000000000010110.
+  Optimizing cells in module \cordic_equiv_miter.
+Performed a total of 0 changes.
+
+9.7.17. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit'.
+Finding identical cells in module `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post'.
+Finding identical cells in module `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre'.
+Finding identical cells in module `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter'.
+Finding identical cells in module `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe'.
+Finding identical cells in module `$paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit'.
+Finding identical cells in module `$paramod\cordic_stage\Width=32'00000000000000000000000000010110'.
+Finding identical cells in module `\cordic_equiv_miter'.
+Removed a total of 0 cells.
+
+9.7.18. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit..
+Finding unused cells or wires in module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post..
+Finding unused cells or wires in module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre..
+Finding unused cells or wires in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter..
+Finding unused cells or wires in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe..
+Finding unused cells or wires in module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit..
+Finding unused cells or wires in module $paramod\cordic_stage\Width=32'00000000000000000000000000010110..
+Finding unused cells or wires in module \cordic_equiv_miter..
+
+9.7.19. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit.
+Optimizing module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.
+Optimizing module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.
+Optimizing module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.
+Optimizing module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Optimizing module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit.
+Optimizing module $paramod\cordic_stage\Width=32'00000000000000000000000000010110.
+Optimizing module cordic_equiv_miter.
+
+9.7.20. Finished OPT passes. (There is nothing left to do.)
+
+9.8. Executing WREDUCE pass (reducing word size of cells).
+Removed top 31 bits (of 32) from port B of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$lt$cordic_post.sv:96$385 ($lt).
+Removed top 13 bits (of 22) from mux cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$ternary$cordic_post.sv:107$394 ($mux).
+Removed top 12 bits (of 22) from port A of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$add$cordic_post.sv:109$395 ($add).
+Removed top 15 bits (of 22) from port B of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$add$cordic_post.sv:109$395 ($add).
+Removed top 11 bits (of 22) from port Y of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$add$cordic_post.sv:109$395 ($add).
+Removed top 31 bits (of 32) from port B of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$lt$cordic_post.sv:96$396 ($lt).
+Removed top 11 bits (of 22) from port B of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$gt$cordic_post.sv:110$399 ($gt).
+Removed top 2 bits (of 22) from port B of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$sub$cordic_post.sv:125$403 ($sub).
+Removed top 2 bits (of 22) from port B of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$add$cordic_post.sv:125$404 ($add).
+Removed top 27 bits (of 32) from port B of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$add$cordic_post.sv:141$414 ($add).
+Removed top 9 bits (of 32) from port Y of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$add$cordic_post.sv:141$414 ($add).
+Removed top 3 bits (of 22) from port A of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$gt$cordic_post.sv:142$416 ($gt).
+Removed top 6 bits (of 22) from port B of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$gt$cordic_post.sv:142$416 ($gt).
+Removed top 3 bits (of 22) from port A of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$lt$cordic_post.sv:143$418 ($lt).
+Removed top 6 bits (of 22) from port B of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$lt$cordic_post.sv:143$418 ($lt).
+Removed top 27 bits (of 32) from port B of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$add$cordic_post.sv:141$425 ($add).
+Removed top 9 bits (of 32) from port Y of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$add$cordic_post.sv:141$425 ($add).
+Removed top 3 bits (of 22) from port A of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$gt$cordic_post.sv:142$427 ($gt).
+Removed top 6 bits (of 22) from port B of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$gt$cordic_post.sv:142$427 ($gt).
+Removed top 3 bits (of 22) from port A of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$lt$cordic_post.sv:143$429 ($lt).
+Removed top 6 bits (of 22) from port B of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$lt$cordic_post.sv:143$429 ($lt).
+Removed top 27 bits (of 32) from port B of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$add$cordic_post.sv:141$436 ($add).
+Removed top 9 bits (of 32) from port Y of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$add$cordic_post.sv:141$436 ($add).
+Removed top 3 bits (of 22) from port A of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$gt$cordic_post.sv:142$438 ($gt).
+Removed top 6 bits (of 22) from port B of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$gt$cordic_post.sv:142$438 ($gt).
+Removed top 3 bits (of 22) from port A of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$lt$cordic_post.sv:143$440 ($lt).
+Removed top 6 bits (of 22) from port B of cell $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$lt$cordic_post.sv:143$440 ($lt).
+Removed top 6 bits (of 32) from wire $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$add$cordic_post.sv:141$414_Y.
+Removed top 6 bits (of 32) from wire $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$add$cordic_post.sv:141$425_Y.
+Removed top 6 bits (of 32) from wire $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.$add$cordic_post.sv:141$436_Y.
+Removed top 2 bits (of 22) from port A of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$lt$cordic_pre.sv:140$473 ($lt).
+Removed top 31 bits (of 32) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$lt$cordic_pre.sv:140$473 ($lt).
+Removed top 2 bits (of 22) from port A of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$neg$cordic_pre.sv:141$474 ($neg).
+Removed top 2 bits (of 22) from port A of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$neg$cordic_pre.sv:142$475 ($neg).
+Removed top 2 bits (of 22) from port A of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$lt$cordic_pre.sv:143$476 ($lt).
+Removed top 31 bits (of 32) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$lt$cordic_pre.sv:143$476 ($lt).
+Removed top 1 bits (of 2) from mux cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$ternary$cordic_pre.sv:143$477 ($mux).
+Removed top 3 bits (of 22) from port A of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$add$cordic_pre.sv:192$486 ($add).
+Removed top 4 bits (of 22) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$add$cordic_pre.sv:192$486 ($add).
+Removed top 2 bits (of 22) from port Y of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$add$cordic_pre.sv:192$486 ($add).
+Removed top 3 bits (of 22) from port A of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$sub$cordic_pre.sv:193$488 ($sub).
+Removed top 4 bits (of 22) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$sub$cordic_pre.sv:193$488 ($sub).
+Removed top 2 bits (of 22) from port Y of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$sub$cordic_pre.sv:193$488 ($sub).
+Removed top 2 bits (of 22) from port A of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$le$cordic_pre.sv:197$489 ($le).
+Removed top 31 bits (of 32) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$le$cordic_pre.sv:197$489 ($le).
+Removed top 3 bits (of 22) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$gt$cordic_pre.sv:228$507 ($gt).
+Removed top 2 bits (of 22) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$sub$cordic_pre.sv:229$508 ($sub).
+Removed top 3 bits (of 22) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$lt$cordic_pre.sv:232$511 ($lt).
+Removed top 2 bits (of 22) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$add$cordic_pre.sv:233$512 ($add).
+Removed top 31 bits (of 32) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$lt$cordic_pre.sv:108$515 ($lt).
+Removed top 3 bits (of 22) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$gt$cordic_pre.sv:239$518 ($gt).
+Removed top 31 bits (of 32) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$lt$cordic_pre.sv:108$519 ($lt).
+Removed top 3 bits (of 22) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$gt$cordic_pre.sv:241$522 ($gt).
+Removed top 3 bits (of 22) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$gt$cordic_pre.sv:242$526 ($gt).
+Removed top 1 bits (of 2) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$procmux$1373_CMP0 ($eq).
+Removed top 1 bits (of 5) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$procmux$1568_CMP0 ($eq).
+Removed top 2 bits (of 5) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$procmux$1588_CMP0 ($eq).
+Removed top 2 bits (of 5) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$procmux$1598_CMP0 ($eq).
+Removed top 3 bits (of 5) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$procmux$1631_CMP0 ($eq).
+Removed top 1 bits (of 5) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$procmux$1674_CMP0 ($eq).
+Removed top 2 bits (of 5) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$procmux$1676_CMP0 ($eq).
+Removed top 3 bits (of 5) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$procmux$1678_CMP0 ($eq).
+Removed top 2 bits (of 5) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$procmux$1703_CMP0 ($eq).
+Removed top 4 bits (of 5) from port B of cell $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$procmux$1706_CMP0 ($eq).
+Removed top 1 bits (of 2) from wire $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.$ternary$cordic_pre.sv:143$477_Y.
+Removed top 3 bits (of 4) from port A of cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$eq$cordic_core_iter.sv:118$334 ($eq).
+Removed top 2 bits (of 4) from port A of cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$eq$cordic_core_iter.sv:118$335 ($eq).
+Removed top 2 bits (of 4) from port A of cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$eq$cordic_core_iter.sv:118$336 ($eq).
+Removed top 1 bits (of 4) from port A of cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$eq$cordic_core_iter.sv:118$337 ($eq).
+Removed top 1 bits (of 4) from port A of cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$eq$cordic_core_iter.sv:118$338 ($eq).
+Removed top 1 bits (of 4) from port A of cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$eq$cordic_core_iter.sv:118$339 ($eq).
+Removed top 1 bits (of 4) from port A of cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$eq$cordic_core_iter.sv:118$340 ($eq).
+Removed top 1 bits (of 2) from port B of cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$procmux$1875_CMP0 ($eq).
+Removed top 1 bits (of 2) from port B of cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$procmux$1898_CMP0 ($eq).
+Removed top 5 bits (of 6) from mux cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$procmux$2073 ($mux).
+Removed top 5 bits (of 22) from mux cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$procmux$2076 ($mux).
+Removed top 4 bits (of 22) from mux cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$procmux$2079 ($mux).
+Removed top 5 bits (of 22) from mux cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$procmux$2082 ($mux).
+Removed top 5 bits (of 22) from wire $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$1\angle_circ_sel[21:0].
+Removed top 5 bits (of 22) from wire $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$1\angle_hyp_sel[21:0].
+Removed top 7 bits (of 22) from wire $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$1\angle_lin_sel[21:0].
+Removed top 5 bits (of 6) from wire $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.$1\shift_hyp_sel[5:0].
+Removed top 17 bits (of 22) from mux cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procmux$1015 ($mux).
+Removed top 14 bits (of 22) from mux cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procmux$1018 ($mux).
+Removed top 14 bits (of 22) from mux cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procmux$1022 ($mux).
+Removed top 1 bits (of 2) from port B of cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procmux$1232_CMP0 ($eq).
+Removed top 9 bits (of 22) from mux cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procmux$1231 ($pmux).
+Removed top 1 bits (of 2) from port B of cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procmux$1257_CMP0 ($eq).
+Removed top 8 bits (of 22) from mux cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procmux$1256 ($pmux).
+Removed top 1 bits (of 2) from port B of cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procmux$1282_CMP0 ($eq).
+Removed top 7 bits (of 22) from mux cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procmux$1281 ($pmux).
+Removed top 4 bits (of 22) from mux cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procmux$1285 ($mux).
+Removed top 4 bits (of 22) from mux cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procmux$1289 ($mux).
+Removed top 1 bits (of 2) from port B of cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procmux$1307_CMP0 ($eq).
+Removed top 6 bits (of 22) from mux cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procmux$1306 ($pmux).
+Removed top 3 bits (of 22) from mux cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procmux$1310 ($mux).
+Removed top 3 bits (of 22) from mux cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procmux$1314 ($mux).
+Removed top 1 bits (of 2) from port B of cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procmux$1332_CMP0 ($eq).
+Removed top 5 bits (of 22) from mux cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procmux$1331 ($pmux).
+Removed top 2 bits (of 22) from mux cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procmux$1335 ($mux).
+Removed top 2 bits (of 22) from mux cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procmux$1339 ($mux).
+Removed top 1 bits (of 2) from port B of cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procmux$1357_CMP0 ($eq).
+Removed top 4 bits (of 22) from mux cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procmux$1356 ($pmux).
+Removed top 1 bits (of 22) from mux cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procmux$1360 ($mux).
+Removed top 1 bits (of 22) from mux cell $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.$procmux$1364 ($mux).
+Removed top 4 bits (of 22) from wire $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.gen_stage[0].angle.
+Removed top 17 bits (of 22) from wire $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.gen_stage[14].angle.
+Removed top 5 bits (of 22) from wire $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.gen_stage[1].angle.
+Removed top 6 bits (of 22) from wire $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.gen_stage[2].angle.
+Removed top 7 bits (of 22) from wire $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.gen_stage[3].angle.
+Removed top 8 bits (of 22) from wire $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.gen_stage[4].angle.
+Removed top 9 bits (of 22) from wire $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.gen_stage[5].angle.
+Removed top 6 bits (of 8) from port B of cell cordic_equiv_miter.$eq$cordic_equiv_miter.sv:166$114 ($eq).
+
+9.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit..
+Finding unused cells or wires in module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post..
+Finding unused cells or wires in module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre..
+Finding unused cells or wires in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter..
+Finding unused cells or wires in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe..
+Finding unused cells or wires in module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit..
+Finding unused cells or wires in module $paramod\cordic_stage\Width=32'00000000000000000000000000010110..
+Finding unused cells or wires in module \cordic_equiv_miter..
+Removed 0 unused cells and 14 unused wires.
+<suppressed ~4 debug messages>
+
+9.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+9.11. Executing OPT pass (performing simple optimizations).
+
+9.11.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit.
+Optimizing module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post.
+Optimizing module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre.
+Optimizing module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter.
+Optimizing module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe.
+Optimizing module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit.
+Optimizing module $paramod\cordic_stage\Width=32'00000000000000000000000000010110.
+Optimizing module cordic_equiv_miter.
+
+9.11.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit'.
+Finding identical cells in module `$paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post'.
+Finding identical cells in module `$paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre'.
+Finding identical cells in module `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter'.
+Finding identical cells in module `$paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe'.
+Finding identical cells in module `$paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit'.
+Finding identical cells in module `$paramod\cordic_stage\Width=32'00000000000000000000000000010110'.
+Finding identical cells in module `\cordic_equiv_miter'.
+Removed a total of 0 cells.
+
+9.11.3. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit..
+Finding unused cells or wires in module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post..
+Finding unused cells or wires in module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre..
+Finding unused cells or wires in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter..
+Finding unused cells or wires in module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe..
+Finding unused cells or wires in module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit..
+Finding unused cells or wires in module $paramod\cordic_stage\Width=32'00000000000000000000000000010110..
+Finding unused cells or wires in module \cordic_equiv_miter..
+
+9.11.4. Finished fast OPT passes.
+
+9.12. Printing statistics.
+
+=== $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit ===
+
+   Number of wires:                 33
+   Number of wire bits:            401
+   Number of public wires:          33
+   Number of public wire bits:     401
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  3
+     $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post      1
+     $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre      1
+     $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter      1
+
+=== $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post ===
+
+   Number of wires:                 69
+   Number of wire bits:            964
+   Number of public wires:          38
+   Number of public wire bits:     531
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 43
+     $add                            5
+     $eq                             1
+     $gt                             4
+     $logic_and                      1
+     $logic_or                       1
+     $lt                             5
+     $mux                           23
+     $neg                            2
+     $sub                            1
+
+=== $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre ===
+
+   Number of wires:                104
+   Number of wire bits:           1112
+   Number of public wires:          28
+   Number of public wire bits:     404
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 86
+     $add                            2
+     $eq                            10
+     $gt                             4
+     $le                             1
+     $logic_and                      1
+     $logic_not                      6
+     $lt                             5
+     $mux                           36
+     $neg                            6
+     $pmux                           5
+     $reduce_or                      8
+     $sub                            2
+
+=== $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter ===
+
+   Number of wires:                141
+   Number of wire bits:           2861
+   Number of public wires:          52
+   Number of public wire bits:    1745
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                114
+     $add                            1
+     $adff                           2
+     $dff                            4
+     $eq                            19
+     $logic_and                      2
+     $logic_not                      2
+     $logic_or                       1
+     $lt                             1
+     $mux                           76
+     $paramod\cordic_stage\Width=32'00000000000000000000000000010110      1
+     $pmux                           2
+     $reduce_bool                    1
+     $sshr                           2
+
+=== $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe ===
+
+   Number of wires:                337
+   Number of wire bits:           6219
+   Number of public wires:         218
+   Number of public wire bits:    4840
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                229
+     $adff                          15
+     $dff                           60
+     $eq                            13
+     $logic_and                     16
+     $logic_not                      2
+     $mux                          101
+     $paramod\cordic_stage\Width=32'00000000000000000000000000010110     15
+     $pmux                           6
+     $reduce_or                      1
+
+=== $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit ===
+
+   Number of wires:                 33
+   Number of wire bits:            401
+   Number of public wires:          33
+   Number of public wire bits:     401
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  3
+     $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post      1
+     $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre      1
+     $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe      1
+
+=== $paramod\cordic_stage\Width=32'00000000000000000000000000010110 ===
+
+   Number of wires:                 23
+   Number of wire bits:            381
+   Number of public wires:          12
+   Number of public wire bits:     202
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 15
+     $add                            3
+     $eq                             1
+     $logic_not                      1
+     $mux                            5
+     $not                            1
+     $pmux                           1
+     $sub                            3
+
+=== cordic_equiv_miter ===
+
+   Number of wires:                105
+   Number of wire bits:            727
+   Number of public wires:          57
+   Number of public wire bits:     533
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 76
+     $add                            2
+     $adff                           2
+     $assert                         6
+     $cover                          2
+     $dff                           22
+     $eq                             8
+     $logic_and                      7
+     $mux                           24
+     $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit      1
+     $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit      1
+     $reduce_bool                    1
+
+=== design hierarchy ===
+
+   cordic_equiv_miter                1
+     $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit      1
+       $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post      1
+       $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre      1
+       $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter      1
+         $paramod\cordic_stage\Width=32'00000000000000000000000000010110      1
+     $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit      1
+       $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post      1
+       $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre      1
+       $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe      1
+         $paramod\cordic_stage\Width=32'00000000000000000000000000010110     15
+
+   Number of wires:               1363
+   Number of wire bits:          20857
+   Number of public wires:         717
+   Number of public wire bits:   13022
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                899
+     $add                           65
+     $adff                          19
+     $assert                         6
+     $cover                          2
+     $dff                           86
+     $eq                            78
+     $gt                            16
+     $le                             2
+     $logic_and                     29
+     $logic_not                     32
+     $logic_or                       3
+     $lt                            21
+     $mux                          399
+     $neg                           16
+     $not                           16
+     $pmux                          34
+     $reduce_bool                    2
+     $reduce_or                     17
+     $sshr                           2
+     $sub                           54
+
+9.13. Executing CHECK pass (checking for obvious problems).
+Checking module $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit...
+Checking module $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post...
+Checking module $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre...
+Checking module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter...
+Checking module $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe...
+Checking module $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit...
+Checking module $paramod\cordic_stage\Width=32'00000000000000000000000000010110...
+Checking module cordic_equiv_miter...
+Found and reported 0 problems.
+
+10. Executing HIERARCHY pass (managing design hierarchy).
+
+10.1. Analyzing design hierarchy..
+Top module:  \cordic_equiv_miter
+Used module:     $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit
+Used module:         $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter
+Used module:             $paramod\cordic_stage\Width=32'00000000000000000000000000010110
+Used module:         $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post
+Used module:         $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre
+Used module:     $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit
+Used module:         $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe
+
+10.2. Analyzing design hierarchy..
+Top module:  \cordic_equiv_miter
+Used module:     $paramod$51b84add644ca772061a781b3b7f6e777930bbec\cordic_unit
+Used module:         $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_iter
+Used module:             $paramod\cordic_stage\Width=32'00000000000000000000000000010110
+Used module:         $paramod$61776569a85344245b9d64c3251b7e6f7af13812\cordic_post
+Used module:         $paramod$b02c9d36aaa4dbd0d9cdbdcdbb4e43566c76ccad\cordic_pre
+Used module:     $paramod$cc41f0f1fb532ba15e3021d37c511b6ad3cc92e8\cordic_unit
+Used module:         $paramod$b72822fcce2f5a77a02b62b897e0418c1140494b\cordic_core_pipe
+Removed 0 unused modules.
+Module cordic_equiv_miter directly or indirectly contains formal properties -> setting "keep" attribute.
+
+11. Executing jny backend.
+
+12. Executing RTLIL backend.
+Output filename: ../model/design.il
+
+End of script. Logfile hash: 2943305465, CPU: user 2.44s system 0.03s, MEM: 24.42 MB peak
+Yosys 0.33 (git sha1 2584903a060)
+Time spent: 24% 6x opt_clean (0 sec), 18% 2x hierarchy (0 sec), ...

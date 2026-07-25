@@ -1,0 +1,56 @@
+# Copyright 2026 Daniel Tyukov
+# SPDX-License-Identifier: Apache-2.0
+#
+# Bounded equivalence between the pipelined and folded cores, smallest legal
+# configuration: Q3.5 with 5 stages.
+#
+# Q3.5 and 5 stages is the floor the elaboration checks allow. DataWidth must be at
+# least 8, DataWidth - FracBits must be at least 3 so pi is representable, and
+# NumStages must be 5 or 15 or more, because anything from 6 to 14 truncates the
+# hyperbolic repeat sequence and breaks Walther's convergence condition. So this is
+# not an arbitrarily shrunken model: it is the smallest configuration the design
+# claims to support, and `make lint` elaborates it as one of its parameter sets.
+#
+# The size matters because the unrolled state grows with word width times stage
+# count. equiv_q3_13.sby tries the same proof at Q3.13 with 15 stages, which is the
+# configuration the accuracy sweep uses; see formal/README.md for whether that one
+# converges.
+#
+# depth 16 covers reset release plus both cores' full latency, which at 5 stages is
+# about 8 cycles each. equiv_tiny_cover.sby is what shows that depth is actually
+# enough to retire an operation on both sides, because a bounded proof over a
+# comparison that never happens would pass while proving nothing.
+
+[options]
+mode bmc
+depth 16
+expect pass
+
+[engines]
+smtbmc z3
+
+# sby copies everything in [files] into <task>/src and runs yosys from there, so
+# these are bare filenames rather than the paths they have in the repo.
+#
+# -DSYNTHESIS is not about synthesis here. The RTL's own concurrent assertions are
+# guarded by `ifndef SYNTHESIS`, and Yosys's native Verilog front end has no SVA
+# support at all, so leaving them in is a syntax error. The miter's properties are
+# written as immediate assertions for the same reason.
+[script]
+read -formal -sv -DSYNTHESIS cordic_stage.sv cordic_core_pipe.sv cordic_core_iter.sv \
+     cordic_pre.sv cordic_post.sv cordic_unit.sv cordic_equiv_miter.sv
+chparam -set DataWidth 8 -set FracBits 5 -set NumStages 5 cordic_equiv_miter
+prep -top cordic_equiv_miter
+
+[files]
+../rtl/cordic_rom.svh
+../rtl/cordic_defs.svh
+../rtl/cordic_rom_fx.svh
+../rtl/cordic_regmap.svh
+../rtl/cordic_stage.sv
+../rtl/cordic_core_pipe.sv
+../rtl/cordic_core_iter.sv
+../rtl/cordic_pre.sv
+../rtl/cordic_post.sv
+../rtl/cordic_unit.sv
+cordic_equiv_miter.sv

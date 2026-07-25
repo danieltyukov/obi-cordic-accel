@@ -1,0 +1,64 @@
+# Copyright 2026 Daniel Tyukov
+# SPDX-License-Identifier: Apache-2.0
+#
+# Reachability of the equivalence comparison itself, Q3.5 with 5 stages.
+#
+# equiv_tiny.sby proves that the two cores never disagree within its bound. That
+# result is only worth having if the comparison is reached: an assertion gated on a
+# condition the solver can never satisfy passes trivially. This task asks the
+# opposite question, whether `matched` is reachable at all, and it has to pass for
+# the bmc result to mean anything.
+#
+# c_reached_one covers one operation retired on both sides. c_reached_two covers two,
+# which is the stronger statement, since it means the folded core went round its
+# iteration loop twice and the two stayed in step across an operation boundary.
+#
+# Q3.5 and 5 stages is the floor the elaboration checks allow. DataWidth must be at
+# least 8, DataWidth - FracBits must be at least 3 so pi is representable, and
+# NumStages must be 5 or 15 or more, because anything from 6 to 14 truncates the
+# hyperbolic repeat sequence and breaks Walther's convergence condition. So this is
+# not an arbitrarily shrunken model: it is the smallest configuration the design
+# claims to support, and `make lint` elaborates it as one of its parameter sets.
+#
+# The size matters because the unrolled state grows with word width times stage
+# count. equiv_q3_13.sby tries the same proof at Q3.13 with 15 stages, which is the
+# configuration the accuracy sweep uses; see formal/README.md for whether that one
+# converges.
+#
+# depth 24 rather than 16: reaching a second retired operation needs the folded core
+# to run two full iteration loops, and it accepts a new operation only after the
+# previous one has been taken.
+
+[options]
+mode cover
+depth 24
+expect pass
+
+[engines]
+smtbmc z3
+
+# sby copies everything in [files] into <task>/src and runs yosys from there, so
+# these are bare filenames rather than the paths they have in the repo.
+#
+# -DSYNTHESIS is not about synthesis here. The RTL's own concurrent assertions are
+# guarded by `ifndef SYNTHESIS`, and Yosys's native Verilog front end has no SVA
+# support at all, so leaving them in is a syntax error. The miter's properties are
+# written as immediate assertions for the same reason.
+[script]
+read -formal -sv -DSYNTHESIS cordic_stage.sv cordic_core_pipe.sv cordic_core_iter.sv \
+     cordic_pre.sv cordic_post.sv cordic_unit.sv cordic_equiv_miter.sv
+chparam -set DataWidth 8 -set FracBits 5 -set NumStages 5 cordic_equiv_miter
+prep -top cordic_equiv_miter
+
+[files]
+../rtl/cordic_rom.svh
+../rtl/cordic_defs.svh
+../rtl/cordic_rom_fx.svh
+../rtl/cordic_regmap.svh
+../rtl/cordic_stage.sv
+../rtl/cordic_core_pipe.sv
+../rtl/cordic_core_iter.sv
+../rtl/cordic_pre.sv
+../rtl/cordic_post.sv
+../rtl/cordic_unit.sv
+cordic_equiv_miter.sv
