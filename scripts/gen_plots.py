@@ -458,7 +458,7 @@ def plot_area():
     ax.set_xticklabels(labels, fontsize=7.5)
     ax.set_ylabel("cell area (thousand um^2)")
     ax.set_ylim(0, max((comb + ff) / 1000.0) * 1.16)
-    ax.set_title("Area on IHP SG13G2 130nm")
+    ax.set_title("Mapped cell area on IHP SG13G2 130nm")
     ax.legend(loc="upper left")
 
     ax = axes[1]
@@ -469,7 +469,7 @@ def plot_area():
     ax.set_xticklabels(labels, fontsize=7.5)
     ax.set_ylabel("Fmax at the slow corner (MHz)")
     ax.set_ylim(0, max(fmax) * 1.2)
-    ax.set_title("Frequency")
+    ax.set_title("Frequency, synthesis estimate")
 
     ratios = []
     for a, b in (("pipe_q3_29_n28", "iter_q3_29_n28"),
@@ -478,12 +478,13 @@ def plot_area():
         if a in s and b in s:
             ratios.append(f"{s[a]['config']['num_stages']} stages: "
                           f"{s[a]['synth_area_um2'] / s[b]['synth_area_um2']:.2f}x")
-    fig.suptitle("Real cells and real Liberty timing. Pipelined / iterative area "
-                 "ratio " + ", ".join(ratios), y=1.02, fontsize=9.5)
+    fig.suptitle("Synthesis estimate over six configurations: real sg13g2 cells and "
+                 "real Liberty timing, no placement. Mapped area ratio "
+                 + ", ".join(ratios), y=1.02, fontsize=9.5)
     note(fig, "The folded core's area hardly moves between 16 and 28 stages, since "
               "only the angle table grows, while the pipelined core scales with the "
               "stage count. The combinational and register split is apportioned by "
-              "cell count, because the tool reports one area total.")
+              "cell count, because the tool reports one area total. These are synthesis numbers and\nthey are not what the two routed configurations measure: see docs/img/pnr_comparison.png for the gap.")
     save(fig, "area_comparison.png")
 
 

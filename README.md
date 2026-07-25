@@ -380,8 +380,6 @@ Post-route on IHP SG13G2, which is the only comparison that settles anything:
 | Results/s per mm2 of cells | 98.8 M | 17.5 M | **5.6x** |
 | Latency, end to end | 30 cycles | 31 cycles | |
 
-![Area comparison](docs/img/area_comparison.png)
-
 Folding is a worse deal than 1/N: 4.4x the cell area buys 25x the throughput, so the
 pipelined core is 5.6x better per square millimetre of cells. What it does not cost is
 frequency. **Post-route the folded core is the faster of the two, by 16 percent**, and
@@ -404,10 +402,15 @@ angle muxes into the same carry chain, over a die 0.6 mm on a side, and spends 0
 no placement has no way to charge for it. The throughput conclusion is unchanged, since
 25x is 25x, but the frequency ranking from synthesis alone was simply wrong.
 
-The width dependence is worth knowing before picking a format. At Q3.13 the synthesis
+Across all six configurations, still at synthesis and labelled as such on the figure:
+
+![Area and frequency over six configurations, synthesis estimate](docs/img/area_comparison.png)
+
+The width dependence there is worth knowing before picking a format. At Q3.13 the
 estimate puts the two at the same speed (95.9 against 98.1 MHz) because a 22-bit
 internal datapath needs one fewer mux level in the shifter. Only the Q3.29 pair has
-been routed, so whether that holds post-route is untested.
+been routed, so whether that holds post-route is untested, and the pair that was
+routed says the estimate can get the ranking backwards.
 
 Flow control in the pipelined core is one global enable, not per-stage skid buffers:
 
