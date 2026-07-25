@@ -87,6 +87,15 @@ METRICS = [
     "route__drc_errors",
     "route__wirelength",
     "magic__drc_error__count",
+    # Magic and KLayout each stream out a GDS independently and the flow XORs them.
+    # A non-zero difference means the two tools disagree about what the layout is,
+    # which would make every other number here suspect.
+    "design__xor_difference__count",
+    # Present for completeness and expected to stay null: the LibreLane Classic flow
+    # for ihp-sg13g2 includes Magic.DRC but no KLayout.DRC step and no LVS step at
+    # all, so these keys have nothing to fill them. Reported as absent rather than
+    # quietly dropped, because "no LVS number" and "LVS passed" are not the same
+    # claim and the README has to say which one it is.
     "klayout__drc_error__count",
     "design__lvs_error__count",
     "antenna__violating__nets",
