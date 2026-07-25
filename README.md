@@ -618,19 +618,16 @@ so a clone needs no generator run to build.
 
 - **The RV32 image is never executed here.** It compiles and links; running it needs
   Croc's own testbench.
-- **The IHP numbers stop after synthesis and drive repair.** Wire parasitics are
-  estimated, not extracted, because there is no placement. `make pnr` runs the full
-  LibreLane flow, and for the folded variant it has: post-route die 383,154 um2
-  against 135,442 um2 of mapped cells, DRC clean from both the router and Magic, and
-  **67.7 MHz post-route against the 75.2 MHz synthesis estimate at the typical
-  corner**. So the Fmax numbers above are about 10 percent optimistic, in the
-  direction you would expect and by a modest amount. See
-  [pnr/README.md](pnr/README.md).
-- **The pipelined variant has not been placed and routed yet.** Its area ratio against
-  the folded one is therefore quoted from synthesis. Since the post-route inflation
-  comes from clock tree and timing-repair buffering, and the pipelined variant has
-  four times the registers, the 4.5x synthesis ratio is a **lower bound** on the
-  post-route ratio rather than an estimate of it.
+- **The IHP numbers in the table above stop after synthesis and drive repair.** Wire
+  parasitics are estimated by `set_wire_rc`, not extracted, because there is no
+  placement. `make pnr` takes both variants the rest of the way; the post-route
+  numbers are reported separately under [Routed layout](#routed-layout) and are
+  labelled as post-route wherever they appear, because a synthesis estimate and a
+  routed measurement are not interchangeable. See
+  [docs/pnr/README.md](docs/pnr/README.md).
+- **No layout-versus-schematic check has been run.** The LibreLane Classic flow for
+  `ihp-sg13g2` has a Magic DRC step but no LVS step, so there is no LVS result here
+  and none is claimed.
 - **Fmax is limited by ripple-carry adders.** That is a property of `abc`'s mapping,
   not of the architecture, and it is stated rather than worked around. Both variants
   are affected identically, so the comparison holds.
