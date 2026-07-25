@@ -86,13 +86,15 @@ make images      # redraw every figure from the measured data
 ```
 
 `make all` is all of those. Measured from a clean clone on a 22-core workstation with
-other work running: 638 s and 791 s on two runs, so call it 10 to 15 minutes. `make
-pnr` takes hours and is deliberately not part of it.
+other work running: 638 s, 791 s and 977 s on three runs, so call it 10 to 17 minutes.
+`make pnr` takes hours and is deliberately not part of it.
 
 Before you open a pull request, `make all` should complete and `git status` should be
 clean. A dirty tree after `make all` means a generated file, a synthesis report or a
 figure in your branch no longer matches what the tools produce, and CI will fail on
-exactly that.
+exactly that. Every committed generated file, synthesis report and figure is
+byte-reproducible from a clean clone, which is what makes that check worth running
+rather than a formality.
 
 ## Lint
 
@@ -395,8 +397,8 @@ down.
   on cell area and up to 1.88x on frequency, and they are not interchangeable. Every
   table says which one it is.
 - **Name the corner, and check which one you mean.** `make pdk` times against
-  `sg13g2_stdcell_{slow_1p08V_125C, typ_1p20V_25C, fast_1p65V_m40C}.lib`, so its fast
-  corner is 1.08 V / 125 C, 1.20 V / 25 C and **1.65 V** / -40 C. LibreLane names its
+  `sg13g2_stdcell_{slow_1p08V_125C, typ_1p20V_25C, fast_1p65V_m40C}.lib`, so its three
+  corners are 1.08 V / 125 C, 1.20 V / 25 C and **1.65 V** / -40 C. LibreLane names its
   own corners `nom_slow_1p08V_125C`, `nom_typ_1p20V_25C` and `nom_fast_1p32V_m40C`, so
   the fast one carries a different voltage in its name than the Liberty file
   `scripts/run_pdk.py` and `scripts/pnr_fmax.py` actually read. Slow and typ agree
