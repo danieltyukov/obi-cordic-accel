@@ -1,0 +1,426 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 788 1116" width="788" height="1116" role="img" aria-label="CORDIC accelerator OBI register map">
+  <style>
+    :root { --bg:#ffffff; --fg:#16191d; --muted:#5c646e; --grid:#c3c9d1; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg:#14171a; --fg:#e8ebee; --muted:#9aa3ad; --grid:#3a424b; }
+    }
+
+    text { font-family: "DejaVu Sans", "Helvetica Neue", Arial, sans-serif; }
+    .ttl  { font-size: 21px; font-weight: 700; fill: var(--fg); }
+    .sub  { font-size: 12px; fill: var(--muted); }
+    .rn   { font-size: 13px; font-weight: 700; fill: var(--fg); }
+    .ro   { font-size: 11px; fill: var(--muted); }
+    .bit  { font-size: 9px; fill: var(--muted); }
+    .fl   { font-size: 10px; font-weight: 600; fill: var(--fg); }
+    .lg   { font-size: 11px; fill: var(--fg); }
+    .box  { fill: none; stroke: var(--grid); stroke-width: 1; }
+  </style>
+  <rect width="788" height="1116" fill="var(--bg)"/>
+  <text class="ttl" x="16" y="34">CORDIC accelerator register map</text>
+  <text class="sub" x="16" y="54">OBI subordinate window, 4 KB, 32-bit words. Offsets 0x064 and above are unmapped and answer with r.err.</text>
+  <text class="bit" x="748" y="100" text-anchor="middle">0</text>
+  <text class="bit" x="668" y="100" text-anchor="middle">4</text>
+  <text class="bit" x="588" y="100" text-anchor="middle">8</text>
+  <text class="bit" x="508" y="100" text-anchor="middle">12</text>
+  <text class="bit" x="428" y="100" text-anchor="middle">16</text>
+  <text class="bit" x="348" y="100" text-anchor="middle">20</text>
+  <text class="bit" x="268" y="100" text-anchor="middle">24</text>
+  <text class="bit" x="188" y="100" text-anchor="middle">28</text>
+  <text class="bit" x="128" y="100" text-anchor="middle">31</text>
+  <text class="ro" x="108" y="100" text-anchor="end">bit</text>
+  <text class="rn" x="16" y="123">ID</text>
+  <text class="ro" x="16" y="135">0x000 RO</text>
+  <rect class="box" x="118" y="108" width="640" height="30" rx="2"/>
+  <line x1="198" y1="108" x2="198" y2="138" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="108" x2="278" y2="138" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="108" x2="358" y2="138" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="108" x2="438" y2="138" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="108" x2="518" y2="138" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="108" x2="598" y2="138" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="108" x2="678" y2="138" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="118" y="108" width="640" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="438" y="127" text-anchor="middle" fill="#ffffff">MAGIC</text>
+  <rect class="box" x="118" y="108" width="640" height="30" rx="2"/>
+  <text class="rn" x="16" y="161">VERSION</text>
+  <text class="ro" x="16" y="173">0x004 RO</text>
+  <rect class="box" x="118" y="146" width="640" height="30" rx="2"/>
+  <line x1="198" y1="146" x2="198" y2="176" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="146" x2="278" y2="176" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="146" x2="358" y2="176" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="146" x2="438" y2="176" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="146" x2="518" y2="176" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="146" x2="598" y2="176" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="146" x2="678" y2="176" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="118" y="146" width="160" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="198" y="165" text-anchor="middle" fill="#ffffff">MAJOR</text>
+  <rect x="278" y="146" width="160" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="358" y="165" text-anchor="middle" fill="#ffffff">MINOR</text>
+  <rect x="438" y="146" width="160" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="518" y="165" text-anchor="middle" fill="#ffffff">PATCH</text>
+  <rect class="box" x="118" y="146" width="640" height="30" rx="2"/>
+  <text class="rn" x="16" y="199">CFG0</text>
+  <text class="ro" x="16" y="211">0x008 RO</text>
+  <rect class="box" x="118" y="184" width="640" height="30" rx="2"/>
+  <line x1="198" y1="184" x2="198" y2="214" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="184" x2="278" y2="214" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="184" x2="358" y2="214" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="184" x2="438" y2="214" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="184" x2="518" y2="214" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="184" x2="598" y2="214" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="184" x2="678" y2="214" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="598" y="184" width="160" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="678" y="203" text-anchor="middle" fill="#ffffff">DATA_WIDTH</text>
+  <rect x="438" y="184" width="160" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="518" y="203" text-anchor="middle" fill="#ffffff">FRAC_BITS</text>
+  <rect x="278" y="184" width="160" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="358" y="203" text-anchor="middle" fill="#ffffff">NUM_STAGES</text>
+  <rect x="198" y="184" width="80" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="238" y="203" text-anchor="middle" fill="#ffffff">GUARD_INT</text>
+  <rect x="118" y="184" width="80" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="158" y="203" text-anchor="middle" fill="#ffffff">GUARD_FRAC</text>
+  <rect class="box" x="118" y="184" width="640" height="30" rx="2"/>
+  <text class="rn" x="16" y="237">CFG1</text>
+  <text class="ro" x="16" y="249">0x00C RO</text>
+  <rect class="box" x="118" y="222" width="640" height="30" rx="2"/>
+  <line x1="198" y1="222" x2="198" y2="252" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="222" x2="278" y2="252" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="222" x2="358" y2="252" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="222" x2="438" y2="252" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="222" x2="518" y2="252" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="222" x2="598" y2="252" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="222" x2="678" y2="252" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="738" y="222" width="20" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <title>VARIANT</title>
+  <rect x="718" y="222" width="20" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <title>USE_RREADY</title>
+  <rect x="598" y="222" width="80" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="638" y="241" text-anchor="middle" fill="#ffffff">IN_DEPTH</text>
+  <rect x="518" y="222" width="80" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="558" y="241" text-anchor="middle" fill="#ffffff">OUT_DEPTH</text>
+  <rect x="358" y="222" width="160" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="438" y="241" text-anchor="middle" fill="#ffffff">LATENCY</text>
+  <rect x="198" y="222" width="160" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="278" y="241" text-anchor="middle" fill="#ffffff">INTERVAL</text>
+  <rect class="box" x="118" y="222" width="640" height="30" rx="2"/>
+  <text class="rn" x="16" y="275">CTRL</text>
+  <text class="ro" x="16" y="287">0x010 RW</text>
+  <rect class="box" x="118" y="260" width="640" height="30" rx="2"/>
+  <line x1="198" y1="260" x2="198" y2="290" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="260" x2="278" y2="290" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="260" x2="358" y2="290" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="260" x2="438" y2="290" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="260" x2="518" y2="290" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="260" x2="598" y2="290" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="260" x2="678" y2="290" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="738" y="260" width="20" height="30" rx="2" fill="#a3618f" fill-opacity="0.85"/>
+  <title>SOFT_RST</title>
+  <rect x="718" y="260" width="20" height="30" rx="2" fill="#a3618f" fill-opacity="0.85"/>
+  <title>POP</title>
+  <rect x="698" y="260" width="20" height="30" rx="2" fill="#a3618f" fill-opacity="0.85"/>
+  <title>FLUSH_IN</title>
+  <rect x="678" y="260" width="20" height="30" rx="2" fill="#a3618f" fill-opacity="0.85"/>
+  <title>FLUSH_OUT</title>
+  <rect x="658" y="260" width="20" height="30" rx="2" fill="#a3618f" fill-opacity="0.85"/>
+  <title>CLR_ERR</title>
+  <rect x="578" y="260" width="20" height="30" rx="2" fill="#4f9d76" fill-opacity="0.85"/>
+  <title>IRQ_EN_DONE</title>
+  <rect x="558" y="260" width="20" height="30" rx="2" fill="#4f9d76" fill-opacity="0.85"/>
+  <title>IRQ_EN_ERR</title>
+  <rect class="box" x="118" y="260" width="640" height="30" rx="2"/>
+  <text class="rn" x="16" y="313">STATUS</text>
+  <text class="ro" x="16" y="325">0x014 RO</text>
+  <rect class="box" x="118" y="298" width="640" height="30" rx="2"/>
+  <line x1="198" y1="298" x2="198" y2="328" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="298" x2="278" y2="328" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="298" x2="358" y2="328" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="298" x2="438" y2="328" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="298" x2="518" y2="328" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="298" x2="598" y2="328" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="298" x2="678" y2="328" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="738" y="298" width="20" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <title>BUSY</title>
+  <rect x="718" y="298" width="20" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <title>RES_VALID</title>
+  <rect x="698" y="298" width="20" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <title>IN_FULL</title>
+  <rect x="678" y="298" width="20" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <title>IN_EMPTY</title>
+  <rect x="658" y="298" width="20" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <title>OUT_FULL</title>
+  <rect x="638" y="298" width="20" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <title>OUT_EMPTY</title>
+  <rect x="518" y="298" width="80" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="558" y="317" text-anchor="middle" fill="#ffffff">IN_COUNT</text>
+  <rect x="438" y="298" width="80" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="478" y="317" text-anchor="middle" fill="#ffffff">OUT_COUNT</text>
+  <rect x="418" y="298" width="20" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <title>ERR_DOMAIN</title>
+  <rect x="398" y="298" width="20" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <title>ERR_OVERFLOW</title>
+  <rect x="378" y="298" width="20" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <title>ERR_UNDERFLOW</title>
+  <rect x="358" y="298" width="20" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <title>ERR_ACCESS</title>
+  <rect class="box" x="118" y="298" width="640" height="30" rx="2"/>
+  <text class="rn" x="16" y="351">IRQ</text>
+  <text class="ro" x="16" y="363">0x018 W1C</text>
+  <rect class="box" x="118" y="336" width="640" height="30" rx="2"/>
+  <line x1="198" y1="336" x2="198" y2="366" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="336" x2="278" y2="366" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="336" x2="358" y2="366" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="336" x2="438" y2="366" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="336" x2="518" y2="366" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="336" x2="598" y2="366" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="336" x2="678" y2="366" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="738" y="336" width="20" height="30" rx="2" fill="#b8863b" fill-opacity="0.85"/>
+  <title>DONE</title>
+  <rect x="718" y="336" width="20" height="30" rx="2" fill="#b8863b" fill-opacity="0.85"/>
+  <title>ERR</title>
+  <rect class="box" x="118" y="336" width="640" height="30" rx="2"/>
+  <text class="rn" x="16" y="389">OP_X</text>
+  <text class="ro" x="16" y="401">0x020 RW</text>
+  <rect class="box" x="118" y="374" width="640" height="30" rx="2"/>
+  <line x1="198" y1="374" x2="198" y2="404" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="374" x2="278" y2="404" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="374" x2="358" y2="404" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="374" x2="438" y2="404" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="374" x2="518" y2="404" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="374" x2="598" y2="404" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="374" x2="678" y2="404" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="118" y="374" width="640" height="30" rx="2" fill="#4f9d76" fill-opacity="0.85"/>
+  <text class="fl" x="438" y="393" text-anchor="middle" fill="#ffffff">VALUE</text>
+  <rect class="box" x="118" y="374" width="640" height="30" rx="2"/>
+  <text class="rn" x="16" y="427">OP_Y</text>
+  <text class="ro" x="16" y="439">0x024 RW</text>
+  <rect class="box" x="118" y="412" width="640" height="30" rx="2"/>
+  <line x1="198" y1="412" x2="198" y2="442" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="412" x2="278" y2="442" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="412" x2="358" y2="442" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="412" x2="438" y2="442" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="412" x2="518" y2="442" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="412" x2="598" y2="442" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="412" x2="678" y2="442" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="118" y="412" width="640" height="30" rx="2" fill="#4f9d76" fill-opacity="0.85"/>
+  <text class="fl" x="438" y="431" text-anchor="middle" fill="#ffffff">VALUE</text>
+  <rect class="box" x="118" y="412" width="640" height="30" rx="2"/>
+  <text class="rn" x="16" y="465">OP_Z</text>
+  <text class="ro" x="16" y="477">0x028 RW</text>
+  <rect class="box" x="118" y="450" width="640" height="30" rx="2"/>
+  <line x1="198" y1="450" x2="198" y2="480" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="450" x2="278" y2="480" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="450" x2="358" y2="480" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="450" x2="438" y2="480" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="450" x2="518" y2="480" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="450" x2="598" y2="480" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="450" x2="678" y2="480" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="118" y="450" width="640" height="30" rx="2" fill="#4f9d76" fill-opacity="0.85"/>
+  <text class="fl" x="438" y="469" text-anchor="middle" fill="#ffffff">VALUE</text>
+  <rect class="box" x="118" y="450" width="640" height="30" rx="2"/>
+  <text class="rn" x="16" y="503">CMD</text>
+  <text class="ro" x="16" y="515">0x02C RW</text>
+  <rect class="box" x="118" y="488" width="640" height="30" rx="2"/>
+  <line x1="198" y1="488" x2="198" y2="518" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="488" x2="278" y2="518" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="488" x2="358" y2="518" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="488" x2="438" y2="518" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="488" x2="518" y2="518" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="488" x2="598" y2="518" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="488" x2="678" y2="518" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="658" y="488" width="100" height="30" rx="2" fill="#4f9d76" fill-opacity="0.85"/>
+  <text class="fl" x="708" y="507" text-anchor="middle" fill="#ffffff">FUNC</text>
+  <rect x="438" y="488" width="160" height="30" rx="2" fill="#4f9d76" fill-opacity="0.85"/>
+  <text class="fl" x="518" y="507" text-anchor="middle" fill="#ffffff">TAG</text>
+  <rect x="118" y="488" width="20" height="30" rx="2" fill="#a3618f" fill-opacity="0.85"/>
+  <text class="fl" x="128" y="507" text-anchor="middle" fill="#ffffff">GO</text>
+  <rect class="box" x="118" y="488" width="640" height="30" rx="2"/>
+  <text class="rn" x="16" y="541">RES_X</text>
+  <text class="ro" x="16" y="553">0x030 RO</text>
+  <rect class="box" x="118" y="526" width="640" height="30" rx="2"/>
+  <line x1="198" y1="526" x2="198" y2="556" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="526" x2="278" y2="556" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="526" x2="358" y2="556" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="526" x2="438" y2="556" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="526" x2="518" y2="556" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="526" x2="598" y2="556" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="526" x2="678" y2="556" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="118" y="526" width="640" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="438" y="545" text-anchor="middle" fill="#ffffff">VALUE</text>
+  <rect class="box" x="118" y="526" width="640" height="30" rx="2"/>
+  <text class="rn" x="16" y="579">RES_Y</text>
+  <text class="ro" x="16" y="591">0x034 RO</text>
+  <rect class="box" x="118" y="564" width="640" height="30" rx="2"/>
+  <line x1="198" y1="564" x2="198" y2="594" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="564" x2="278" y2="594" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="564" x2="358" y2="594" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="564" x2="438" y2="594" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="564" x2="518" y2="594" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="564" x2="598" y2="594" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="564" x2="678" y2="594" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="118" y="564" width="640" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="438" y="583" text-anchor="middle" fill="#ffffff">VALUE</text>
+  <rect class="box" x="118" y="564" width="640" height="30" rx="2"/>
+  <text class="rn" x="16" y="617">RES_Z</text>
+  <text class="ro" x="16" y="629">0x038 RO</text>
+  <rect class="box" x="118" y="602" width="640" height="30" rx="2"/>
+  <line x1="198" y1="602" x2="198" y2="632" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="602" x2="278" y2="632" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="602" x2="358" y2="632" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="602" x2="438" y2="632" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="602" x2="518" y2="632" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="602" x2="598" y2="632" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="602" x2="678" y2="632" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="118" y="602" width="640" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="438" y="621" text-anchor="middle" fill="#ffffff">VALUE</text>
+  <rect class="box" x="118" y="602" width="640" height="30" rx="2"/>
+  <text class="rn" x="16" y="655">RES_FLAGS</text>
+  <text class="ro" x="16" y="667">0x03C RO</text>
+  <rect class="box" x="118" y="640" width="640" height="30" rx="2"/>
+  <line x1="198" y1="640" x2="198" y2="670" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="640" x2="278" y2="670" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="640" x2="358" y2="670" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="640" x2="438" y2="670" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="640" x2="518" y2="670" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="640" x2="598" y2="670" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="640" x2="678" y2="670" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="738" y="640" width="20" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <title>DOMAIN_ERR</title>
+  <rect x="718" y="640" width="20" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <title>SAT_X</title>
+  <rect x="698" y="640" width="20" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <title>SAT_Y</title>
+  <rect x="678" y="640" width="20" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <title>SAT_Z</title>
+  <rect x="498" y="640" width="100" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="548" y="659" text-anchor="middle" fill="#ffffff">FUNC</text>
+  <rect x="278" y="640" width="160" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="358" y="659" text-anchor="middle" fill="#ffffff">TAG</text>
+  <rect class="box" x="118" y="640" width="640" height="30" rx="2"/>
+  <text class="rn" x="16" y="693">K_CIRC</text>
+  <text class="ro" x="16" y="705">0x040 RO</text>
+  <rect class="box" x="118" y="678" width="640" height="30" rx="2"/>
+  <line x1="198" y1="678" x2="198" y2="708" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="678" x2="278" y2="708" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="678" x2="358" y2="708" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="678" x2="438" y2="708" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="678" x2="518" y2="708" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="678" x2="598" y2="708" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="678" x2="678" y2="708" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="118" y="678" width="640" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="438" y="697" text-anchor="middle" fill="#ffffff">VALUE</text>
+  <rect class="box" x="118" y="678" width="640" height="30" rx="2"/>
+  <text class="rn" x="16" y="731">IK_CIRC</text>
+  <text class="ro" x="16" y="743">0x044 RO</text>
+  <rect class="box" x="118" y="716" width="640" height="30" rx="2"/>
+  <line x1="198" y1="716" x2="198" y2="746" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="716" x2="278" y2="746" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="716" x2="358" y2="746" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="716" x2="438" y2="746" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="716" x2="518" y2="746" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="716" x2="598" y2="746" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="716" x2="678" y2="746" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="118" y="716" width="640" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="438" y="735" text-anchor="middle" fill="#ffffff">VALUE</text>
+  <rect class="box" x="118" y="716" width="640" height="30" rx="2"/>
+  <text class="rn" x="16" y="769">K_HYP</text>
+  <text class="ro" x="16" y="781">0x048 RO</text>
+  <rect class="box" x="118" y="754" width="640" height="30" rx="2"/>
+  <line x1="198" y1="754" x2="198" y2="784" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="754" x2="278" y2="784" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="754" x2="358" y2="784" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="754" x2="438" y2="784" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="754" x2="518" y2="784" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="754" x2="598" y2="784" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="754" x2="678" y2="784" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="118" y="754" width="640" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="438" y="773" text-anchor="middle" fill="#ffffff">VALUE</text>
+  <rect class="box" x="118" y="754" width="640" height="30" rx="2"/>
+  <text class="rn" x="16" y="807">IK_HYP</text>
+  <text class="ro" x="16" y="819">0x04C RO</text>
+  <rect class="box" x="118" y="792" width="640" height="30" rx="2"/>
+  <line x1="198" y1="792" x2="198" y2="822" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="792" x2="278" y2="822" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="792" x2="358" y2="822" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="792" x2="438" y2="822" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="792" x2="518" y2="822" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="792" x2="598" y2="822" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="792" x2="678" y2="822" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="118" y="792" width="640" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="438" y="811" text-anchor="middle" fill="#ffffff">VALUE</text>
+  <rect class="box" x="118" y="792" width="640" height="30" rx="2"/>
+  <text class="rn" x="16" y="845">LIM_CIRC</text>
+  <text class="ro" x="16" y="857">0x050 RO</text>
+  <rect class="box" x="118" y="830" width="640" height="30" rx="2"/>
+  <line x1="198" y1="830" x2="198" y2="860" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="830" x2="278" y2="860" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="830" x2="358" y2="860" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="830" x2="438" y2="860" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="830" x2="518" y2="860" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="830" x2="598" y2="860" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="830" x2="678" y2="860" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="118" y="830" width="640" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="438" y="849" text-anchor="middle" fill="#ffffff">VALUE</text>
+  <rect class="box" x="118" y="830" width="640" height="30" rx="2"/>
+  <text class="rn" x="16" y="883">LIM_HYP</text>
+  <text class="ro" x="16" y="895">0x054 RO</text>
+  <rect class="box" x="118" y="868" width="640" height="30" rx="2"/>
+  <line x1="198" y1="868" x2="198" y2="898" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="868" x2="278" y2="898" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="868" x2="358" y2="898" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="868" x2="438" y2="898" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="868" x2="518" y2="898" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="868" x2="598" y2="898" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="868" x2="678" y2="898" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="118" y="868" width="640" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="438" y="887" text-anchor="middle" fill="#ffffff">VALUE</text>
+  <rect class="box" x="118" y="868" width="640" height="30" rx="2"/>
+  <text class="rn" x="16" y="921">LIM_LIN</text>
+  <text class="ro" x="16" y="933">0x058 RO</text>
+  <rect class="box" x="118" y="906" width="640" height="30" rx="2"/>
+  <line x1="198" y1="906" x2="198" y2="936" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="906" x2="278" y2="936" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="906" x2="358" y2="936" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="906" x2="438" y2="936" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="906" x2="518" y2="936" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="906" x2="598" y2="936" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="906" x2="678" y2="936" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="118" y="906" width="640" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="438" y="925" text-anchor="middle" fill="#ffffff">VALUE</text>
+  <rect class="box" x="118" y="906" width="640" height="30" rx="2"/>
+  <text class="rn" x="16" y="959">TANH_LIM_HYP</text>
+  <text class="ro" x="16" y="971">0x05C RO</text>
+  <rect class="box" x="118" y="944" width="640" height="30" rx="2"/>
+  <line x1="198" y1="944" x2="198" y2="974" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="944" x2="278" y2="974" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="944" x2="358" y2="974" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="944" x2="438" y2="974" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="944" x2="518" y2="974" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="944" x2="598" y2="974" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="944" x2="678" y2="974" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="118" y="944" width="640" height="30" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="fl" x="438" y="963" text-anchor="middle" fill="#ffffff">VALUE</text>
+  <rect class="box" x="118" y="944" width="640" height="30" rx="2"/>
+  <text class="rn" x="16" y="997">SCRATCH</text>
+  <text class="ro" x="16" y="1009">0x060 RW</text>
+  <rect class="box" x="118" y="982" width="640" height="30" rx="2"/>
+  <line x1="198" y1="982" x2="198" y2="1012" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="278" y1="982" x2="278" y2="1012" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="358" y1="982" x2="358" y2="1012" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="438" y1="982" x2="438" y2="1012" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="518" y1="982" x2="518" y2="1012" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="598" y1="982" x2="598" y2="1012" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <line x1="678" y1="982" x2="678" y2="1012" stroke="var(--grid)" stroke-width="0.5" stroke-dasharray="2 3"/>
+  <rect x="118" y="982" width="640" height="30" rx="2" fill="#4f9d76" fill-opacity="0.85"/>
+  <text class="fl" x="438" y="1001" text-anchor="middle" fill="#ffffff">VALUE</text>
+  <rect class="box" x="118" y="982" width="640" height="30" rx="2"/>
+  <text class="lg" x="16" y="1049">Access</text>
+  <rect x="78" y="1038" width="16" height="14" rx="2" fill="#5b7fa6" fill-opacity="0.85"/>
+  <text class="lg" x="100" y="1049">RO</text>
+  <rect x="138" y="1038" width="16" height="14" rx="2" fill="#4f9d76" fill-opacity="0.85"/>
+  <text class="lg" x="160" y="1049">RW</text>
+  <rect x="198" y="1038" width="16" height="14" rx="2" fill="#b8863b" fill-opacity="0.85"/>
+  <text class="lg" x="220" y="1049">W1C</text>
+  <rect x="266" y="1038" width="16" height="14" rx="2" fill="#a3618f" fill-opacity="0.85"/>
+  <text class="lg" x="288" y="1049">W1S</text>
+  <text class="lg" x="16" y="1072">Unlabelled cells are reserved: writes are ignored and reads return 0. W1S bits self-clear and always read 0.</text>
+  <text class="lg" x="16" y="1090">Operand and result words hold signed fixed-point values in the elaborated format reported by CFG0.</text>
+</svg>

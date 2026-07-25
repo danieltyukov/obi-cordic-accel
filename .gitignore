@@ -1,0 +1,35 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# cocotb / simulation
+sim_build/
+tb/sim_build/
+results.xml
+tb/results.xml
+*.vcd
+*.fst
+*.ghw
+dump.*
+obj_dir/
+verilator.log
+
+# synthesis
+build/
+*.json
+!docs/synth/*.json
+
+# software
+*.elf
+*.o
+*.a
+*.bin
+*.hex
+*.dis
+*.map
+
+# editors / OS
+*.swp
+.DS_Store
