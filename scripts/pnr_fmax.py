@@ -66,14 +66,21 @@ def sta_script(corner, netlist, spef, top):
 
     read_lef twice before read_verilog, tech LEF first: OpenROAD reports
     [ERROR ORD-2010] no technology has been read otherwise.
+
+    `spef` of None substitutes the `set_wire_rc -layer Metal2` estimate docs/pdk uses,
+    on the same routed netlist. That is the control: it separates "the estimate's wire
+    model is wrong" from "the netlist PnR produced is different", and on this design it
+    is the second, since the estimate comes out optimistic rather than pessimistic once
+    the netlist is held fixed.
     """
     lib = STDCELL / "lib" / CORNERS[corner][0]
+    parasitics = f"read_spef {spef}" if spef else "set_wire_rc -layer Metal2"
     return f"""read_lef {TECH_LEF}
 read_lef {CELL_LEF}
 read_liberty {lib}
 read_verilog {netlist}
 link_design {top}
-read_spef {spef}
+{parasitics}
 create_clock -name clk -period {PROBE_NS:.4f} [get_ports clk_i]
 set_output_delay 0.0 -clock clk [all_outputs]
 set_driving_cell -lib_cell sg13g2_inv_4 [all_inputs]
@@ -104,11 +111,11 @@ def resolve_flop(netlist_text, inst):
     return q or None
 
 
-def time_corner(name, corner, netlist, spef, top):
+def time_corner(name, corner, netlist, spef, top, tag=""):
     BUILD.mkdir(parents=True, exist_ok=True)
-    tcl = BUILD / f"{name}_{corner}.tcl"
+    tcl = BUILD / f"{name}_{corner}{tag}.tcl"
     tcl.write_text(sta_script(corner, netlist, spef, top))
-    log = BUILD / f"{name}_{corner}.log"
+    log = BUILD / f"{name}_{corner}{tag}.log"
     with log.open("w") as fh:
         rc = subprocess.run(["openroad", "-no_init", "-exit", str(tcl)],
                             stdout=fh, stderr=subprocess.STDOUT).returncode
@@ -212,6 +219,23 @@ def main(argv=None):
         print(f"    {got[list(got)[0]]['startpoint']}\n"
               f"    -> {got[list(got)[0]]['endpoint']}", flush=True)
         entry["postroute_fmax"] = got
+
+        # The control. Same routed netlist, same constraints, wire RC estimated the
+        # way docs/pdk estimates it instead of extracted. If the estimate were the
+        # reason the synthesis Fmax is low, this would come out slow; it comes out
+        # fast, which puts the difference in the netlist rather than the wire model.
+        ctl = time_corner(name, "slow", netlist, None, top, tag="_wirerc")
+        if ctl:
+            entry["wire_rc_control"] = {
+                "corner": "slow",
+                "note": "routed netlist, set_wire_rc -layer Metal2 instead of SPEF",
+                "reg_path_delay_ns": ctl["reg_path_delay_ns"],
+                "fmax_mhz": ctl["fmax_mhz"],
+            }
+            ext = got["slow"]["reg_path_delay_ns"]
+            print(f"    control: same netlist on set_wire_rc gives "
+                  f"{ctl['reg_path_delay_ns']:.3f} ns against {ext:.3f} ns extracted "
+                  f"({ext / ctl['reg_path_delay_ns']:.2f}x optimistic)", flush=True)
         changed = True
 
     if changed:

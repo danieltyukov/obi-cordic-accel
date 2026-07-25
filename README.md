@@ -22,9 +22,9 @@ and two interchangeable microarchitectures that produce bit-identical results.
 | Format | Q3.29 in 32 bits by default, parameterised; Q3.13 in 16 bits also verified |
 | Accuracy | 4.5 LSB worst case for sin and cos, 1.5 RMS, measured against double precision |
 | Interfaces | OBI v1.6 subordinate over a 4 KB window, plus a valid/ready streaming port |
-| Pipelined core | 1 result per cycle, 61.6 MHz, 0.607 mm2 on IHP 130nm |
-| Iterative core | 1 result per 29 cycles, 48.5 MHz, 0.135 mm2, 4.5x smaller |
-| Silicon | Real IHP SG13G2 130nm, the process Croc taped out in: area in um2 and Fmax at three corners |
+| Pipelined core | 1 result per cycle, 78.6 MHz post-route, 1.954 mm2 of die on IHP 130nm |
+| Iterative core | 1 result per 29 cycles, 90.9 MHz post-route, 0.383 mm2, 5.1x smaller |
+| Silicon | Real IHP SG13G2 130nm, the process Croc taped out in. Both variants routed to GDS, DRC and LVS clean, area in um2 and Fmax at three corners |
 | Verification | 71 tests: 17,536 accuracy comparisons, 4,200 domain arguments, 28 OBI protocol tests, bit-identity between both cores over 900 operations, plus 13 concurrent assertions in the RTL |
 | Tooling | Verilator lint clean at `-Wall` over 10 configurations, Yosys plus OpenROAD over 6, both RV32 driver images link |
 
@@ -37,6 +37,7 @@ and two interchangeable microarchitectures that produce bit-identical results.
 - [The two microarchitectures](#the-two-microarchitectures)
 - [Streaming](#streaming)
 - [Silicon: real IHP 130nm](#silicon-real-ihp-130nm)
+- [Routed: what synthesis got wrong](#routed-what-synthesis-got-wrong)
 - [Synthesis](#synthesis)
 - [Software](#software)
 - [Simulating and testing](#simulating-and-testing)
@@ -364,31 +365,49 @@ offset above `0x063`, and a write to any of the 17 read-only registers.
 and angle sequence, so results are **bit-identical**, asserted over 900 operations by
 recording both runs and diffing the files word for word.
 
+Post-route on IHP SG13G2, which is the only comparison that settles anything:
+
 | | Pipelined (`Variant = 0`) | Iterative (`Variant = 1`) | Ratio |
 |---|---|---|---|
 | Structure | N register banks, shifts are wiring | one stage reused, barrel shifter in the loop | |
-| Cells, Q3.29 N=28 | 40,413 | 8,390 | 4.8x |
+| Routed cells, Q3.29 N=28 | 54,177 | 10,840 | 5.0x |
 | Flip-flops | 4,921 | 1,229 | 4.0x |
-| Area, IHP 130nm | 0.607 mm2 | 0.135 mm2 | **4.5x** |
-| Fmax, slow corner | 61.6 MHz | 48.5 MHz | 1.27x |
+| Routed cell area | 0.796 mm2 | 0.179 mm2 | **4.4x** |
+| Die area | 1.954 mm2 | 0.383 mm2 | 5.1x |
+| Fmax, slow corner | 78.6 MHz | **90.9 MHz** | 0.86x |
 | Retire interval | **1 cycle** | 29 cycles | 29x |
-| Throughput | 61.6 M results/s | 1.67 M results/s | **36.9x** |
-| Results/s per mm2 | 101.4 M | 12.3 M | **8.2x** |
+| Throughput | 78.6 M results/s | 3.13 M results/s | **25.1x** |
+| Results/s per mm2 of cells | 98.8 M | 17.5 M | **5.6x** |
 | Latency, end to end | 30 cycles | 31 cycles | |
 
 ![Area comparison](docs/img/area_comparison.png)
 
-Folding turns out to be a worse deal than 1/N, and the real-silicon numbers are what
-show it. It costs **frequency as well as throughput**: at Q3.29 the folded core runs
-27 percent slower, because its barrel shifter and angle mux sit inside the loop, in
-series with the same carry chain the pipelined core has all to itself. So 4.5x the
-area buys 36.9x the throughput, and the pipelined core is 8.2x better per square
-millimetre.
+Folding is a worse deal than 1/N: 4.4x the cell area buys 25x the throughput, so the
+pipelined core is 5.6x better per square millimetre of cells. What it does not cost is
+frequency. **Post-route the folded core is the faster of the two, by 16 percent**, and
+that is the opposite of what the synthesis estimate says.
 
-That penalty is width-dependent, which is worth knowing before picking a format. At
-Q3.13 the two run at the same speed (95.9 against 98.1 MHz) because a 22-bit internal
-datapath needs one fewer mux level in the shifter, and the throughput gap narrows to
-15.6x for 2.85x the area.
+Worth spelling out, because the synthesis numbers are the ones most open accelerator
+repositories quote:
+
+| Q3.29, N=28, slow corner | Pipelined | Iterative | Which is faster |
+|---|---:|---:|---|
+| Synthesis estimate (`make pdk`) | 61.6 MHz | 48.5 MHz | pipelined, by 27% |
+| Routed, extracted parasitics | 78.6 MHz | 90.9 MHz | **folded, by 16%** |
+
+The paths say why. The pipelined core's critical path runs from the input FIFO's read
+pointer through `cordic_pre`'s pi fold into stage 0's adder, and post-route it spends
+**2.69 of its 12.72 ns in buffers** the resizer had to insert to cross a die 1.4 mm on
+a side. The folded core's runs from the micro-rotation counter through the shift and
+angle muxes into the same carry chain, over a die 0.6 mm on a side, and spends 0.95 of
+11.00 ns in buffers. Physical size is a frequency cost, and a synthesis estimate with
+no placement has no way to charge for it. The throughput conclusion is unchanged, since
+25x is 25x, but the frequency ranking from synthesis alone was simply wrong.
+
+The width dependence is worth knowing before picking a format. At Q3.13 the synthesis
+estimate puts the two at the same speed (95.9 against 98.1 MHz) because a 22-bit
+internal datapath needs one fewer mux level in the shifter. Only the Q3.29 pair has
+been routed, so whether that holds post-route is untested.
 
 Flow control in the pipelined core is one global enable, not per-stage skid buffers:
 
@@ -437,6 +456,11 @@ drive strength, and the one repaired netlist is timed at all three corners. Repo
 under [docs/pdk/](docs/pdk/), methodology in
 [docs/pdk/README.md](docs/pdk/README.md).
 
+**Everything in this section is a synthesis estimate**, over six configurations. Two
+of them have been routed as well, and where the two disagree the routed number is the
+real one: see [Routed](#routed-what-synthesis-got-wrong) for the measured gap, which
+runs to 1.31x on cell area and 1.88x on frequency.
+
 | Configuration | Cells | FFs | Area | Fmax slow | typ | fast | Throughput |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | pipelined, Q3.29, N=28 | 40,413 | 4,921 | 0.607 mm2 | 61.6 MHz | 95.3 | 197.3 | **61.6 M/s** |
@@ -473,6 +497,12 @@ to `i_unit.gen_iterative.i_core.xr_q[37]`, through the shift and angle muxes int
 same carry chain. Registering `cordic_pre` would shorten the first; nothing shortens
 the second without unfolding.
 
+Post-route both paths keep their character and one of them moves. The pipelined path
+still starts at `i_in_fifo.rptr_q[0]` and now ends at stage 1's `y_i[37]`. The folded
+path starts at the micro-rotation counter instead of the attribute register, still
+through the shift and angle muxes into the same adder. Same story, different register
+feeding it.
+
 ## Synthesis
 
 `make synth` also keeps a technology-independent Yosys run (`abc -g cmos4`) under
@@ -489,16 +519,99 @@ script itself rather than appearing in a report nobody reads:
 - `check -assert`: no combinational loop, no multiply-driven wire, no undriven wire
 - no unmapped memory, no tristate
 
-### Routed layout
+## Routed: what synthesis got wrong
 
-`make pnr` then `make layout`. The folded variant at Q3.29 with 28 stages, routed and
-DRC clean on IHP SG13G2, 383,154 um2 of die at 50 percent utilisation:
+`make pnr` then `make layout`. Both variants at Q3.29 with 28 stages, taken from RTL
+to GDS through LibreLane on IHP SG13G2. The two frames below cover identical
+micrometres of silicon, so the folded die is smaller in the figure because it is
+smaller on the wafer:
 
-![Routed layout of the folded variant](docs/img/layout_iter_q3_29_n28.png)
+![Both routed variants at one shared scale](docs/img/pnr_layouts.png)
 
-Six metal layers, power rails horizontal, the OBI and streaming ports labelled around
-the edge. Nothing here is a mock-up: it is the GDS the flow produced, with zero DRC
-errors from both the router and Magic, rendered by KLayout.
+Metal4 and above only. Metal1 pitch is under a micron against a die 1.4 mm across, so
+including the lower layers turns either die into a solid block. For structure below
+that, crop instead: 12 um of the pipelined die with every layer on, where the cell
+rows, the poly gates, the contacts and the local routing are individually legible.
+
+![Detail of the pipelined layout](docs/img/layout_pipe_q3_29_n28_detail.png)
+
+### The synthesis-to-route delta
+
+This is the part worth reading, because synthesis numbers are what most open
+accelerator repositories quote as if they were final. They are not, and they are not
+wrong in a single direction either.
+
+| Q3.29, N=28 | Pipelined | Iterative |
+|---|---:|---:|
+| Mapped cell area, synthesis | 607,386 um2 | 135,442 um2 |
+| Routed standard cell area | 795,596 um2 | 179,054 um2 |
+| **Cell area inflation** | **1.31x** | **1.32x** |
+| Die area | 1,954,180 um2 | 383,154 um2 |
+| Die / mapped cells | 3.22x | 2.83x |
+| Utilisation achieved | 42.0% | 50.1% |
+| Fmax slow, synthesis estimate | 61.6 MHz | 48.5 MHz |
+| Fmax slow, routed | 78.6 MHz | 90.9 MHz |
+| **Frequency change** | **1.28x** | **1.88x** |
+
+![Synthesis against post-route](docs/img/pnr_comparison.png)
+
+**Area: synthesis understates it, by 1.31x on the cells and about 3x on the die.** The
+die figure is the one to be careful with. Most of it is the utilisation target the
+floorplan was given, 35 percent for the pipelined variant and 40 for the folded one,
+which is a designer's choice rather than a measurement, and it is why the two die
+ratios differ while the cell ratios do not.
+
+**Both variants inflate in cell area by the same factor**, 1.31x against 1.32x. That is
+worth stating because the obvious hypothesis is the opposite: the pipelined core has
+four times the registers, so its clock tree should punish it harder. Measured, the
+clock tree is 5.2 percent of routed cell area in the pipelined variant and 5.2 percent
+in the folded one. What differs is timing repair, 10 percent of cell area pipelined
+against 13 percent folded, and it goes the other way. A synthesis-only area comparison
+between these two microarchitectures is fair.
+
+**Timing: synthesis understates it, and not by the same factor.** Both designs are
+faster routed than the estimate said, the folded one by 1.88x and the pipelined one by
+1.28x. The natural explanation is that `set_wire_rc -layer Metal2` is pessimistic, and
+it is the wrong one. `scripts/pnr_fmax.py` checks it by re-timing each **routed**
+netlist under that same estimate, which holds the netlist fixed and varies only the
+wire model:
+
+| Slow corner, reg-to-reg | Pipelined | Iterative |
+|---|---:|---:|
+| Routed netlist, extracted parasitics | 12.72 ns | 11.00 ns |
+| Routed netlist, `set_wire_rc` estimate | 9.63 ns | 8.93 ns |
+| The estimate is | 1.32x optimistic | 1.23x optimistic |
+
+On a fixed netlist the estimate runs optimistic, not pessimistic. So the gap is in the
+netlist rather than the wire model: `make pdk` does drive repair over a virtual
+placement, while PnR places, builds a clock tree and then resizes against real
+positions, and the folded core's mux-heavy critical path responds to that far better
+than the pipelined core's carry chain does.
+
+Which is how a synthesis-only comparison came to rank the two variants the wrong way
+round on frequency. See [docs/pnr/README.md](docs/pnr/README.md) for why the routed
+frequency has to be measured separately rather than divided out of LibreLane's
+leftover slack, and for what that number does and does not claim.
+
+### Signoff
+
+| Check | Pipelined | Iterative |
+|---|---|---|
+| Router DRC, iterated to convergence | 0 | 0 |
+| Magic DRC, sg13g2 runset | not finished | 0 |
+| KLayout DRC, sg13g2 runset, 477 rules | not finished | 0 |
+| Magic against KLayout GDS XOR | 0 | 0 |
+| netgen LVS, extracted against netlist | not finished | **circuits match uniquely** |
+| Antenna violations after diode insertion | 13 | 6 |
+| Routed wirelength | 1,685,814 um | 418,654 um |
+
+Magic's DRC is single-threaded whatever the flow is told, and it scales badly: 7
+minutes 43 seconds for the folded variant's 30k instances, and it had not returned on
+the pipelined variant's 166k when this was written. "Not finished" in that column
+means exactly that, and not that the check passed. Everything above it in the
+pipelined column did run: the router iterated its own DRC from 15,957 violations to
+zero over six passes, and Magic and KLayout independently streamed out GDS that XOR to
+nothing.
 
 ## Software
 
@@ -556,8 +669,9 @@ make lint        # Verilator -Wall, 10 configurations plus the Croc wrapper
 make test        # the whole suite, both variants, both OBI handshakes
 make synth       # Yosys generic cells, 6 configurations
 make pdk         # real IHP SG13G2 130nm: um2 and MHz at three corners
-make pnr         # full RTL-to-GDS, post-route area plus DRC and LVS
-make sw          # host driver test (runs) and RV32 image (links)
+make pnr         # full RTL-to-GDS, both variants: post-route area, DRC and LVS
+make layout      # render the routed dies at a shared scale, plus detail crops
+make sw          # host driver test (runs) and RV32 images (link)
 make images      # redraw every figure from the measured data
 make all         # all of the above
 ```
@@ -618,16 +732,24 @@ so a clone needs no generator run to build.
 
 - **The RV32 image is never executed here.** It compiles and links; running it needs
   Croc's own testbench.
-- **The IHP numbers in the table above stop after synthesis and drive repair.** Wire
-  parasitics are estimated by `set_wire_rc`, not extracted, because there is no
-  placement. `make pnr` takes both variants the rest of the way; the post-route
-  numbers are reported separately under [Routed layout](#routed-layout) and are
-  labelled as post-route wherever they appear, because a synthesis estimate and a
-  routed measurement are not interchangeable. See
-  [docs/pnr/README.md](docs/pnr/README.md).
-- **No layout-versus-schematic check has been run.** The LibreLane Classic flow for
-  `ihp-sg13g2` has a Magic DRC step but no LVS step, so there is no LVS result here
-  and none is claimed.
+- **The IHP table under [Silicon](#silicon-real-ihp-130nm) stops after synthesis and
+  drive repair.** Wire parasitics are estimated by `set_wire_rc`, not extracted,
+  because there is no placement. Both variants at Q3.29 N=28 have been routed the rest
+  of the way and those numbers are reported separately under
+  [Routed](#routed-what-synthesis-got-wrong), labelled as post-route wherever they
+  appear, because a synthesis estimate and a routed measurement are not
+  interchangeable and here they differ by up to 1.88x. The other four configurations
+  have not been routed.
+- **Nothing has been fabricated.** These are tool outputs on a real PDK, not a
+  tapeout. The design has no pad ring and has had no analog or reliability signoff.
+- **The pipelined variant's physical signoff is incomplete.** Its router DRC is clean
+  and its GDS exists, but Magic DRC, KLayout DRC and LVS had not finished when this
+  was written, and are reported as unfinished rather than passed. The folded variant
+  is clean on all of them, including netgen LVS.
+- **The post-route frequencies are the routed netlists' path delays, not closed
+  timing.** Each netlist was optimised against the period in its LibreLane config and
+  the tool stopped once it met it, so a tighter target would have produced a different
+  netlist. [docs/pnr/README.md](docs/pnr/README.md) has the full statement.
 - **Fmax is limited by ripple-carry adders.** That is a property of `abc`'s mapping,
   not of the architecture, and it is stated rather than worked around. Both variants
   are affected identically, so the comparison holds.

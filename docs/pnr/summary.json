@@ -122,6 +122,12 @@
     "path_buffers": 5,
     "overall_hold_slack_ns": 0.1276
    }
+  },
+  "wire_rc_control": {
+   "corner": "slow",
+   "note": "routed netlist, set_wire_rc -layer Metal2 instead of SPEF",
+   "reg_path_delay_ns": 8.9327,
+   "fmax_mhz": 111.95
   }
  },
  "pipe_q3_29_n28": {
@@ -246,6 +252,12 @@
     "path_buffers": 15,
     "overall_hold_slack_ns": 0.1244
    }
+  },
+  "wire_rc_control": {
+   "corner": "slow",
+   "note": "routed netlist, set_wire_rc -layer Metal2 instead of SPEF",
+   "reg_path_delay_ns": 9.6312,
+   "fmax_mhz": 103.83
   }
  }
 }

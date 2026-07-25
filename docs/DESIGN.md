@@ -550,7 +550,8 @@ either cocotb generation.
 | Lint | `make lint` | Zero Verilator warnings at `-Wall` over 10 parameter configurations plus the Croc wrapper against stand-in Croc packages. |
 | Synthesis | `make synth` | Six configurations, generic cells. No inferred latch, no combinational loop, no unmapped submodule, asserted inside the Yosys script itself. |
 | Silicon | `make pdk` | Six configurations on real IHP SG13G2 130nm cells: area in um2 and Fmax at all three corners, with the repair target iterated to convergence so Fmax is a measurement rather than a function of the probe period. |
-| Place and route | `make pnr` | Full RTL-to-GDS through LibreLane for post-route area and DRC/LVS signoff. |
+| Place and route | `make pnr` | Full RTL-to-GDS through LibreLane, both variants: post-route area, post-route timing at all three corners with extracted parasitics, router and Magic and KLayout DRC, a Magic-against-KLayout GDS XOR, and netgen LVS. The folded variant is clean on all of them; the pipelined variant's Magic DRC had not finished, and is reported as unfinished rather than passed. |
+| Bounded equivalence | `make formal` | A SymbiYosys miter proving the two cores cannot disagree within a bound, for one operation in flight. Stronger than random vectors over what it covers, and narrower. [formal/README.md](../formal/README.md) states the bound, the configuration, and what did not converge. |
 | Driver | `make sw` | The identical driver source runs on the host against a register-accurate peripheral model, 626 checks, and links as a complete RV32IMC image. |
 
 Two things this repository does **not** establish, said plainly:
@@ -558,10 +559,13 @@ Two things this repository does **not** establish, said plainly:
 - **The RV32 image is never executed.** There is no Croc simulation here. It
   compiles and links, and it records its outcome at a known symbol so Croc's own
   testbench can read it, but nothing in this repository runs it.
-- **The IHP timing stops after synthesis and drive repair.** Wire parasitics are
-  estimated by `set_wire_rc`, not extracted, because there is no placement. `make pnr`
-  runs the full flow for post-route area and signoff; `pnr/README.md` explains why
-  timing is not quoted from there.
+- **The IHP timing in `make pdk` stops after synthesis and drive repair.** Wire
+  parasitics are estimated by `set_wire_rc`, not extracted, because there is no
+  placement. `make pnr` routes the two Q3.29 N=28 configurations the rest of the way
+  and `scripts/pnr_fmax.py` re-times the routed netlists comparably; the gap runs to
+  1.31x on cell area and 1.88x on frequency, in opposite directions.
+  [../docs/pnr/README.md](pnr/README.md) states what the routed frequency does and
+  does not claim.
 - **Fmax is set by ripple-carry adders.** That is `abc`'s mapping, not the
   architecture, and it is reported rather than worked around. Both variants are
   affected identically, so the comparison between them holds.

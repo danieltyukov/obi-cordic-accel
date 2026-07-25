@@ -5,58 +5,66 @@ SG13G2 open PDK, the same 130nm process Croc taped out in. `make layout` renders
 result. `scripts/run_pnr.py` is the driver and `pnr/cordic.sdc` is the constraint file.
 
 `make pdk` stops after synthesis. This goes further, and the reason it is worth doing
-is not the pictures. A synthesis-only area comparison between a pipelined and a folded
-design is systematically unfair to the pipelined one, because synthesis charges it for
-cell area but not for the clock tree, the timing-repair buffering, or the routing that
-its much larger register count demands. Those only appear after placement and routing.
-Measuring both variants through the same flow and comparing their inflation factors is
-the only way to see how much of the folded variant's apparent area advantage survives
-physical implementation.
+is not the pictures. Every PPA number a synthesis run produces is an estimate of a
+quantity that only exists after placement, and the estimate is wrong in both
+directions at once: it understates area, because there is no clock tree, no timing
+repair and no floorplan, and it understates frequency, because drive repair over a
+virtual placement cannot size gates against distances it does not know. Routing both
+variants through the same flow is what turns that from an assertion into two numbers
+per variant.
 
 ## What is actually measured
 
 | Number | Where it comes from | What it is |
 |---|---|---|
-| routed standard-cell area | `design__instance__area__class:standard_cell` | cell area after resizing, clock tree and repair, excluding fill |
+| routed standard-cell area | `design__instance__area__stdcell` | cell area after resizing, clock tree and repair, excluding fill |
 | die area | `design__die__area` | the whole die, so it includes whitespace at the target utilisation |
-| routed cell count | `design__instance__count__class:standard_cell` | excludes the fill cells, which are placement filler and not logic |
+| routed cell count | `design__instance__count__stdcell` | excludes the fill cells, which are placement filler and not logic |
+| cell composition | `design__instance__area__class:*` | registers, combinational logic, clock tree and timing-repair buffers separately |
 | router DRC | `route__drc_errors` | OpenROAD's detailed router, after it iterates to convergence |
 | GDS cross-check | `design__xor_difference__count` | Magic and KLayout each stream out a GDS; the flow XORs them |
 | Magic DRC | `magic__drc_error__count` | the sg13g2 Magic runset against the streamed-out GDS |
-| post-route timing | `*stapostpnr/<corner>/max.rpt` | all three corners, with parasitics extracted by OpenRCX |
+| KLayout DRC | `klayout__drc_error__count` | the sg13g2 KLayout runset, 477 rules |
+| LVS | `design__lvs_error__count` | netgen, extracted layout against the post-route netlist |
+| post-route Fmax | `scripts/pnr_fmax.py` | the routed netlist re-timed on extracted parasitics |
 
-## Two things this deliberately does not claim
+## Why the post-route frequency is measured separately
 
-**The post-route frequency is not the same measurement as the Fmax in
-[docs/pdk](../pdk/).** `make pdk` iterates the clock period until slack reaches zero,
-so its Fmax is the frequency at which the design just closes. This flow routes for one
-fixed target period and reports the slack left over. Dividing into that slack implies
-a frequency, but only under the assumption that a tighter target would not have made
-the tool place, size and buffer differently, and it would have. Both numbers appear in
-the README, labelled, and neither is presented as the other.
+LibreLane reports the slack left over at the one period the design was routed for.
+Dividing into that slack gives a number, but not one that can be set beside the Fmax
+in [docs/pdk](../pdk/), for two reasons that compound. `pnr/cordic.sdc` charges a
+quarter of the clock period to input arrival and another quarter to output setup,
+which is a deliberate budget for a peripheral sitting on a SoC bus, and it adds five
+percent of the period as setup uncertainty. `make pdk` applies neither. So the
+leftover slack carries the IO budget, the uncertainty and the routed target all at
+once, and comparing it against a synthesis Fmax says nothing about what changed
+between the two.
 
-Within that limit the comparison is still informative, because both flows measure the
-same thing on the same design: register to register, at the slow corner, 1.08 V and
-125 C.
+`scripts/pnr_fmax.py` re-times the routed netlist under the same constraint style
+`make pdk` uses, against the parasitics OpenRCX extracted from the routed design
+instead of a `set_wire_rc` estimate. What is left between the two numbers is then the
+parasitics and the cells PnR added, which is the thing worth measuring. Both are
+register to register, at the same three corners, from the same Liberty files.
 
-**Timing here is register to register, not the headline slack.** The worst path in
-every one of these runs is an IO path, because `pnr/cordic.sdc` charges a quarter of
-the clock period to input arrival and another quarter to output setup. That is a
-deliberate budget for a peripheral sitting on a SoC bus, not a property of the logic,
-so the headline `timing__setup__ws` describes the constraint rather than the design.
-`scripts/run_pnr.py` reads the worst register-to-register path out of the path reports
-instead, and resolves its endpoints back to RTL register names.
+Two limits on that number, both real:
 
-## What is not checked
+- **It is the routed netlist's path delay, not a closed-timing Fmax.** The netlist was
+  optimised against the period in the LibreLane config and the tool stopped once it
+  met it. A tighter target would have produced a different netlist, and this
+  measurement cannot say whether a better one.
+- **The worst path overall is still an IO path**, so the register-to-register path is
+  searched for rather than taken from the top of the report. `scripts/run_pnr.py`
+  requires both ends of the path to be flops and resolves them back to RTL register
+  names.
 
-The LibreLane Classic flow for `ihp-sg13g2` includes `Magic.DRC` but **no LVS step**,
-and no KLayout DRC step either. So there is no layout-versus-schematic result here, and
-none is claimed. The checks that do run are the router's own DRC, the Magic DRC
-runset, and the Magic-against-KLayout GDS XOR.
+## What is not silicon
 
-Nothing here is a mock-up: every number and every figure comes out of the flow. Nor is
-any of it silicon. These are tool outputs on a real PDK, not a tapeout: the design has
-not been manufactured, has no pad ring, and has had no analog or reliability signoff.
+Every number and every figure here comes out of the flow, and none of it is a
+mock-up. None of it is silicon either. These are tool outputs on a real PDK, not a
+tapeout: the design has not been manufactured, has no pad ring, and has had no analog
+or reliability signoff. The signoff that does run is the router's own DRC iterated to
+convergence, the Magic and KLayout DRC runsets, a Magic-against-KLayout GDS XOR, and
+netgen LVS of the extracted layout against the post-route netlist.
 
 ## Reproducing
 
@@ -64,19 +72,32 @@ not been manufactured, has no pad ring, and has had no analog or reliability sig
 make pnr           # both variants, RTL to GDS. Hours, not minutes.
 make pnr-harvest   # re-read the newest existing run into summary.json
 make layout        # render the GDS figures from the run
+.venv/bin/python scripts/pnr_fmax.py   # re-time the routed netlists
 ```
 
 `make pnr-harvest` exists because the list of metrics worth recording grew several
 times while a routing run was in flight. Re-reading a finished run costs a second;
 repeating it costs hours and would produce a different layout from the one already
-rendered and committed.
+rendered and committed. Both the harvest and the Fmax measurement work on an
+unfinished run: everything they need is written by step 55 of 75, and the signoff DRC
+stages after it are what dominate the wall clock.
 
-Two settings in `scripts/run_pnr.py` are there because of failures worth recording:
+Settings that are there because of failures worth recording:
 
 - `RSZ_HOLD_MAX_BUFFER_PCT` and a split setup/hold clock uncertainty in
   `pnr/cordic.sdc`. A single `set_clock_uncertainty` without `-setup` applies to hold
   analysis as well, so every short path needed five percent of the clock period in
   padding, and post-CTS hold repair ran out of buffers with `[RSZ-0060] Max buffer
-  count reached` at stage 37 of 79.
-- `KLAYOUT_XOR_THREADS`. KLayout's threading options default to unset, meaning
-  single-threaded.
+  count reached` at stage 37 of 75.
+- `KLAYOUT_DRC_THREADS` and `KLAYOUT_XOR_THREADS`. KLayout's threading options default
+  to unset, meaning single-threaded, and the maximal sg13g2 DRC runset then takes
+  longer than every other stage put together.
+- `--build-dir`, so the two variants can route at once. LibreLane stages the RTL and
+  the config next to each other, so a second driver writing into a live work directory
+  would pull them out from under the first.
+
+Magic's DRC stays single-threaded whatever the config says, and it scales badly: 7
+minutes for the folded variant's 30k instances, hours for the pipelined variant's
+166k. That is why the pipelined entry in `summary.json` can carry routing and timing
+results with its Magic DRC, KLayout DRC and LVS counts still `null`. A null there
+means the stage had not finished, not that it passed.
