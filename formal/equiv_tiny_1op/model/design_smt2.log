@@ -59,23 +59,25 @@ Module cordic_equiv_miter directly or indirectly contains formal properties -> s
 
 === cordic_equiv_miter ===
 
-   Number of wires:                108
-   Number of wire bits:            522
-   Number of public wires:          71
-   Number of public wire bits:     373
+   Number of wires:                116
+   Number of wire bits:            565
+   Number of public wires:          74
+   Number of public wire bits:     390
    Number of memories:               0
    Number of memory bits:            0
    Number of processes:              0
-   Number of cells:                 78
-     $add                            2
-     $anyinit                       20
+   Number of cells:                 86
+     $add                            3
+     $anyinit                       21
      $anyseq                         6
      $assert                         6
      $assume                         1
      $eq                             7
      $ff                             1
-     $logic_and                      6
-     $mux                           25
+     $ge                             1
+     $logic_and                      7
+     $logic_not                      1
+     $mux                           28
      $not                            1
      $paramod$70820d58573aa6bc151b08ca87828bb1aacf54b8\cordic_unit      1
      $paramod$d65250d32a3a3b63267a61a752ff3d1effa537d5\cordic_unit      1
@@ -230,28 +232,29 @@ Module cordic_equiv_miter directly or indirectly contains formal properties -> s
        $paramod$801fe539f75c768c502eaedc222877d9a728ec18\cordic_pre      1
        $paramod$88d5efff5ea4ed3f4dc036b654af2da8e0760030\cordic_post      1
 
-   Number of wires:                869
-   Number of wire bits:           7442
-   Number of public wires:         453
-   Number of public wire bits:    4430
+   Number of wires:                877
+   Number of wire bits:           7485
+   Number of public wires:         456
+   Number of public wire bits:    4447
    Number of memories:               0
    Number of memory bits:            0
    Number of processes:              0
-   Number of cells:                592
-     $add                           35
-     $anyinit                       51
+   Number of cells:                600
+     $add                           36
+     $anyinit                       52
      $anyseq                        14
      $assert                         6
      $assume                         3
      $eq                            49
      $ff                             1
+     $ge                             1
      $gt                            16
      $le                             2
-     $logic_and                     18
-     $logic_not                     22
+     $logic_and                     19
+     $logic_not                     23
      $logic_or                       3
      $lt                            21
-     $mux                          260
+     $mux                          263
      $neg                           16
      $not                            9
      $pmux                          21
@@ -274,6 +277,6 @@ Creating SMT-LIBv2 representation of module $paramod$70820d58573aa6bc151b08ca878
 Creating SMT-LIBv2 representation of module $paramod$d65250d32a3a3b63267a61a752ff3d1effa537d5\cordic_unit.
 Creating SMT-LIBv2 representation of module cordic_equiv_miter.
 
-End of script. Logfile hash: 974baba4d4, CPU: user 0.06s system 0.01s, MEM: 16.95 MB peak
+End of script. Logfile hash: 5fcafe637d, CPU: user 0.04s system 0.01s, MEM: 17.07 MB peak
 Yosys 0.33 (git sha1 2584903a060)
-Time spent: 69% 2x write_smt2 (0 sec), 24% 2x read_rtlil (0 sec), ...
+Time spent: 62% 2x write_smt2 (0 sec), 32% 2x read_rtlil (0 sec), ...

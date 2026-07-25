@@ -1,0 +1,10 @@
+# running in equiv_tiny_1op/src/
+read -formal -sv -DSYNTHESIS cordic_stage.sv cordic_core_pipe.sv cordic_core_iter.sv \
+     cordic_pre.sv cordic_post.sv cordic_unit.sv cordic_equiv_miter.sv
+chparam -set DataWidth 8 -set FracBits 5 -set NumStages 5 -set MaxIssue 1 cordic_equiv_miter
+prep -top cordic_equiv_miter
+
+hierarchy -smtcheck
+rename -witness
+write_jny -no-connections ../model/design.json
+write_rtlil ../model/design.il

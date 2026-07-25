@@ -1586,6 +1586,6 @@ Module cordic_equiv_miter directly or indirectly contains formal properties -> s
 12. Executing RTLIL backend.
 Output filename: ../model/design.il
 
-End of script. Logfile hash: e018655ac2, CPU: user 0.47s system 0.01s, MEM: 21.01 MB peak
+End of script. Logfile hash: e018655ac2, CPU: user 0.67s system 0.02s, MEM: 20.91 MB peak
 Yosys 0.33 (git sha1 2584903a060)
-Time spent: 21% 2x hierarchy (0 sec), 19% 6x opt_clean (0 sec), ...
+Time spent: 22% 6x opt_clean (0 sec), 16% 2x hierarchy (0 sec), ...
