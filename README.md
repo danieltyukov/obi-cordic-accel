@@ -489,6 +489,17 @@ script itself rather than appearing in a report nobody reads:
 - `check -assert`: no combinational loop, no multiply-driven wire, no undriven wire
 - no unmapped memory, no tristate
 
+### Routed layout
+
+`make pnr` then `make layout`. The folded variant at Q3.29 with 28 stages, routed and
+DRC clean on IHP SG13G2, 383,154 um2 of die at 50 percent utilisation:
+
+![Routed layout of the folded variant](docs/img/layout_iter_q3_29_n28.png)
+
+Six metal layers, power rails horizontal, the OBI and streaming ports labelled around
+the edge. Nothing here is a mock-up: it is the GDS the flow produced, with zero DRC
+errors from both the router and Magic, rendered by KLayout.
+
 ## Software
 
 A freestanding baremetal driver: no libc, no floating point, no allocation. Croc's
