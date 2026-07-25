@@ -504,6 +504,11 @@ def main(argv=None):
             return 1
         picked = {k: metrics.get(k) for k in METRICS}
         picked["run_dir"] = str(run.relative_to(ROOT))
+        # Carried explicitly, since it is not one of METRICS. A reader has to be able
+        # to tell a metric the flow computed from one it never got to, and a null in
+        # magic__drc_error__count means opposite things in those two cases.
+        if metrics.get("_source"):
+            picked["_source"] = metrics["_source"]
         picked["config"] = cfg
         wpath = worst_reg_path(run)
         if wpath:
@@ -536,8 +541,16 @@ def main(argv=None):
             print(f"    {k:<32} {picked.get(k)}", flush=True)
 
     path = OUT / "summary.json"
-    if path.exists() and args.only:
-        merged = json.loads(path.read_text())
+    previous = json.loads(path.read_text()) if path.exists() else {}
+    # scripts/pnr_fmax.py writes into the same entries and this script rebuilds them
+    # from scratch, so anything it owns has to be carried across or a harvest silently
+    # deletes a measurement that took a separate STA run to produce.
+    for name, entry in summary.items():
+        for key in ("postroute_fmax", "wire_rc_control"):
+            if key not in entry and key in previous.get(name, {}):
+                entry[key] = previous[name][key]
+    if previous and args.only:
+        merged = dict(previous)
         merged.update(summary)
         summary = merged
     path.write_text(json.dumps(summary, indent=1))

@@ -97,7 +97,15 @@ Settings that are there because of failures worth recording:
   would pull them out from under the first.
 
 Magic's DRC stays single-threaded whatever the config says, and it scales badly: 7
-minutes for the folded variant's 30k instances, hours for the pipelined variant's
-166k. That is why the pipelined entry in `summary.json` can carry routing and timing
-results with its Magic DRC, KLayout DRC and LVS counts still `null`. A null there
-means the stage had not finished, not that it passed.
+minutes 43 seconds for the folded variant's 30k instances against 2 hours 7 minutes for
+the pipelined variant's 166k. That is why a `summary.json` entry can carry routing and
+timing results with its Magic DRC, KLayout DRC and LVS counts still `null`: the harvest
+works on an unfinished run, and everything the routing and timing numbers need is
+written by step 55 of 75. A null in those fields means the stage had not finished. It
+does not mean the stage passed, and the README quotes it that way.
+
+The two runs differ in where their metrics come from. The folded run completes cleanly
+and writes `final/metrics.json`. The pipelined run reaches all 75 stages but ends with
+two deferred DRC errors and never writes one, so its metrics are merged from the
+per-step files. The `_source` field in `summary.json` records which of the two a given
+entry came from.

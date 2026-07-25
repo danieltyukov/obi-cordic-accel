@@ -602,26 +602,33 @@ leftover slack, and for what that number does and does not claim.
 |---|---|---|
 | Router DRC, iterated to convergence | 0 | 0 |
 | Magic DRC, sg13g2 runset | **7** | 0 |
-| KLayout DRC, sg13g2 runset, 477 rules | not finished | 0 |
+| KLayout DRC, sg13g2 runset, 477 rules | **1** | 0 |
 | Magic against KLayout GDS XOR | 0 | 0 |
-| netgen LVS, extracted against netlist | not finished | **circuits match uniquely** |
+| netgen LVS, extracted against netlist | circuits match uniquely | circuits match uniquely |
+| LVS unmatched nets, devices, pins | 0, 0, 0 | 0, 0, 0 |
 | Antenna violations after diode insertion | 13 | 6 |
 | Routed wirelength | 1,685,814 um | 418,654 um |
+| Switching power at typ | 0.117 W | 0.018 W |
 
-**The folded variant closes clean and the pipelined one does not.** Magic finds 7
-violations on the pipelined layout of two kinds, both in the raw count Magic warns
-should be divided by three or four: a Metal2 minimum-area failure (`M2.d`) at one spot
-near (704.5, 467.4) um, and a tie extension beyond a diffusion contact (`LU.c`) at two
-more. Neither is in the deck OpenROAD's own router checks, which is why the router
-converged to zero and Magic did not. They are not designed in, they are artefacts of
-this flow configuration on a die five times the area, and clearing them would mean
-another routing run rather than an RTL change.
+**The folded variant closes DRC clean and the pipelined one does not.** Both variants
+pass LVS: netgen reports circuits match uniquely against the extracted layout, with no
+unmatched net, device or pin on either.
+
+The two DRC decks agree on what is wrong. KLayout reports exactly one violation on the
+pipelined layout, a Metal2 minimum-area failure (`M2.d`). Magic reports 7 in the raw
+count it warns should be divided by three or four, and they are the same `M2.d` spot
+near (704.5, 467.4) um plus two tie extensions beyond a diffusion contact (`LU.c`) that
+KLayout's deck does not flag. So: one real minimum-area sliver that two independent
+tools found, and a tap-cell rule that one of them applies. Neither is in the deck
+OpenROAD's own router checks, which is why the router converged to zero and the signoff
+decks did not. Neither is designed in: they are artefacts of this flow configuration on
+a die five times the area, and clearing them means another routing run, not an RTL
+change.
 
 Magic's DRC is single-threaded whatever the flow is told, and it scales badly: 7
-minutes 43 seconds for the folded variant's 30k instances against 2 hours 7 minutes
-for the pipelined variant's 166k. The stages after it had not returned when this was
-written, and "not finished" in that column means exactly that, not that the check
-passed.
+minutes 43 seconds for the folded variant's 30k instances against 2 hours 7 minutes for
+the pipelined variant's 166k. That is the single reason the pipelined variant took most
+of a day to get through signoff.
 
 ## Software
 
@@ -752,10 +759,11 @@ so a clone needs no generator run to build.
   have not been routed.
 - **Nothing has been fabricated.** These are tool outputs on a real PDK, not a
   tapeout. The design has no pad ring and has had no analog or reliability signoff.
-- **The pipelined variant's physical signoff is incomplete.** Its router DRC is clean
-  and its GDS exists, but Magic DRC, KLayout DRC and LVS had not finished when this
-  was written, and are reported as unfinished rather than passed. The folded variant
-  is clean on all of them, including netgen LVS.
+- **The pipelined variant does not close DRC.** Its router DRC converges to zero and
+  it passes LVS, but the Magic and KLayout signoff decks each find a Metal2
+  minimum-area violation, and Magic finds two tie extensions on top. The folded
+  variant is clean on every check. Both are reported above rather than rounded to
+  "DRC clean".
 - **The post-route frequencies are the routed netlists' path delays, not closed
   timing.** Each netlist was optimised against the period in its LibreLane config and
   the tool stopped once it met it, so a tighter target would have produced a different
