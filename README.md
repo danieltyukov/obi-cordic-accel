@@ -24,7 +24,7 @@ and two interchangeable microarchitectures that produce bit-identical results.
 | Interfaces | OBI v1.6 subordinate over a 4 KB window, plus a valid/ready streaming port |
 | Pipelined core | 1 result per cycle, 78.6 MHz post-route, 1.954 mm2 of die on IHP 130nm |
 | Iterative core | 1 result per 29 cycles, 90.9 MHz post-route, 0.383 mm2, 5.1x smaller |
-| Silicon | Real IHP SG13G2 130nm, the process Croc taped out in. Both variants routed to GDS, DRC and LVS clean, area in um2 and Fmax at three corners |
+| Silicon | Real IHP SG13G2 130nm, the process Croc taped out in. Both variants routed to GDS and LVS clean; the folded one is DRC clean and the pipelined one has one Metal2 minimum-area violation. Area in um2 and Fmax at three corners |
 | Verification | 80 tests, 0 failures: 17,536 accuracy comparisons, 4,237 domain arguments, 28 OBI protocol tests, bit-identity between both cores over 900 operations, plus 13 concurrent assertions in the RTL |
 | Tooling | Verilator lint clean at `-Wall` over 10 configurations, Yosys plus OpenROAD over 6, both RV32 driver images link |
 
