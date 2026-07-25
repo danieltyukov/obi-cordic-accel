@@ -50,12 +50,13 @@ RV_STACK_SIZE ?= 512
 RV_ABI    ?= ilp32
 # Freestanding: no libc, no start files. libgcc still comes in, for the 64-bit
 # divide the fixed-point ratio helpers use.
-# CORDIC_VEC_NO_NOTES drops the vector table's descriptive strings, which the
-# target has nothing to print them to anyway.
-RV_CFLAGS := -std=c11 -Os -g $(WARN) $(INC) \
-             -march=$(RV_ARCH) -mabi=$(RV_ABI) \
-             -ffreestanding -fno-builtin -fno-common \
-             -ffunction-sections -fdata-sections \
+# Shared between both link modes.
+RV_CFLAGS_BASE := -std=c11 -Os -g $(WARN) $(INC) \
+                  -march=$(RV_ARCH) -mabi=$(RV_ABI) \
+                  -fno-common -ffunction-sections -fdata-sections
+# Freestanding adds -ffreestanding and drops the vector notes, which the target has
+# nothing to print them to anyway.
+RV_CFLAGS := $(RV_CFLAGS_BASE) -ffreestanding -fno-builtin \
              -DCORDIC_VEC_NO_NOTES -DCORDIC_VEC_LIMIT=$(RV_VEC_LIMIT)
 # A single RWX LOAD segment is exactly right for a baremetal image running from
 # SRAM, so the warning about it is noise here.
@@ -70,9 +71,9 @@ CORDIC_VEC_TOTAL := $(shell sed -n 's/^#define CORDIC_VEC_TOTAL \([0-9]*\).*/\1/
                       $(TOPDIR)/host/cordic_vectors.h)
 RV_ELF    := $(BUILD)/test_cordic_rv32.elf
 
-.PHONY: all host rv32 rv32-full run clean check-toolchain
+.PHONY: all host rv32 rv32-full rv32-picolibc run clean check-toolchain
 
-all: host rv32
+all: host rv32 rv32-picolibc
 
 $(BUILD):
 	@mkdir -p $(BUILD)
@@ -111,6 +112,21 @@ $(RV_ELF): $(RV_SRCS) $(RV_LD_SCRIPT) $(TOPDIR)/include/cordic.h \
 	@$(RV_SIZE) $@
 	@$(RV_OBJDUMP) -d $@ > $(BUILD)/test_cordic_rv32.dis
 	@echo "disassembly in $(BUILD)/test_cordic_rv32.dis"
+
+# Second link mode: against picolibc rather than freestanding. Proves the driver
+# links with a real C library as well as without one, and carries all 79 vectors
+# since picolibc brings its own crt0 and linker script and is not squeezed into
+# stock Croc's 8 KB. Note picolibc's printf additionally needs the platform to
+# define stdout, which for Croc means wiring up its UART; the driver itself uses
+# no stdio, so this link needs nothing extra.
+PICO_ELF := $(BUILD)/test_cordic_rv32_picolibc.elf
+
+rv32-picolibc: check-toolchain | $(BUILD)
+	@echo "== sw: RV32 image against picolibc"
+	$(RV_CC) $(RV_CFLAGS_BASE) -DCORDIC_VEC_LIMIT=$(CORDIC_VEC_TOTAL) \
+	  -specs=picolibc.specs $(TOPDIR)/cordic.c $(TOPDIR)/test_cordic.c \
+	  -o $(PICO_ELF)
+	@$(RV_SIZE) $(PICO_ELF)
 
 # Every vector, for a Croc with more than the default SRAM.
 rv32-full:

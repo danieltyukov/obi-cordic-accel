@@ -8,7 +8,7 @@
 #   make lint      Verilator -Wall on the core RTL and on the Croc wrapper
 #   make test      the whole cocotb suite, both variants, both OBI handshakes
 #   make synth     Yosys over six configurations, reports into docs/synth
-#   make sw        host driver test (runs) and RV32 image (links)
+#   make sw        host driver test (runs) and both RV32 images (link)
 #   make images    regenerate every figure in docs/img from measured data
 #   make check-gen fail if any generated file is out of date
 #   make all       gen, lint, test, synth, sw, images
@@ -236,8 +236,8 @@ sw-host: sw-vectors
 # Skipped rather than failed when the cross toolchain is absent, and it says so.
 sw-rv32: sw-vectors
 	@if command -v riscv64-unknown-elf-gcc >/dev/null 2>&1; then \
-	  echo "== sw: RV32 image"; \
-	  $(MAKE) -s -C $(TOP)/sw rv32; \
+	  echo "== sw: RV32 images, freestanding and picolibc"; \
+	  $(MAKE) -s -C $(TOP)/sw rv32 rv32-picolibc; \
 	else \
 	  echo "== sw: RV32 image SKIPPED, riscv64-unknown-elf-gcc not on PATH"; \
 	fi

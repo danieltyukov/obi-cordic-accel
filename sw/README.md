@@ -8,10 +8,11 @@ in soft-float routines costing more than the accelerator saves. Everything is
 `include/cordic_regmap.h` is generated from `scripts/cordic_regmap.py` alongside the
 RTL's own offsets, so the driver cannot drift from the hardware.
 
-## Two builds
+## Three builds
 
-    make host   # gcc, runs and reports
-    make rv32   # riscv64-unknown-elf-gcc, freestanding RV32IMC for Croc
+    make host           # gcc, runs and reports
+    make rv32           # freestanding RV32IMC, own crt0 and linker script
+    make rv32-picolibc  # RV32IMC linked against picolibc
     make all
 
 `make host` compiles `test_cordic.c` against the register-accurate peripheral model
@@ -25,13 +26,29 @@ The peripheral model does not compute CORDIC. It answers out of
 asserted against operation by operation. A second CORDIC written in C would only
 show that two pieces of C agree with each other.
 
-`make rv32` produces a complete, linked RV32IMC image. **It is not executed here:**
-this repository carries no Croc simulation. Point `CORDIC_BASE` at the
-accelerator's window and run it under Croc's own testbench. The image records its
-outcome in the `cordic_test_report` symbol (magic `0x54455354`, then the check and
-failure counts and the first failure's details) and returns the failure count in
-`a0`, so a testbench can read the result straight out of memory. Define
-`CORDIC_TEST_PUTC(c)` to route the log to Croc's UART.
+Both RV32 targets produce a complete, linked RV32IMC image, verified here:
+
+| Target | Link mode | Text | BSS | Vectors |
+|---|---|---:|---:|---:|
+| `rv32` | freestanding, `-nostdlib`, own `crt0.S` and `link.ld` | 7,428 | 32 | 12 |
+| `rv32-picolibc` | `-specs=picolibc.specs` | 14,380 | 4,128 | 79 |
+
+The freestanding one is what Croc actually wants: it fits stock Croc's 8 KB SRAM
+with a 512-byte stack and brings its own startup, which is closer to how Croc boots.
+The picolibc build exists to show the driver links against a real C library too, and
+is not size-constrained because picolibc supplies its own startup and linker script.
+
+One picolibc caveat worth knowing: its `printf` needs the platform to define
+`stdout`, so a bare `printf` link fails with `undefined reference to 'stdout'` until
+you wire up a console. The driver and the self-test use no stdio at all, so neither
+needs it.
+
+**Neither RV32 image is executed here:** this repository carries no Croc simulation.
+Point `CORDIC_BASE` at the accelerator's window and run it under Croc's own
+testbench. The image records its outcome in the `cordic_test_report` symbol (magic
+`0x54455354`, then the check and failure counts and the first failure's details) and
+returns the failure count in `a0`, so a testbench can read the result straight out of
+memory. Define `CORDIC_TEST_PUTC(c)` to route the log to Croc's UART.
 
 ## Toolchain
 
