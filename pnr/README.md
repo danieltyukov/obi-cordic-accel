@@ -32,6 +32,50 @@ making. `scripts/run_pnr.py` supplies `pnr/cordic.sdc` explicitly, so the fallba
 warning should not appear; if it does, treat that run's timing as unreliable and use
 the `make pdk` numbers.
 
+## Result: the folded variant, Q3.29, 28 stages
+
+Real numbers from the flow, at a 22 ns target and 40 percent core utilisation.
+`docs/pnr/summary.json` carries the full metric set.
+
+| | Value | Against synthesis |
+|---|---:|---:|
+| Synthesis cell area (`make pdk`) | 135,442 um2 | |
+| Post-route standard-cell area | 179,027 um2 | **1.32x** |
+| Post-route die area | 383,154 um2 | **2.83x** |
+| Core utilisation | 0.501 | |
+| Standard cells placed | 10,835 | 8,390 mapped |
+| Fill cells | 19,179 | |
+| Routed wirelength | 418,654 um | |
+| Fmax at typ, synthesis estimate | 75.2 MHz | |
+| Fmax at typ, post-route | **67.7 MHz** | **0.90x** |
+| Setup worst slack at typ, 22 ns | +7.23 ns | |
+| Hold worst slack at typ | +0.231 ns | |
+| Router DRC errors | **0** | after 5 iterations, 3767 to 0 |
+| Magic DRC errors | **0** | |
+| Antenna violating nets | 6 | |
+| Power at typ, 22 ns | 17.2 mW | |
+
+Two things worth taking from that.
+
+**Post-route timing is 10 percent worse than the synthesis estimate.** 67.7 MHz
+against 75.2, because extracted parasitics replace the `set_wire_rc` estimate. That is
+the honest size of the gap between what `make pdk` reports and what a routed design
+does, and it applies to every Fmax number in this repository. The direction is the one
+you would expect and the magnitude is modest, which is what makes the `make pdk`
+numbers usable for comparison even though they are not signoff.
+
+**The standard-cell area grows 1.32x from synthesis to route**, before any die
+overhead. That is timing repair and clock tree: 1,311 timing-repair buffers and 476
+clock buffers and inverters were inserted, none of which exist in the mapped netlist
+the synthesis area is measured from. The die is 2.83x the mapped cell area once
+utilisation is accounted for.
+
+Because that inflation comes from buffering, it should hit the pipelined variant
+harder: it has four times the registers, so four times the clock tree. That
+measurement is not in yet, and the honest statement is that the 4.5x synthesis area
+ratio between the variants is therefore a **lower bound** on the post-route ratio, not
+an estimate of it.
+
 ## Two things that cost time, recorded so they do not cost it twice
 
 **Hold repair explodes if setup uncertainty is applied to hold.** The first attempt

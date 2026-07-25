@@ -57,6 +57,11 @@ METRICS = [
     "timing__setup__ws",
     "timing__hold__ws",
     "timing__setup__tns",
+    "timing__setup__ws__corner:nom_typ_1p20V_25C",
+    "timing__hold__ws__corner:nom_typ_1p20V_25C",
+    "design__instance__area__class:standard_cell",
+    "design__instance__area__class:fill_cell",
+    "design__instance__count__class:standard_cell",
     "route__drc_errors",
     "route__wirelength",
     "magic__drc_error__count",
@@ -213,6 +218,31 @@ def latest_run(run_dir):
     return runs[-1] if runs else None
 
 
+def harvest(run):
+    """Collect metrics from final/metrics.json, or from the per-step files.
+
+    LibreLane writes final/metrics.json only when every stage completes, and the
+    signoff DRC stages are slow enough that a run can hold real, finished results
+    while still working. Each step also drops or_metrics_out.json, so falling back
+    to those means a stalled or aborted signoff does not throw away routing and
+    timing numbers that are already valid. Later steps win on conflict, which is
+    the same precedence the final file would have.
+    """
+    final = run / "final" / "metrics.json"
+    if final.exists():
+        return json.loads(final.read_text())
+
+    merged = {}
+    for step in sorted((run).glob("*/or_metrics_out.json")):
+        try:
+            merged.update(json.loads(step.read_text()))
+        except (OSError, json.JSONDecodeError):
+            continue
+    if merged:
+        merged["_source"] = "per-step or_metrics_out.json, flow did not reach final"
+    return merged
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--only", action="append", default=None)
@@ -264,11 +294,10 @@ def main(argv=None):
         if run is None:
             print(f"  no run directory under {work / 'runs'}", file=sys.stderr)
             return 1
-        mpath = run / "final" / "metrics.json"
-        if not mpath.exists():
-            print(f"  {mpath} missing", file=sys.stderr)
+        metrics = harvest(run)
+        if not metrics:
+            print(f"  no metrics found under {run}", file=sys.stderr)
             return 1
-        metrics = json.loads(mpath.read_text())
         picked = {k: metrics.get(k) for k in METRICS}
         picked["run_dir"] = str(run.relative_to(ROOT))
         picked["config"] = cfg

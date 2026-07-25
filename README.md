@@ -609,8 +609,17 @@ so a clone needs no generator run to build.
   Croc's own testbench.
 - **The IHP numbers stop after synthesis and drive repair.** Wire parasitics are
   estimated, not extracted, because there is no placement. `make pnr` runs the full
-  LibreLane flow for post-route area and DRC/LVS signoff; see
-  [pnr/README.md](pnr/README.md) for why timing is not quoted from there.
+  LibreLane flow, and for the folded variant it has: post-route die 383,154 um2
+  against 135,442 um2 of mapped cells, DRC clean from both the router and Magic, and
+  **67.7 MHz post-route against the 75.2 MHz synthesis estimate at the typical
+  corner**. So the Fmax numbers above are about 10 percent optimistic, in the
+  direction you would expect and by a modest amount. See
+  [pnr/README.md](pnr/README.md).
+- **The pipelined variant has not been placed and routed yet.** Its area ratio against
+  the folded one is therefore quoted from synthesis. Since the post-route inflation
+  comes from clock tree and timing-repair buffering, and the pipelined variant has
+  four times the registers, the 4.5x synthesis ratio is a **lower bound** on the
+  post-route ratio rather than an estimate of it.
 - **Fmax is limited by ripple-carry adders.** That is a property of `abc`'s mapping,
   not of the architecture, and it is stated rather than worked around. Both variants
   are affected identically, so the comparison holds.
