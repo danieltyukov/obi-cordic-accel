@@ -1,0 +1,58 @@
+// Copyright 2026 Daniel Tyukov
+// SPDX-License-Identifier: Apache-2.0
+//
+// EXAMPLE rtl/user_pkg.sv for pulp-platform/croc with the CORDIC accelerator added.
+//
+// Diff against your own user_pkg.sv rather than copying wholesale: the file is
+// Croc's, and yours may already carry other subordinates. The three additions are
+// the UserCordic enum entry, its address rule, and nothing else.
+
+`include "obi/typedef.svh"
+
+package user_pkg;
+
+  //////////////////
+  // User Manager //
+  //////////////////
+
+  // None. The CORDIC accelerator is a subordinate only; its streaming ports are
+  // point to point and do not touch the interconnect.
+
+  ///////////////////////
+  // User Subordinates //
+  ///////////////////////
+
+  // Base address of the user domain: croc_pkg::UserBaseAddr.
+  // Croc's convention is one 4 KB-aligned window per subordinate, and the CORDIC
+  // accelerator decodes addr[11:0] only, so any 4 KB-aligned base works unchanged.
+
+  /// Enum with user domain demultiplexer subordinate idxs
+  typedef enum bit [4:0] {
+    UserError  = 0,
+    UserRom    = 1,
+    UserCordic = 2
+  } user_demux_outputs_e;
+
+  /// Address rules given to the user domain demultiplexer.
+  localparam croc_pkg::addr_map_rule_t [1:0] UserAddrMap = '{
+    '{
+      idx:        UserRom,
+      start_addr: croc_pkg::UserBaseAddr,
+      end_addr:   croc_pkg::UserBaseAddr + 32'h0000_1000
+    },
+    // One 4 KB window, which is exactly CordicWindowBytes in
+    // rtl/cordic_regmap.svh. Offsets 0x000 to 0x063 are implemented and the rest
+    // of the window answers with r.err, so a stray access is reported rather than
+    // aliased.
+    '{
+      idx:        UserCordic,
+      start_addr: croc_pkg::UserBaseAddr + 32'h0000_1000,
+      end_addr:   croc_pkg::UserBaseAddr + 32'h0000_2000
+    }
+  };
+  // Everything outside the rules goes to the error subordinate.
+
+  // +1 for the additional OBI error subordinate
+  localparam int unsigned NumDemuxSbr = $size(UserAddrMap) + 1;
+
+endpackage

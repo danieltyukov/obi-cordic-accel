@@ -8,4 +8,6 @@ cocotb==1.9.2
 numpy>=1.26
 matplotlib>=3.8
 mpmath>=1.3
+# Only for scripts/check_svg.py: the stdlib XML parsers resolve external entities.
+defusedxml>=0.7
 pytest>=8.0

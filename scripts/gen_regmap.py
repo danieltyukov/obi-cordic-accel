@@ -172,7 +172,8 @@ def gen_reg_tables():
     out.append("| Offset | Name | Access | Description |")
     out.append("|--------|------|--------|-------------|")
     for r in REGS_SORTED:
-        out.append(f"| `0x{r.offset:03X}` | `{r.name}` | {r.access} | {r.desc} |")
+        out.append(f"| `0x{r.offset:03X}` | `{r.name}` | {r.access} "
+                   f"| {md(r.desc)} |")
     out.append(f"| `0x{rm.MAPPED_BYTES:03X}` .. `0x{rm.WINDOW_BYTES - 4:03X}` "
                f"| unmapped | - | Reads return "
                f"`0x{rm.BAD_ACCESS_DATA:08X}` with `r.err`, writes take `r.err` |")
@@ -188,7 +189,7 @@ def gen_reg_tables():
         out.append("|------|------|--------|-------------|")
         for fl in sorted(r.fields, key=lambda x: -x.hi):
             bits = f"{fl.hi}" if fl.hi == fl.lo else f"{fl.hi}:{fl.lo}"
-            out.append(f"| `{bits}` | `{fl.name}` | {fl.access} | {fl.desc} |")
+            out.append(f"| `{bits}` | `{fl.name}` | {fl.access} | {md(fl.desc)} |")
         reserved = 0xFFFFFFFF & ~(wr_mask(r) | readable_mask(r))
         if reserved:
             out.append(f"| others | reserved | RO | Read 0, writes ignored |")
@@ -196,13 +197,19 @@ def gen_reg_tables():
     return "\n".join(out)
 
 
+def md(text):
+    """Escape a pipe so it survives inside a markdown table cell."""
+    return text.replace("|", "\\|")
+
+
 def gen_func_table():
     out = []
     out.append("| `FUNC` | Name | System | Mode | Operands | Result | Convergence domain | Gain |")
     out.append("|-------:|------|--------|------|----------|--------|--------------------|------|")
     for fn in rm.FUNCS:
-        out.append(f"| {fn.code} | `{fn.name}` | {fn.coord} | {fn.mode} | {fn.operands} "
-                   f"| {fn.result} | {fn.domain} | {fn.gain} |")
+        out.append(f"| {fn.code} | `{fn.name}` | {fn.coord} | {fn.mode} "
+                   f"| {md(fn.operands)} | {md(fn.result)} | {md(fn.domain)} "
+                   f"| {md(fn.gain)} |")
     return "\n".join(out)
 
 

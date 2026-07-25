@@ -1,0 +1,168 @@
+# Copyright 2026 Daniel Tyukov
+# SPDX-License-Identifier: Apache-2.0
+
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# A push that lands while an earlier run is still going cancels it: nothing here
+# depends on history.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Ubuntu 24.04 ships Verilator 5.020, which pins cocotb to 1.9.x. See the note in
+  # the Makefile and in docs/DESIGN.md under "Tool support".
+  DEBIAN_FRONTEND: noninteractive
+
+jobs:
+  lint:
+    name: lint and generated files
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: install tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends verilator
+          verilator --version
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: create the venv
+        run: make venv
+      # Runs the generators and diffs their output against the tree, so a hand edit
+      # to a generated file, or a change to a generator without regenerating,
+      # fails here rather than surfacing as a mysterious mismatch later.
+      - name: generated files are up to date
+        run: make check-gen
+      - name: lint
+        run: make lint
+
+  test:
+    name: simulation
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: install tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends verilator
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: create the venv
+        run: make venv
+      # Smaller sweeps than a local run: the same tests over fewer random
+      # arguments, so a CI run stays inside a sensible wall clock while every
+      # directed and edge case still runs, since those are not sampled.
+      - name: run the suite
+        run: make test ACC_SAMPLES=300 DOMAIN_SAMPLES=200 EQUIV_SAMPLES=400 STREAM_OPS=128
+      - name: upload the measured results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sim-results
+          path: build/results/
+          if-no-files-found: warn
+
+  synth:
+    name: synthesis
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: install tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends yosys
+          yosys -V
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: create the venv
+        run: make venv
+      - name: synthesise every configuration
+        run: make synth
+      # The committed reports have to match what Yosys just produced, which is what
+      # stops the numbers quoted in the README from going stale.
+      - name: committed reports match this run
+        run: |
+          if ! git diff --exit-code -- docs/synth; then
+            echo "::error::docs/synth differs from this run. Run 'make synth' and commit the reports."
+            exit 1
+          fi
+          echo "committed synthesis reports match"
+      - name: upload the reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: synth-reports
+          path: docs/synth/
+
+  software:
+    name: driver
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: install the RISC-V toolchain
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends gcc-riscv64-unknown-elf
+          riscv64-unknown-elf-gcc --version | head -1
+          riscv64-unknown-elf-gcc -print-multi-lib
+      - name: create the venv
+        run: make venv
+      # Runs the host build and links the RV32 image. The RV32 image is not
+      # executed: there is no Croc simulation here. See sw/README.md.
+      - name: driver test and RV32 image
+        run: make sw
+      - name: upload the RV32 image
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rv32-image
+          path: |
+            build/sw/test_cordic_rv32.elf
+            build/sw/test_cordic_rv32.map
+          if-no-files-found: warn
+
+  figures:
+    name: figures
+    needs: [test, synth]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: install tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends verilator yosys
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: create the venv
+        run: make venv
+      # The figures are drawn from measured data, so the data has to be produced
+      # here before they can be regenerated. A short run is enough to redraw them;
+      # the committed versions come from a full local run.
+      - name: produce the measurements
+        run: |
+          make test ACC_SAMPLES=200 DOMAIN_SAMPLES=100 EQUIV_SAMPLES=200 STREAM_OPS=128
+          make synth-quick
+      - name: regenerate the figures
+        run: make images
+      - name: every SVG is well formed
+        run: .venv/bin/python scripts/check_svg.py
+      - name: upload the figures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: figures
+          path: docs/img/

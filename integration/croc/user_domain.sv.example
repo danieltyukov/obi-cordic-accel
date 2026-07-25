@@ -1,0 +1,167 @@
+// Copyright 2026 Daniel Tyukov
+// SPDX-License-Identifier: Apache-2.0
+//
+// EXAMPLE rtl/user_domain.sv for pulp-platform/croc with the CORDIC accelerator
+// added. Croc's own file is Solderpad SHL-0.51; only the CORDIC-specific parts
+// below are covered by this repository's Apache-2.0 licence.
+//
+// Diff this against your own user_domain.sv. The additions are:
+//   1. a pair of sbr_obi_req_t / sbr_obi_rsp_t signals and the demux fanout lines
+//   2. the cordic_obi_wrap instance
+//   3. one bit of interrupts_o driven from irq_o
+// Everything else is Croc's stock scaffolding, reproduced so the file compiles.
+
+module user_domain import user_pkg::*; import croc_pkg::*; #(
+  parameter int unsigned GpioCount       = 16,
+  parameter int unsigned NumExternalIrqs = 4
+) (
+  input  logic clk_i,
+  input  logic ref_clk_i,
+  input  logic rst_ni,
+  input  logic testmode_i,
+
+  input  sbr_obi_req_t user_sbr_obi_req_i,
+  output sbr_obi_rsp_t user_sbr_obi_rsp_o,
+
+  output mgr_obi_req_t user_mgr_obi_req_o,
+  input  mgr_obi_rsp_t user_mgr_obi_rsp_i,
+
+  input  logic [      GpioCount-1:0] gpio_in_sync_i,
+  output logic [NumExternalIrqs-1:0] interrupts_o
+);
+
+  // ---------------------------------------------------------------------------
+  // Interrupts
+  // ---------------------------------------------------------------------------
+  logic cordic_irq;
+  assign interrupts_o[NumExternalIrqs-1:1] = '0;
+  assign interrupts_o[0]                   = cordic_irq;
+
+  // ---------------------------------------------------------------------------
+  // No user manager
+  // ---------------------------------------------------------------------------
+  assign user_mgr_obi_req_o = '0;
+
+  // ---------------------------------------------------------------------------
+  // Subordinate demultiplexer
+  // ---------------------------------------------------------------------------
+  sbr_obi_req_t [NumDemuxSbr-1:0] all_user_sbr_obi_req;
+  sbr_obi_rsp_t [NumDemuxSbr-1:0] all_user_sbr_obi_rsp;
+
+  sbr_obi_req_t user_error_obi_req,  user_cordic_obi_req;
+  sbr_obi_rsp_t user_error_obi_rsp,  user_cordic_obi_rsp;
+
+  assign user_error_obi_req               = all_user_sbr_obi_req[UserError];
+  assign all_user_sbr_obi_rsp[UserError]  = user_error_obi_rsp;
+  assign user_cordic_obi_req              = all_user_sbr_obi_req[UserCordic];
+  assign all_user_sbr_obi_rsp[UserCordic] = user_cordic_obi_rsp;
+
+  // Keep your own UserRom or other subordinates wired here as well; the CORDIC
+  // accelerator neither needs nor conflicts with them.
+
+  logic [cf_math_pkg::idx_width(NumDemuxSbr)-1:0] user_idx;
+
+  addr_decode #(
+    .NoIndices ( NumDemuxSbr                    ),
+    .NoRules   ( $size(UserAddrMap)             ),
+    .addr_t    ( logic[SbrObiCfg.AddrWidth-1:0] ),
+    .rule_t    ( addr_map_rule_t                ),
+    .Napot     ( 1'b0                           )
+  ) i_addr_decode_periphs (
+    .addr_i           ( user_sbr_obi_req_i.a.addr ),
+    .addr_map_i       ( UserAddrMap               ),
+    .idx_o            ( user_idx                  ),
+    .dec_valid_o      (),
+    .dec_error_o      (),
+    .en_default_idx_i ( 1'b1      ),
+    .default_idx_i    ( UserError )
+  );
+
+  obi_demux #(
+    .ObiCfg      ( SbrObiCfg     ),
+    .obi_req_t   ( sbr_obi_req_t ),
+    .obi_rsp_t   ( sbr_obi_rsp_t ),
+    .NumMgrPorts ( NumDemuxSbr   ),
+    .NumMaxTrans ( 2             )
+  ) i_obi_demux (
+    .clk_i,
+    .rst_ni,
+    .sbr_port_select_i ( user_idx             ),
+    .sbr_port_req_i    ( user_sbr_obi_req_i   ),
+    .sbr_port_rsp_o    ( user_sbr_obi_rsp_o   ),
+    .mgr_ports_req_o   ( all_user_sbr_obi_req ),
+    .mgr_ports_rsp_i   ( all_user_sbr_obi_rsp )
+  );
+
+  // ---------------------------------------------------------------------------
+  // CORDIC accelerator
+  // ---------------------------------------------------------------------------
+  // Variant 0 is the fully pipelined core: one result per cycle, 28 cycles of
+  // latency, and by far the larger of the two. Set Variant to 1 for the iterative
+  // core if area matters more than throughput; the results are bit-identical
+  // either way. See the measured numbers in the README.
+  //
+  // EnableStream is 0 here, which is the right default for a CVE2-only system:
+  // nothing in stock Croc can feed a streaming port at one operation per cycle.
+  // Turn it on and wire the ports to a DMA engine or another accelerator to get
+  // the pipelined core anywhere near its retire rate.
+  cordic_obi_wrap #(
+    .ObiCfg       ( SbrObiCfg     ),
+    .obi_req_t    ( sbr_obi_req_t ),
+    .obi_rsp_t    ( sbr_obi_rsp_t ),
+    .DataWidth    ( 32            ),
+    .FracBits     ( 29            ),
+    .NumStages    ( 28            ),
+    .Variant      ( 0             ),
+    .GuardInt     ( 2             ),
+    .GuardFrac    ( 4             ),
+    .InDepth      ( 4             ),
+    .OutDepth     ( 4             ),
+    .EnableStream ( 1'b0          )
+  ) i_user_cordic (
+    .clk_i,
+    .rst_ni,
+    .obi_req_i ( user_cordic_obi_req ),
+    .obi_rsp_o ( user_cordic_obi_rsp ),
+    .irq_o     ( cordic_irq          ),
+
+    .str_in_valid_i  ( 1'b0 ),
+    .str_in_ready_o  (),
+    .str_in_func_i   ( 5'd0 ),
+    .str_in_tag_i    ( 8'd0 ),
+    .str_in_x_i      ( '0 ),
+    .str_in_y_i      ( '0 ),
+    .str_in_z_i      ( '0 ),
+
+    .str_out_valid_o (),
+    .str_out_ready_i ( 1'b0 ),
+    .str_out_x_o     (),
+    .str_out_y_o     (),
+    .str_out_z_o     (),
+    .str_out_flags_o (),
+    .str_out_func_o  (),
+    .str_out_tag_o   ()
+  );
+
+  // ---------------------------------------------------------------------------
+  // Error subordinate
+  // ---------------------------------------------------------------------------
+  obi_err_sbr #(
+    .ObiCfg      ( SbrObiCfg     ),
+    .obi_req_t   ( sbr_obi_req_t ),
+    .obi_rsp_t   ( sbr_obi_rsp_t ),
+    .NumMaxTrans ( 1             ),
+    .RspData     ( 32'hBADCAB1E  )
+  ) i_user_err (
+    .clk_i,
+    .rst_ni,
+    .testmode_i ( testmode_i         ),
+    .obi_req_i  ( user_error_obi_req ),
+    .obi_rsp_o  ( user_error_obi_rsp )
+  );
+
+  // gpio_in_sync_i and ref_clk_i are unused by this subordinate.
+  logic unused_user_domain;
+  assign unused_user_domain = ^{gpio_in_sync_i, ref_clk_i};
+
+endmodule

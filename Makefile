@@ -1,0 +1,270 @@
+# Copyright 2026 Daniel Tyukov
+# SPDX-License-Identifier: Apache-2.0
+#
+# Top-level build. `make all` runs everything from a clean checkout.
+#
+#   make venv      create .venv and install requirements
+#   make gen       regenerate every generated file (ROM, register map, sw vectors)
+#   make lint      Verilator -Wall on the core RTL and on the Croc wrapper
+#   make test      the whole cocotb suite, both variants, both OBI handshakes
+#   make synth     Yosys over six configurations, reports into docs/synth
+#   make sw        host driver test (runs) and RV32 image (links)
+#   make images    regenerate every figure in docs/img from measured data
+#   make check-gen fail if any generated file is out of date
+#   make all       gen, lint, test, synth, sw, images
+#
+# Simulator note: Verilator, because it is the only open simulator on this machine
+# that elaborates the design. Icarus Verilog 12 aborts on an internal assertion when
+# a constant function indexes a packed 2D localparam. Verilator 5.020 is installed
+# and cocotb 2.0 needs 5.036, so requirements.txt pins cocotb 1.9.2; tb/cordic_tb.py
+# carries the two shims that let the suite run on either cocotb generation.
+
+SHELL := /bin/bash
+TOP   := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+
+VENV    := $(TOP)/.venv
+PY      := $(VENV)/bin/python
+PIP     := $(VENV)/bin/pip
+VENV_OK := $(VENV)/.installed
+
+RTL_DIR := $(TOP)/rtl
+RTL := \
+  $(RTL_DIR)/cordic_stage.sv \
+  $(RTL_DIR)/cordic_core_pipe.sv \
+  $(RTL_DIR)/cordic_core_iter.sv \
+  $(RTL_DIR)/cordic_pre.sv \
+  $(RTL_DIR)/cordic_post.sv \
+  $(RTL_DIR)/cordic_unit.sv \
+  $(RTL_DIR)/cordic_fifo.sv \
+  $(RTL_DIR)/cordic_obi_regs.sv \
+  $(RTL_DIR)/cordic_accel.sv
+
+WRAP_LINT := \
+  $(TOP)/integration/croc/lint/obi_pkg.sv \
+  $(TOP)/integration/croc/lint/croc_pkg.sv \
+  $(TOP)/integration/croc/lint/tb_wrap_lint.sv \
+  $(TOP)/integration/croc/cordic_obi_wrap.sv
+
+GENERATED := \
+  $(RTL_DIR)/cordic_rom.svh \
+  $(RTL_DIR)/cordic_regmap.svh \
+  $(TOP)/sw/include/cordic_regmap.h \
+  $(TOP)/sw/host/cordic_vectors.h \
+  $(TOP)/docs/REGISTERS.md \
+  $(TOP)/docs/img/regmap.svg
+
+VERILATOR ?= verilator
+YOSYS     ?= yosys
+
+# Sample counts. CI lowers them; a local run gets the full sweep.
+ACC_SAMPLES    ?= 1200
+DOMAIN_SAMPLES ?= 600
+EQUIV_SAMPLES  ?= 900
+STREAM_OPS     ?= 256
+
+.PHONY: all venv gen rom regmap sw-vectors check-gen lint lint-core lint-wrap \
+        lint-configs test test-smoke test-accuracy test-domain test-obi \
+        test-throughput test-equivalence test-reset synth synth-quick sw sw-host \
+        sw-rv32 images clean distclean tools help
+
+all: check-tools gen lint test synth sw images
+	@echo
+	@echo "==== make all completed ===="
+
+help:
+	@sed -n 's/^#   //p' $(lastword $(MAKEFILE_LIST))
+
+# ---------------------------------------------------------------------------
+# Environment
+# ---------------------------------------------------------------------------
+venv: $(VENV_OK)
+
+$(VENV_OK): $(TOP)/requirements.txt
+	python3 -m venv $(VENV)
+	$(PIP) -q install --upgrade pip
+	$(PIP) -q install -r $(TOP)/requirements.txt
+	@touch $@
+	@$(PY) -c "import cocotb; print('cocotb', cocotb.__version__)"
+
+.PHONY: check-tools
+check-tools:
+	@fail=0; \
+	for t in $(VERILATOR) $(YOSYS) python3; do \
+	  if ! command -v $$t >/dev/null 2>&1; then \
+	    echo "missing required tool: $$t"; fail=1; fi; \
+	done; \
+	if ! command -v riscv64-unknown-elf-gcc >/dev/null 2>&1; then \
+	  echo "note: riscv64-unknown-elf-gcc not found, 'make sw' will skip the RV32 image"; \
+	fi; \
+	test $$fail -eq 0
+	@echo "verilator $$($(VERILATOR) --version | cut -d' ' -f2)"
+	@echo "yosys     $$($(YOSYS) -V | cut -d' ' -f2)"
+
+# ---------------------------------------------------------------------------
+# Generated files
+# ---------------------------------------------------------------------------
+gen: rom regmap sw-vectors
+
+rom: $(VENV_OK)
+	$(PY) $(TOP)/scripts/gen_cordic_rom.py
+
+regmap: $(VENV_OK)
+	$(PY) $(TOP)/scripts/gen_regmap.py
+
+sw-vectors: $(VENV_OK)
+	$(PY) $(TOP)/scripts/gen_sw_vectors.py
+
+# Fails if a generated file in the tree does not match what the generator produces.
+# CI runs this, so a hand edit to a generated file cannot slip through.
+check-gen: $(VENV_OK)
+	$(PY) $(TOP)/scripts/gen_cordic_rom.py --check
+	$(PY) $(TOP)/scripts/gen_regmap.py --check
+	$(PY) $(TOP)/scripts/gen_sw_vectors.py --check
+
+# ---------------------------------------------------------------------------
+# Lint. Zero warnings at -Wall is the bar, and it is enforced by -Wall alone
+# being enough for Verilator to exit non-zero.
+# ---------------------------------------------------------------------------
+lint: lint-core lint-wrap lint-configs
+
+lint-core:
+	@echo "== lint: core RTL, default parameters"
+	$(VERILATOR) --lint-only -Wall +incdir+$(RTL_DIR) --top-module cordic_accel $(RTL)
+
+lint-wrap:
+	@echo "== lint: Croc integration wrapper, both variants"
+	$(VERILATOR) --lint-only -Wall +incdir+$(RTL_DIR) --top-module tb_wrap_lint \
+	  $(WRAP_LINT) $(RTL)
+
+# Every parameter combination the design claims to support, because a generate
+# branch that is never elaborated is a branch that is never checked.
+# One configuration per line, because a make list cannot carry an argument group
+# containing spaces through the shell's word splitting.
+define LINT_CONFIGS
+defaults
+-GVariant=1
+-GUseRReady=1
+-GVariant=1 -GUseRReady=1
+-GDataWidth=16 -GFracBits=13 -GNumStages=15
+-GVariant=1 -GDataWidth=16 -GFracBits=13 -GNumStages=15
+-GNumStages=5
+-GNumStages=48
+-GInDepth=8 -GOutDepth=2 -GGuardInt=1 -GGuardFrac=6
+-GDataWidth=24 -GFracBits=20 -GNumStages=20 -GIdWidth=1
+endef
+export LINT_CONFIGS
+
+lint-configs:
+	@echo "== lint: parameter configurations"
+	@set -e; while IFS= read -r cfg; do \
+	  [ -n "$$cfg" ] || continue; \
+	  printf '   %-62s' "$$cfg"; \
+	  args=$$cfg; [ "$$cfg" = defaults ] && args=""; \
+	  $(VERILATOR) --lint-only -Wall +incdir+$(RTL_DIR) --top-module cordic_accel \
+	    $$args $(RTL) && echo "clean"; \
+	done <<< "$$LINT_CONFIGS"
+
+# ---------------------------------------------------------------------------
+# Simulation
+# ---------------------------------------------------------------------------
+SIM_ENV := PATH=$(VENV)/bin:$$PATH \
+           CORDIC_ACC_SAMPLES=$(ACC_SAMPLES) \
+           CORDIC_DOMAIN_SAMPLES=$(DOMAIN_SAMPLES) \
+           CORDIC_EQUIV_SAMPLES=$(EQUIV_SAMPLES) \
+           CORDIC_STREAM_OPS=$(STREAM_OPS)
+
+# $(1) module, $(2) extra environment
+define run_sim
+	@echo "== sim: $(1) $(2)"
+	@$(SIM_ENV) $(2) $(MAKE) -s -C $(TOP)/tb MODULE=$(1)
+endef
+
+test: $(VENV_OK) test-smoke test-accuracy test-domain test-obi test-throughput \
+      test-equivalence test-reset
+	@echo
+	@echo "==== every simulation target passed ===="
+
+test-smoke:
+	$(call run_sim,test_smoke,)
+
+test-accuracy:
+	$(call run_sim,test_accuracy,)
+
+test-domain:
+	$(call run_sim,test_domain,)
+
+# Both R-channel handshakes: Croc uses UseRReady=0, and 1 is the path where gnt
+# actually has to fall.
+test-obi:
+	$(call run_sim,test_obi,CORDIC_USE_RREADY=0)
+	$(call run_sim,test_obi,CORDIC_USE_RREADY=1)
+
+test-throughput:
+	$(call run_sim,test_throughput,CORDIC_VARIANT=0)
+	$(call run_sim,test_throughput,CORDIC_VARIANT=1)
+
+# Each variant records its results, then they are diffed word for word.
+test-equivalence:
+	$(call run_sim,test_equivalence,CORDIC_VARIANT=0)
+	$(call run_sim,test_equivalence,CORDIC_VARIANT=1)
+	@$(PY) $(TOP)/scripts/check_equivalence.py
+
+test-reset:
+	$(call run_sim,test_reset,CORDIC_VARIANT=0)
+	$(call run_sim,test_reset,CORDIC_VARIANT=1)
+
+# ---------------------------------------------------------------------------
+# Synthesis
+# ---------------------------------------------------------------------------
+synth: $(VENV_OK)
+	$(PY) $(TOP)/scripts/run_synth.py
+
+# The two headline configurations only, for a quicker turnaround.
+synth-quick: $(VENV_OK)
+	$(PY) $(TOP)/scripts/run_synth.py --quick
+
+# ---------------------------------------------------------------------------
+# Software
+# ---------------------------------------------------------------------------
+sw: sw-host sw-rv32
+
+sw-host: sw-vectors
+	@echo "== sw: host driver test"
+	$(MAKE) -s -C $(TOP)/sw host
+	$(TOP)/build/sw/test_cordic_host
+
+# Skipped rather than failed when the cross toolchain is absent, and it says so.
+sw-rv32: sw-vectors
+	@if command -v riscv64-unknown-elf-gcc >/dev/null 2>&1; then \
+	  echo "== sw: RV32 image"; \
+	  $(MAKE) -s -C $(TOP)/sw rv32; \
+	else \
+	  echo "== sw: RV32 image SKIPPED, riscv64-unknown-elf-gcc not on PATH"; \
+	fi
+
+# ---------------------------------------------------------------------------
+# Figures
+# ---------------------------------------------------------------------------
+# The plots need build/results, which the simulation targets write, and
+# docs/synth/summary.json, which make synth writes.
+images: $(VENV_OK)
+	@if [ ! -d $(TOP)/build/results ]; then \
+	  echo "build/results is missing; run 'make test' first"; exit 1; fi
+	@if [ ! -f $(TOP)/docs/synth/summary.json ]; then \
+	  echo "docs/synth/summary.json is missing; run 'make synth' first"; exit 1; fi
+	$(PY) $(TOP)/scripts/gen_plots.py
+	$(PY) $(TOP)/scripts/gen_svg.py
+	$(PY) $(TOP)/scripts/gen_regmap.py
+	$(PY) $(TOP)/scripts/check_svg.py
+
+# ---------------------------------------------------------------------------
+# Housekeeping
+# ---------------------------------------------------------------------------
+clean:
+	rm -rf $(TOP)/build $(TOP)/tb/sim_build $(TOP)/tb/results.xml \
+	       $(TOP)/tb/__pycache__ $(TOP)/scripts/__pycache__ \
+	       $(TOP)/obj_dir $(TOP)/tb/dump.vcd
+	$(MAKE) -s -C $(TOP)/sw clean || true
+
+distclean: clean
+	rm -rf $(VENV)

@@ -31,7 +31,7 @@ The peripheral occupies a 4 KB window. Offsets `0x000` to `0x060` are implemente
 | `0x050` | `LIM_CIRC` | RO | Circular convergence radius, working format |
 | `0x054` | `LIM_HYP` | RO | Hyperbolic convergence radius, working format |
 | `0x058` | `LIM_LIN` | RO | Linear convergence radius, working format |
-| `0x05C` | `TANH_LIM_HYP` | RO | Largest |Y/X| the hyperbolic vectoring mode resolves |
+| `0x05C` | `TANH_LIM_HYP` | RO | Largest \|Y/X\| the hyperbolic vectoring mode resolves |
 | `0x060` | `SCRATCH` | RW | Read-write scratch word, no hardware effect |
 | `0x064` .. `0xFFC` | unmapped | - | Reads return `0xBADACCE5` with `r.err`, writes take `r.err` |
 
@@ -136,10 +136,10 @@ The peripheral occupies a 4 KB window. Offsets `0x000` to `0x060` are implemente
 | 0 | `SIN_COS` | circular | rotation | Z = angle in radians | X = cos(Z), Y = sin(Z) | whole representable range of Z | compensated, x0 preloaded with 1/K |
 | 1 | `ROTATE` | circular | rotation | X, Y = vector, Z = angle | X, Y = K * R(Z) * (X,Y) | whole representable range of Z | exposed as K_CIRC |
 | 2 | `ATAN2` | circular | vectoring | X, Y = vector | Z = atan2(Y,X), X = K * hypot(X,Y) | all four quadrants, no restriction | Z exact, X scaled by K_CIRC |
-| 3 | `SINH_COSH` | hyperbolic | rotation | Z = argument | X = cosh(Z), Y = sinh(Z) | |Z| <= LIM_HYP | compensated, x0 preloaded with 1/Kh |
-| 4 | `HROTATE` | hyperbolic | rotation | X, Y = vector, Z = argument | X, Y = Kh * Rh(Z) * (X,Y) | |Z| <= LIM_HYP | exposed as K_HYP |
-| 5 | `ATANH` | hyperbolic | vectoring | X, Y = vector | Z = atanh(Y/X), X = Kh * sqrt(X^2 - Y^2) | X != 0 and |Y/X| <= TANH_LIM_HYP | Z exact, X scaled by K_HYP |
-| 6 | `EXP` | hyperbolic | rotation | Z = exponent | X = Y = exp(Z) | |Z| <= LIM_HYP | compensated, x0 = y0 = 1/Kh |
+| 3 | `SINH_COSH` | hyperbolic | rotation | Z = argument | X = cosh(Z), Y = sinh(Z) | \|Z\| <= LIM_HYP | compensated, x0 preloaded with 1/Kh |
+| 4 | `HROTATE` | hyperbolic | rotation | X, Y = vector, Z = argument | X, Y = Kh * Rh(Z) * (X,Y) | \|Z\| <= LIM_HYP | exposed as K_HYP |
+| 5 | `ATANH` | hyperbolic | vectoring | X, Y = vector | Z = atanh(Y/X), X = Kh * sqrt(X^2 - Y^2) | X != 0 and \|Y/X\| <= TANH_LIM_HYP | Z exact, X scaled by K_HYP |
+| 6 | `EXP` | hyperbolic | rotation | Z = exponent | X = Y = exp(Z) | \|Z\| <= LIM_HYP | compensated, x0 = y0 = 1/Kh |
 | 7 | `LN` | hyperbolic | vectoring | X = argument | Z = ln(X) | X > 0 and (X-1)/(X+1) within TANH_LIM_HYP | exact, no gain |
-| 8 | `MUL` | linear | rotation | X, Z = factors | Y = X * Z | |Z| <= LIM_LIN | none, gain is 1 |
-| 9 | `DIV` | linear | vectoring | Y = numerator, X = denominator | Z = Y / X | X != 0 and |Y/X| <= LIM_LIN | none, gain is 1 |
+| 8 | `MUL` | linear | rotation | X, Z = factors | Y = X * Z | \|Z\| <= LIM_LIN | none, gain is 1 |
+| 9 | `DIV` | linear | vectoring | Y = numerator, X = denominator | Z = Y / X | X != 0 and \|Y/X\| <= LIM_LIN | none, gain is 1 |

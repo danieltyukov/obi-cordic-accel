@@ -1,0 +1,23 @@
+# Copyright 2026 Daniel Tyukov
+# SPDX-License-Identifier: Apache-2.0
+#
+# Compile order for the CORDIC accelerator, for a flow that wants a plain file
+# list rather than Bender. Paths are relative to this repository's root.
+#
+# Include path: rtl/ must be on the include search path (+incdir+ for Verilator and
+# most simulators, -I for Yosys). cordic_rom.svh, cordic_regmap.svh,
+# cordic_defs.svh and cordic_rom_fx.svh are pulled in from inside module bodies.
+#
+# cordic_obi_wrap.sv is listed last and is only needed for a Croc integration; it
+# depends on obi_pkg and croc_pkg, which Croc provides.
+
+rtl/cordic_stage.sv
+rtl/cordic_core_pipe.sv
+rtl/cordic_core_iter.sv
+rtl/cordic_pre.sv
+rtl/cordic_post.sv
+rtl/cordic_unit.sv
+rtl/cordic_fifo.sv
+rtl/cordic_obi_regs.sv
+rtl/cordic_accel.sv
+integration/croc/cordic_obi_wrap.sv

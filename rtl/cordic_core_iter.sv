@@ -115,7 +115,7 @@ module cordic_core_iter #(
     angle_hyp_sel  = '0;
     shift_hyp_sel  = '0;
     for (int unsigned s = 0; s < NumStages; s++) begin
-      if (s == idx) begin
+      if (IdxWidth'(s) == idx) begin
         angle_circ_sel = angle_circ[s*Width +: Width];
         angle_lin_sel  = angle_lin[s*Width +: Width];
         angle_hyp_sel  = angle_hyp[s*Width +: Width];

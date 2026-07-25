@@ -1,0 +1,36 @@
+# Copyright 2026 Daniel Tyukov
+# SPDX-License-Identifier: Apache-2.0
+#
+# Fragment for pulp-platform/croc's top-level Bender.yml.
+#
+# Croc lists its user-domain sources under the `rtl` target, after croc_pkg.sv and
+# user_pkg.sv. Add the CORDIC files in the order below: the include directory has to
+# be visible before any of them, cordic_stage.sv is instantiated by both cores, and
+# cordic_obi_wrap.sv depends on obi_pkg for the config type.
+#
+# Two include directories matter and both must be exported: rtl/cordic holds the
+# generated cordic_rom.svh and cordic_regmap.svh, and the OBI package's own include
+# dir is already exported by Croc's obi dependency.
+
+# --- add to the top-level `export_include_dirs:` list ------------------------
+export_include_dirs:
+  - rtl/cordic
+
+# --- add to `sources:` inside the target that builds the RTL -----------------
+sources:
+  - target: rtl
+    files:
+      # CORDIC accelerator. Order matters: cordic_stage first, then the cores that
+      # instantiate it, then the wrapper that needs obi_pkg and croc_pkg.
+      - rtl/cordic/cordic_stage.sv
+      - rtl/cordic/cordic_core_pipe.sv
+      - rtl/cordic/cordic_core_iter.sv
+      - rtl/cordic/cordic_pre.sv
+      - rtl/cordic/cordic_post.sv
+      - rtl/cordic/cordic_unit.sv
+      - rtl/cordic/cordic_fifo.sv
+      - rtl/cordic/cordic_obi_regs.sv
+      - rtl/cordic/cordic_accel.sv
+      - rtl/cordic/cordic_obi_wrap.sv
+      # then Croc's own, unchanged:
+      #   - rtl/user_domain.sv
